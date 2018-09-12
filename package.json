@@ -21,12 +21,7 @@
   },
   "homepage": "https://github.com/etauker/archery#readme",
   "dependencies": {
-    "compress": "^0.99.0",
-    "compression": "^1.7.3",
-    "connect": "^3.6.6",
-    "directory": "^0.1.0",
     "express": "^4.16.3",
-    "open": "0.0.5",
-    "serve-index": "^1.9.1"
+    "open": "0.0.5"
   }
 }
