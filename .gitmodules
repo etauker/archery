@@ -1,0 +1,4 @@
+[submodule "archery-ui5"]
+	path = archery-ui5
+	url = git@github.com:etauker/archery-ui5.git
+	branch = develop

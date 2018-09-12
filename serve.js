@@ -10,7 +10,7 @@ const webapp = '/webapp';
 const url = 'http://localhost:' + port + webapp;
 const year = 60 * 60 * 24 * 365 * 1000;
 
-app.use(express.static(__dirname+"/webapp"));
+app.use(express.static(__dirname+"/archery-ui5/webapp"));
 // app.configure(function () {
 //     app.use(express.logger('dev'));     /* 'default', 'short', 'tiny', 'dev' */
 //     app.use(express.bodyParser());
