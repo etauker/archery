@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>SAPUI5 Navigation</title>
+		<script
+				id="sap-ui-bootstrap"
+				src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_belize"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-bindingSyntax="complex"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-preload="async"
+				data-sap-ui-resourceroots='{
+					"com.etauker.archery": "./",
+					"com.etauker.security": "./security/"
+				}'>
+		</script>
+
+		<script>
+
+			sap.ui.getCore().attachInit(function () {
+				sap.ui.require([
+					"com/etauker/archery/localService/mockserver",
+					"sap/m/Shell",
+					"sap/ui/core/ComponentContainer"
+				], function (mockserver, Shell, ComponentContainer) {
+					mockserver.init();
+					new Shell({
+						app : new ComponentContainer({
+							name : "com.etauker.archery",
+							settings : {
+								id : "nav"
+							}
+						})
+					}).placeAt("content");
+				});
+			});
+
+		</script>
+
+	</head>
+	<body class="sapUiBody" id="content">
+	</body>
+</html>

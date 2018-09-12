@@ -1,0 +1,32 @@
+{
+  "name": "etauker-archery",
+  "version": "1.0.0",
+  "description": "",
+  "main": "serve.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/etauker/archery.git"
+  },
+  "keywords": [
+    "etauker",
+    "archery"
+  ],
+  "author": "etauker",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/etauker/archery/issues"
+  },
+  "homepage": "https://github.com/etauker/archery#readme",
+  "dependencies": {
+    "compress": "^0.99.0",
+    "compression": "^1.7.3",
+    "connect": "^3.6.6",
+    "directory": "^0.1.0",
+    "express": "^4.16.3",
+    "open": "0.0.5",
+    "serve-index": "^1.9.1"
+  }
+}

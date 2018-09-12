@@ -1,0 +1,170 @@
+{
+	"_version": "1.8.0",
+	"sap.app": {
+		"id": "com.etauker.security",
+		"type": "library",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"dataSources": {
+			"employeeRemote": {
+				"uri": "/here/goes/your/serviceUrl/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri" : "localService/metadata.xml"
+				}
+			},
+			"login": {
+				"uri": "http://localhost:8081/security/token"
+			},
+			"user": {
+				"uri": "http://localhost:8081/security/users"
+			}
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"minUI5Version": "1.30",
+			"libs": {
+				"sap.m": { }
+			}
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "com.etauker.security.i18n.i18n"
+				}
+			},
+			"security": {
+				"type": "sap.ui.model.json.JSONModel"
+			}
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "com.etauker.security.view",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"transition": "slide",
+				"bypassed": {
+					"target": "notFound"
+				},
+				"async": true
+			},
+			"routes": [{
+				"pattern": "",
+				"name": "appHome",
+				"target": "home"
+			}, {
+				"pattern": "employees",
+				"name": "employeeList",
+				"target": "employees"
+			}, {
+				"pattern": "employee/overview:?query:",
+				"name": "employeeOverview",
+				"target": ["EmployeeOverviewTop", "EmployeeOverviewContent"]
+			}, {
+				"pattern": "employees/{employeeId}",
+				"name": "employee",
+				"target": "employee"
+			}, {
+				"pattern": "employees/{employeeId}/resume:?query:",
+				"name": "employeeResume",
+				"target": "employeeResume"
+			}, {
+				"pattern": "login",
+				"name": "login",
+				"target": "login"
+			}, {
+				"pattern": "createUser",
+				"name": "createUser",
+				"target": "createUser"
+			}],
+			"targets": {
+				"home": {
+					"viewId": "home",
+					"viewName": "Home",
+					"viewLevel" : 1
+				},
+				"notFound": {
+					"viewId": "notFound",
+					"viewName": "NotFound",
+					"transition": "show"
+				},
+				"login": {
+					"viewId": "login",
+					"viewPath": "com.etauker.archery.view",
+					"viewName": "Login",
+					"viewLevel" : 2
+				},
+				"createUser": {
+					"viewId": "createUser",
+					"viewPath": "com.etauker.archery.view",
+					"viewName": "CreateUser",
+					"viewLevel" : 3
+				},
+				"employees": {
+					"viewId": "employeeList",
+					"viewPath": "com.etauker.archery.view.employee",
+					"viewName": "EmployeeList",
+					"viewLevel" : 2
+				},
+				"employee": {
+					"viewId": "employee",
+					"viewName": "employee.Employee",
+					"viewLevel" : 3
+				},
+				"employeeResume": {
+					"viewId": "resume",
+					"viewName": "employee.Resume",
+					"viewLevel" : 4,
+					"transition": "flip"
+				},
+				"resumeTabHobbies": {
+					"parent": "employeeResume",
+					"viewId": "resumeHobbies",
+					"viewPath": "com.etauker.archery.view.employee",
+					"viewName": "ResumeHobbies",
+					"controlId": "hobbiesTab",
+					"controlAggregation": "content"
+				},
+				"resumeTabNotes": {
+					"parent": "employeeResume",
+					"viewId": "resumeNotes",
+					"viewPath": "com.etauker.archery.view.employee",
+					"viewName": "ResumeNotes",
+					"controlId": "notesTab",
+					"controlAggregation": "content"
+				},
+				"EmployeeOverview": {
+					"viewId": "employeeOverview",
+					"viewPath": "com.etauker.archery.view.employee.overview",
+					"viewName": "EmployeeOverview",
+					"viewLevel" : 2
+				},
+				"EmployeeOverviewTop": {
+					"parent": "EmployeeOverview",
+					"viewId": "employeeOverviewTop",
+					"viewPath": "com.etauker.archery.view.employee.overview",
+					"viewName": "EmployeeOverviewTop",
+					"controlId": "EmployeeOverviewParent",
+					"controlAggregation": "content"
+				},
+				"EmployeeOverviewContent": {
+					"parent": "EmployeeOverview",
+					"viewId": "employeeOverviewContent",
+					"viewPath": "com.etauker.archery.view.employee.overview",
+					"viewName": "EmployeeOverviewContent",
+					"controlId": "EmployeeOverviewParent",
+					"controlAggregation": "content"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,11 @@
+<mvc:View
+	controllerName="com.etauker.archery.controller.Seasons"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc">
+	
+	<HBox width="100%">
+		<Text text="Season overview to come..." />
+	</HBox>
+	
+</mvc:View>
