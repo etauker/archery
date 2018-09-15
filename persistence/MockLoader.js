@@ -10,7 +10,7 @@ class MockLoader extends BaseLoader {
     }
 }
 
-BaseLoader.prototype.getScores = function() {
+MockLoader.prototype.getScores = function() {
     console.log("This method returns scores for all archers.");
 }
 
