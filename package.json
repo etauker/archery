@@ -4,7 +4,7 @@
   "description": "",
   "main": "serve.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jasmine "
   },
   "repository": {
     "type": "git",
@@ -25,6 +25,10 @@
     "express": "^4.16.3",
     "jsonwebtoken": "^8.3.0",
     "mysql": "^2.16.0",
-    "open": "0.0.5"
+    "open": "0.0.5",
+    "promise-mysql": "^3.3.1"
+  },
+  "devDependencies": {
+    "jasmine": "^3.2.0"
   }
 }
