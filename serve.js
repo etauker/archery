@@ -27,4 +27,4 @@ app.use(webappEndpoint, express.static(webappDirectory));
 // Start the server
 app.listen(port);
 console.log("App listening at url => " + url)
-open(url); //open in default browser
+// open(url); //open in default browser
