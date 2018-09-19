@@ -16,14 +16,17 @@ class SecurityPersistenceManager {
         this.password = oParams.password || oDatabase.password;
         this.database = oParams.database || oDatabase.database;
 
-        this.connectionObject = {
+        this.poolConnectionObject = {
             host     : this.host,
             user     : this.user,
             password : this.password,
-            database : this.database
+            database : this.database,
+            connectionLimit : 10
+            // connectTimeout: 1000000
         };
-        this.connection = mysql.createConnection( this.connectionObject );
-
+        // this.connection = mysql.createConnection( this.connectionObject );
+        this.pool = mysql.createPool( this.poolConnectionObject );
+        console.log(this.poolConnectionObject);
         // Ensure that all mandatory parameters have a value
         if (!this.user) this._missingParameter("user");
         if (!this.password) this._missingParameter("password");
@@ -44,12 +47,13 @@ SecurityPersistenceManager.prototype.getUser = function(oUser) {
     this._query(sQuery).then(res => {
         console.log("--- THEN ---");
         console.log(res);
-        return this._close();
-    }).then(res => {
-        console.log("--- Connection Closed ---");
-        console.log(res);
-        return res;
+    //     return this._close();
+    // }).then(res => {
+    //     console.log("--- Connection Closed ---");
+    //     console.log(res);
+    //     return res;
     }).catch( err => {
+        console.log("--- CATCH ---");
         console.error(err);
     } );
 };
@@ -109,11 +113,24 @@ SecurityPersistenceManager.prototype._query = function(sQuery, aParams) {
     // });
     // ================================================================
     return new Promise( ( resolve, reject ) => {
-        this.connection.query( sQuery, aParams, ( err, rows ) => {
-            if ( err )
+        if (typeof this.pool.query === 'function' ) {
+            // console.log("--- IF ---");
+            this.pool.query( sQuery, aParams, ( err, rows ) => {
+                console.log("--- QUERY COMPLETE ---");
+                // this.connection.destroy();
+                if ( err )
                 return reject( err );
-            resolve( rows );
-        } );
+                resolve( rows );
+            } );
+        } else {
+            console.log("--- ELSE ---");
+            // this.connection = mysql.createConnection( this.connectionObject );
+            // this.connection.query( sQuery, aParams, ( err, rows ) => {
+            //     if ( err )
+            //     return reject( err );
+            //     resolve( rows );
+            // } );
+        }
     } );
     //, (error) => {
     //     console.log("--- QUERY ERROR ---");
@@ -140,16 +157,16 @@ SecurityPersistenceManager.prototype._query = function(sQuery, aParams) {
 };
 
 SecurityPersistenceManager.prototype._close = function(sQuery, aParams) {
-    return new Promise( ( resolve, reject ) => {
+    // return new Promise( ( resolve, reject ) => {
         console.log("--- Closing Connection ---");
-        console.log(this.connection.end.toString());
-        this.connection.end(err => {
-            console.log(err);
-            if ( err )
-                return reject( err );
-            resolve(true);
-        } );
-    } );
+    //     // console.log(this.connection.end.toString());
+    //     this.connection.end(err => {
+    //         console.log(err);
+    //         if ( err )
+    //             return reject( err );
+    //         resolve(true);
+    //     } );
+    // } );
 }
 
 SecurityPersistenceManager.prototype.getRolesByUser = function(sUserId) {
