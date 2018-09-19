@@ -16,17 +16,19 @@ class SecurityPersistenceManager {
         this.password = oParams.password || oDatabase.password;
         this.database = oParams.database || oDatabase.database;
 
-        // Ensure that all mandatory parameters have a value
-        if (!this.user) this._missingParameter("user");
-        if (!this.password) this._missingParameter("password");
-        if (!this.database) this._missingParameter("database");
-        this.state = "progress";
-        this.connection = mysql.createConnection({
+        this.connectionObject = {
             host     : this.host,
             user     : this.user,
             password : this.password,
             database : this.database
-        });
+        };
+        this.connection = mysql.createConnection( this.connectionObject );
+
+        // Ensure that all mandatory parameters have a value
+        if (!this.user) this._missingParameter("user");
+        if (!this.password) this._missingParameter("password");
+        if (!this.database) this._missingParameter("database");
+
     }
 }
 
@@ -39,147 +41,116 @@ SecurityPersistenceManager.prototype.getUser = function(oUser) {
         return `${sKey} = "${oUser[sKey]}"`;
     })
     sQuery += aProperties.join(" AND ") + ";";
-
-    return this._query(sQuery);
-
-
-
-
-    // var promise =
-    // this.connection.query(sQuery, function (error, results, fields) {
-    //     console.log("after query");
-    //
-    //     return new Promise((resolve, reject) => {
-    //         if (error) {
-    //             console.log("error");
-    //             reject(error);
-    //         } else {
-    //             console.log("success");
-    //             resolve(results, fields);
-    //         }
-    //     });
-    // });
-
+    this._query(sQuery).then(res => {
+        console.log("--- THEN ---");
+        console.log(res);
+        return this._close();
+    }).then(res => {
+        console.log("--- Connection Closed ---");
+        console.log(res);
+        return res;
+    }).catch( err => {
+        console.error(err);
+    } );
 };
 SecurityPersistenceManager.prototype._query = function(sQuery, aParams) {
 
-    // var interval = 1000;
-    var counter = 0;
-    // var max = 10000;
-
-    var complete = false;
-    var promise;
+    // var counter = 0;
     //
-    // var timeout = setInterval(console.log("Hello"), 10);
-    // this.connection.query[util.promisify.custom] = (sQuery, aParams) => {
-    //     return new Promise((resolve, reject) => {
-    //         // doSomething(foo, resolve, reject);
+    // var complete = false;
+    // var promise;
+
+
+    // console.log(sQuery);
+    // try {
+    // return new Promise((resolve, reject) => {
+    //     try {
     //         this.connection.query(sQuery, (aParams || []), (error, results, fields) => {
+    //             // console.log("after query");
+    //
     //             if (error) {
-    //                 console.log("error");
+    //                 console.log(error);
     //                 reject(error);
     //             } else {
-    //                 console.log("success");
+    //                 console.log(results);
+    //                 console.log(fields);
     //                 resolve(results, fields);
     //             }
     //         });
-    //     });
-    // };
-    // var con = this.connection;
-    // console.log(con);
+    //     } catch (err) {
+    //         console.log("catch");
+    //         reject(err);
+    //     }
+    //     // console.log(promise);
+    // });
 
-    // var oConnection = this.connection.then(());
-    // const promisified = util.promisify(oConnection.query);
-    // return promisified(sQuery, (aParams || []));
-    // var prom = promisified(sQuery, (aParams || []));
-    // prom.then((result) => {
-    //     console.log(result);
-    // }, (error) => {
-    //     console.log(error);
-    // })
-
-
-
-
-
-
-
-    // console.log(this.state);
-    // // setTimeout(function(args) {
+    // ================================================================
+    // console.log("--- CONNECTION PARAMETERS ---");
+    // console.log(this.connectionObject);
+    // console.log("--- QUERY ---");
+    // console.log(sQuery);
+    // console.log("--- QUERY PARAMETERS ---");
+    // console.log(aParams);
     //
-    // do {
-    //     console.log(this.state);
-    // }
-    // while (this.state !== "complete")
-    //
-    // console.log(this.state);
-    // var prom = this.connection.query(sQuery, (aParams || []));
-    // prom.then((result) => {
-    //     console.log(result);
-    // }, (error) => {
-    //     console.log(error);
+    // mysql.createConnection(this.connectionObject)
+    // .then((oCon) => {
+    //     console.log("--- CONNECTION OBJECT ---");
+    //     console.log(oCon.query(sQuery, (aParams || [])));
+    //     return oCon.query(sQuery, (aParams || []));
     // })
-    // // }, 10000);
+    // .then((oResult) => {
+    //     console.log("--- QUERY RESULT ---");
+    //     console.log(oResult);
+    //     // oCon.end();
+    //     // resolve(result);
+    // })
+    // .catch(function(oError) {
+    //     console.error(oError);
+    // });
+    // ================================================================
+    return new Promise( ( resolve, reject ) => {
+        this.connection.query( sQuery, aParams, ( err, rows ) => {
+            if ( err )
+                return reject( err );
+            resolve( rows );
+        } );
+    } );
+    //, (error) => {
+    //     console.log("--- QUERY ERROR ---");
+    //     console.error(error);
+    // });
+    //     console.log("--- RESULT ---");
+    //     console.log(result);
+    //     return result;
+    // res.then(result => console.log(result));
 
-
-
-
-
-    // console.log(this.connection.query.toString());
-
-    console.log(sQuery);
-    // try {
-    return new Promise((resolve, reject) => {
-        this.connection.query(sQuery, (aParams || []), (error, results, fields) => {
-            console.log("after query");
-
-                if (error) {
-                    console.log("error");
-                    reject(error);
-                } else {
-                    console.log("success");
-                    // console.log(results);
-                    // console.log(fields);
-                    resolve(results, fields);
-                }
-            });
-            complete = true;
-            console.log(complete);
-            console.log(promise);
-        });
-
-    // } catch (err) {
-    //     // console.log("err");
-    //     // console.log(err);
-    // }
-// console.log(complete);
-//     while (!complete) {
-//         counter++;
-//         // console.log(counter);
-//     }
-//     // console.log(promise);
-//
-//     if (complete) {
-//         console.log("complete");
-//         return promise;
-//     } else {
-//         console.log("Database query timed out");
-//         return new Promise().reject("Database query timed out");
-//     }
-
-
-
-
-
-
-    // setInterval(function() {
-    //     console.log("inside set interval");
-    //     } else if (counter <= max) {
-    //         console.log("} else if (counter <= max) {");
-    //         counter += interval;
-    // }, interval);
-
+        //, (error, results, fields) => {
+        //     // console.log("after query");
+        //
+        //     if (error) {
+        //         console.log(error);
+        //         reject(error);
+        //     } else {
+        //         console.log(results);
+        //         console.log(fields);
+        //         resolve(results, fields);
+        //     }
+        // });
+    // });
 };
+
+SecurityPersistenceManager.prototype._close = function(sQuery, aParams) {
+    return new Promise( ( resolve, reject ) => {
+        console.log("--- Closing Connection ---");
+        console.log(this.connection.end.toString());
+        this.connection.end(err => {
+            console.log(err);
+            if ( err )
+                return reject( err );
+            resolve(true);
+        } );
+    } );
+}
 
 SecurityPersistenceManager.prototype.getRolesByUser = function(sUserId) {
     // TODO: Return an array of rolescorresponding to the provided user
