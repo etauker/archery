@@ -128,7 +128,7 @@ describe("SecurityPersistenceManager getRolesByUser function", function() {
 
 describe("SecurityPersistenceManager createUser function", function() {
     it("should create user with correct details", fnDone => {
-        var promise = oManager.createUser({
+        oManager.createUser({
             username: "test"
         }, "password").then((oResult, oFields) => {
             expect(oResult).not.toBe(null, "null was returned by createUser()");
@@ -138,6 +138,29 @@ describe("SecurityPersistenceManager createUser function", function() {
         }).catch(oError => {
             console.log(oError);
             fail("Error saving user in the database.");
+        });
+    });
+    it("should not create user without a password provided", fnDone => {
+        oManager.createUser({
+            username: "test"
+        }).then((oResult, oFields) => {
+            fail("Error should have been thrown.");
+        }).catch(oError => {
+            fnDone();
+        });
+    });
+    it("should not create user without a user provided", fnDone => {
+        oManager.createUser(null, "password").then((oResult, oFields) => {
+            fail("Error should have been thrown.");
+        }).catch(oError => {
+            fnDone();
+        });
+    });
+    it("should not create user with an empty user provided", fnDone => {
+        oManager.createUser({}, "password").then((oResult, oFields) => {
+            fail("Error should have been thrown.");
+        }).catch(oError => {
+            fnDone();
         });
     });
 });

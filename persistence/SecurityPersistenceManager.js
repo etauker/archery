@@ -17,6 +17,7 @@ class SecurityPersistenceManager {
         this.password = oParams.password || oDatabase.password;
         this.database = oParams.database || oDatabase.database;
         this.commit = oParams.commit === false ? false : true;
+        this.debug = oParams.debug === true ? true : false;
 
         // Create the connection pool
         this.pool = mysql.createPool( {
@@ -37,13 +38,30 @@ class SecurityPersistenceManager {
 //===========================================
 //             PUBLIC FUNCTIONS
 //===========================================
+/**
+ *  Retrieves a user from the database.
+ *  The properties names of the provided object must match the database columns.
+ *  The values of those properties are the values that will be searched in the database.
+ *
+ *  @param {object} oUser - The object representing the user to be retrieved from the database.
+ *  @return {promise} Resolves to the user entry from the database.
+ */
 SecurityPersistenceManager.prototype.getUser = function(oUser) {
     var sQuery = this._formSelectQuery("USER", oUser)
     return this._query(sQuery).then(oQueryResult => {
         return oQueryResult;
     });
 };
-
+/**
+ *  Retrieves the roles for a given user.
+ *  The provided user object must contain either a uuid or a username field.
+ *  If a uuid field is provided for the user it will be used to retrieve the roles.
+ *
+ *  @param {object} oUser - The object representing the user who's roles should be retrieved from the database.
+ *  @param {string=} oUser.uuid - The UUID of the user for which to retrieve the roles.
+ *  @param {string=} oUser.username - The username of the user for which to retrieve the roles. Only used if the UUID is not provided.
+ *  @return {promise} Resolves to the array of user roles.
+ */
 SecurityPersistenceManager.prototype.getRolesByUser = function(oUser) {
 
     // Format the query
@@ -60,17 +78,33 @@ SecurityPersistenceManager.prototype.getRolesByUser = function(oUser) {
         return oQueryResult;
     });
 };
-SecurityPersistenceManager.prototype.createRole = function(oRole) {
-    // TODO: Creates a database entry corresponding to the provided object
-};
+/**
+ *  Creates a database entry for the given user object.
+ *  The password must be provided separately and will be hashed before it is persisted.
+
+ *  @param {object} oUser - The object representing the user that should be saved in the database.
+ *  @param {string} sPassword - Plain-text password of the user. This function handles the hashing of this password before saving.
+ *  @return {promise} Resolves to the database response object for the transaction.
+ */
 SecurityPersistenceManager.prototype.createUser = function(oUser, sPassword) {
+
     return argon2.hash(sPassword).then(sHash => {
+        if (!oUser) throw new Error("Hashing of the provided password failed - user parameter missing.");
+        if (!sPassword) throw new Error("Hashing of the provided password failed - password parameter missing.");
+
         oUser.password_hash = sHash;
-        var sQuery = this._formInsertQuery("USER", Object.keys(oUser), [oUser])
+        var sQuery = this._formInsertQuery("USER", [oUser], Object.keys(oUser))
         return this._query(sQuery).then(oQueryResult => {
             return oQueryResult;
         })
+    }).catch(oError => {
+        if (!oUser) throw new Error("Hashing of the provided password failed - user parameter missing.");
+        if (!sPassword) throw new Error("Hashing of the provided password failed - password parameter missing.");
+        throw new Error("Hashing of the provided password failed - " + oError.toString());
     });
+};
+SecurityPersistenceManager.prototype.createRole = function(oRole) {
+    // TODO: Creates a database entry corresponding to the provided object
 };
 SecurityPersistenceManager.prototype.updateRole = function(oRole) {
     // TODO: Updates a database entry corresponding to the provided object
@@ -104,7 +138,13 @@ SecurityPersistenceManager.prototype.extendSession = function(oExtension) {
 //===========================================
 
 /**
- * Iterates over an object and adds a WHERE clause for each property.
+ *  Generates a SELECT statement from the given object.
+ *  Assumes that all properties of the object correspond to the database columns.
+ *  Also assumes that the database entry has information identical to the provided property values.
+
+ *  @param {string} sTable - The name of the database table which will be queried.
+ *  @param {object} oEntity - The object containing the filter criteria.
+ *  @return {string} The query to be excuted in the database.
  */
 SecurityPersistenceManager.prototype._formSelectQuery = function(sTable, oEntity) {
     var sQuery = `SELECT * FROM ${this.database}.${sTable} WHERE `;
@@ -118,36 +158,38 @@ SecurityPersistenceManager.prototype._formSelectQuery = function(sTable, oEntity
     sQuery += aProperties.join(" AND ") + ";";
     return sQuery;
 };
-SecurityPersistenceManager.prototype._formInsertQuery = function(sTable, aFields, aObjects) {
+
+/**
+ *  Generates an INSERT statement from the given object.
+ *  Assumes that all properties of the object correspond to the database columns.
+ *  Also assumes that the database entry should contain the information provided in the property values.
+ *
+ *  @param {string} sTable - The name of the database table to which the information will be inserted.
+ *  @param {object[]} aEntities - an array of entities to be inserted into the database
+ *  @param {string[]=} aFields - The names of the database columns that should be inserted into. If not provided, the property keys of aEntities will be used.
+ *  @return {string} The insert statement to be excuted in the database.
+ */
+SecurityPersistenceManager.prototype._formInsertQuery = function(sTable, aEntities, aFields) {
     var sQuery = `INSERT INTO ${this.database}.${sTable} (`;
     sQuery += aFields.join(", ") + ") VALUES ";
 
     // Loop through all properties of the object and format as 'KEY = "value"'
-    aObjects = aObjects.map(oObject => {
+    aEntities = aEntities.map(oObject => {
         var aProperties = Object.keys(oObject).map(sKey => {
             return `"${oObject[sKey]}"`;
         })
         return "(" + aProperties.join(", ") + ")";
     });
-    sQuery += aObjects.join(", ") + ";";
-    return sQuery;
-};
-SecurityPersistenceManager.prototype._formIdQuery = function(sTable, oEntity) {
-    var sField = sTable === "USER" ? "uuid" : "id";
-    var sQuery = `SELECT ${sField} FROM ${this.database}.${sTable} WHERE `;
-
-    // Loop through all properties of the object and format as 'KEY = "value"'
-    var aProperties = Object.keys(oEntity).map(sKey => {
-        return `${sKey} = "${oEntity[sKey]}"`;
-    })
-
-    // Join the individual lines with AND and add semicolon at the end
-    sQuery += aProperties.join(" AND ") + ";";
+    sQuery += aEntities.join(", ") + ";";
     return sQuery;
 };
 
 /**
- * Executes the provided query and returns a promise.
+ *  Executes the provided query in the database.
+ *
+ *  @param {string} sQuery - The query to be executed in the database.
+ *  @param {any[]=} aParams - An array of values to replace the placeholders in the query.
+ *  @return {promise} The insert statement to be excuted in the database.
  */
 SecurityPersistenceManager.prototype._query = function(sQuery, aParams) {
     return new Promise((fnResolve, fnReject) => {
@@ -194,13 +236,17 @@ SecurityPersistenceManager.prototype._query = function(sQuery, aParams) {
     });
 };
 
+/**
+ *  Throws an error containing a message that a required parameter is missing.
+ *
+ *  @param {string} sParameter - The name of the required parameter that could not be accessed from the constructor.
+ *  @throws An error describing what parameter is missing and how to supply it.
+ */
 SecurityPersistenceManager.prototype._missingParameter = function(sParameter) {
-throw Error(`
----
+throw Error(`---
 Missing ${sParameter} parameter in the constructor of SecurityPersistenceManager.
 Ensure that process.env.com.etauker.security.db.${sParameter} is set or the parameter is otherwise provided.
----
-`);
+---`);
 }
 
 module.exports = SecurityPersistenceManager;
