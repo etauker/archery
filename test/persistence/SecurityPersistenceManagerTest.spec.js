@@ -1,72 +1,143 @@
 var SecurityPersistenceManager = require("../../persistence/SecurityPersistenceManager.js");
-// var oConfig = {};
-// var oManager = {};
-//
-//
-//
-// oConfig = {
-//     host: "test host",
-//     user: "test user",
-//     password: "test password",
-//     database: "test database"
-// };
 oManager = new SecurityPersistenceManager({
     host: "localhost",
     user: "securityAdmin",
     password: "securityAdmin",
-    database: "etauker_security"
+    database: "etauker_security",
+    commit: false
 });
-//
-// oConfig = {SecurityPersistenceManagerTest
-//     user: "test user",
-//     password: "test password",
-//     database: "test database"
-// };
-// oManager = new SecurityPersistenceManager(oConfig);
-//
-// oConfig = {
-//     host: "test host",
-//     password: "test password",
-//     database: "test database"
-// };
-// oManager = new SecurityPersistenceManager(oConfig);
-//
-//
-// oConfig = {
-//     host: "test host",
-//     user: "test user",
-//     database: "test database"
-// };
-// oManager = new SecurityPersistenceManager(oConfig);
-//
-//
-// oConfig = {
-//     host: "test host",
-//     user: "test user",
-//     password: "test password"
-// };
-// oManager = new SecurityPersistenceManager(oConfig);
 
-
-describe("SecurityPersistenceManager", function() {
-    it("should retrieve a user with specified username", function() {
-
+describe("SecurityPersistenceManager getUser function", function() {
+    it("should retrieve a user with specified uuid", function() {
         oManager.getUser({
             uuid: "f024444f-b872-11e8-9406-080027d2c7dd"
-        });//.then((oResult, oFields) => {
-        //     console.log("oResult");
-        //     // console.log(JSON.stringify(oResult));
-        //     // console.log(oResult);
-        //     // console.log(oFields);
-        //
-        //     expect(oResult).not.toBe(null);
-        //     expect(oResult).not.toBe(undefined);
-        //     expect(oResult.length).toBe(1);
-        // }, (oError) => {
-        //     // console.log("oError");
-        //     // console.log(JSON.stringify(oError));
-        //     console.log(oError);
-        //     expect(oError).not.toBe(null)
-        // }).catch(res => console.log("finally"));
+        }).then((oResult, oFields) => {
+            expect(oResult).not.toBe(null, "null was returned by getUser()");
+            expect(oResult).not.toBe(undefined, "undefined was returned by getUser()");
+            expect(oResult.length).toBe(1);
+            expect(oResult[0].uuid).toBe("f024444f-b872-11e8-9406-080027d2c7dd");
+            expect(oResult[0].username).toBe("admin");
+            expect(oResult[0].created_by).toBe("SETUP_SCRIPT");
+        }).catch(oError => {
+            console.log(oError);
+            fail("Error retrieving user from the database.");
+        });
+    });
+
+    it("should retrieve a user with specified username", function() {
+        oManager.getUser({
+            username: "admin"
+        }).then((oResult, oFields) => {
+            expect(oResult).not.toBe(null, "null was returned by getUser()");
+            expect(oResult).not.toBe(undefined, "undefined was returned by getUser()");
+            expect(oResult.length).toBe(1);
+            expect(oResult[0].uuid).toBe("f024444f-b872-11e8-9406-080027d2c7dd");
+            expect(oResult[0].username).toBe("admin");
+            expect(oResult[0].created_by).toBe("SETUP_SCRIPT");
+        }).catch(oError => {
+            console.log(oError);
+            fail("Error retrieving user from the database.");
+        });
+    });
+
+    it("should not retrieve a user with a non-exitent uuid", function() {
+        oManager.getUser({
+            uuid: "test-non-existent"
+        }).then((oResult, oFields) => {
+            expect(oResult).not.toBe(null, "null was returned by getUser()");
+            expect(oResult).not.toBe(undefined, "undefined was returned by getUser()");
+            expect(oResult.length).toBe(0);
+        }).catch(oError => {
+            console.log(oError);
+            fail("Error retrieving user from the database.");
+        });
+    });
+
+    it("should not retrieve a user with a non-exitent username", function() {
+        oManager.getUser({
+            username: "test-non-existent"
+        }).then((oResult, oFields) => {
+            expect(oResult).not.toBe(null, "null was returned by getUser()");
+            expect(oResult).not.toBe(undefined, "undefined was returned by getUser()");
+            expect(oResult.length).toBe(0);
+        }).catch(oError => {
+            console.log(oError);
+            fail("Error retrieving user from the database.");
+        });
+    });
+});
+describe("SecurityPersistenceManager getRolesByUser function", function() {
+    it("should retrieve roles for a user with specified uuid", function() {
+        oManager.getRolesByUser({
+            uuid: "f0244364-b872-11e8-9406-080027d2c7dd"
+        }).then((oResult, oFields) => {
+            expect(oResult).not.toBe(null, "null was returned by getRolesByUser()");
+            expect(oResult).not.toBe(undefined, "undefined was returned by getRolesByUser()");
+            expect(oResult.length).toBe(1);
+            expect(oResult[0].id).toBe("f023614e-b872-11e8-9406-080027d2c7dd");
+            expect(oResult[0].name).toBe("com.etauker.archery.Archer");
+            expect(oResult[0].created_by).toBe("SETUP_SCRIPT");
+        }).catch(oError => {
+            console.log(oError);
+            fail("Error retrieving user from the database.");
+        });
+    });
+
+    it("should retrieve roles for a user with specified username", function() {
+        oManager.getRolesByUser({
+            username: "archer"
+        }).then((oResult, oFields) => {
+            expect(oResult).not.toBe(null, "null was returned by getRolesByUser()");
+            expect(oResult).not.toBe(undefined, "undefined was returned by getRolesByUser()");
+            expect(oResult.length).toBe(1);
+            expect(oResult[0].id).toBe("f023614e-b872-11e8-9406-080027d2c7dd");
+            expect(oResult[0].name).toBe("com.etauker.archery.Archer");
+            expect(oResult[0].created_by).toBe("SETUP_SCRIPT");
+        }).catch(oError => {
+            console.log(oError);
+            fail("Error retrieving user from the database.");
+        });
+    });
+
+    it("should not retrieve a user with a non-exitent uuid", function() {
+        oManager.getRolesByUser({
+            uuid: "test-non-existent"
+        }).then((oResult, oFields) => {
+            expect(oResult).not.toBe(null, "null was returned by getRolesByUser()");
+            expect(oResult).not.toBe(undefined, "undefined was returned by getRolesByUser()");
+            expect(oResult.length).toBe(0);
+        }).catch(oError => {
+            console.log(oError);
+            fail("Error retrieving user from the database.");
+        });
+    });
+
+    it("should not retrieve a user with a non-exitent username", function() {
+        oManager.getRolesByUser({
+            username: "test-non-existent"
+        }).then((oResult, oFields) => {
+            expect(oResult).not.toBe(null, "null was returned by getRolesByUser()");
+            expect(oResult).not.toBe(undefined, "undefined was returned by getRolesByUser()");
+            expect(oResult.length).toBe(0);
+        }).catch(oError => {
+            console.log(oError);
+            fail("Error retrieving user from the database.");
+        });
+    });
+});
+
+describe("SecurityPersistenceManager createUser function", function() {
+    it("should create user with correct details", fnDone => {
+        var promise = oManager.createUser({
+            username: "test"
+        }, "password").then((oResult, oFields) => {
+            expect(oResult).not.toBe(null, "null was returned by createUser()");
+            expect(oResult).not.toBe(undefined, "undefined was returned by createUser()");
+            expect(oResult.affectedRows).toBe(1);
+            fnDone();
+        }).catch(oError => {
+            console.log(oError);
+            fail("Error saving user in the database.");
+        });
     });
 });
