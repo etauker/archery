@@ -11,11 +11,11 @@ class SecurityPersistenceManager {
 
         // Set class variables
         oParams = oParams || {};
-        let oDatabase = process.env ? (process.env["com.etauker.security.db"] || {}) : {};
-        this.host = oParams.host || oDatabase.host || 'localhost';
-        this.user = oParams.user || oDatabase.user;
-        this.password = oParams.password || oDatabase.password;
-        this.database = oParams.database || oDatabase.database;
+        // let oDatabase = process.env ? (process.env["com.etauker.security.db"] || {}) : {};
+        this.host = oParams.host || process.env.COM_ETAUKER_SECURITY_DB_HOST || 'localhost';
+        this.user = oParams.user || process.env.COM_ETAUKER_SECURITY_DB_USER;
+        this.password = oParams.password || process.env.COM_ETAUKER_SECURITY_DB_PASSWORD;
+        this.database = oParams.database || process.env.COM_ETAUKER_SECURITY_DB_DATABASE;
         this.commit = oParams.commit === false ? false : true;
         this.debug = oParams.debug === true ? true : false;
 
@@ -48,8 +48,19 @@ class SecurityPersistenceManager {
  */
 SecurityPersistenceManager.prototype.getUser = function(oUser) {
     var sQuery = this._formSelectQuery("USER", oUser)
-    return this._query(sQuery).then(oQueryResult => {
-        return oQueryResult;
+    return this._query(sQuery).then(aQueryResult => {
+        return aQueryResult[0];
+    });
+};
+/**
+ *  Retrieves a user from the database.
+ *
+ *  @param {string} sUser - The username of the user to retrieve from the database.
+ *  @return {promise} Resolves to the user entry from the database.
+ */
+SecurityPersistenceManager.prototype.getUserByUsername = function(sUsername) {
+    return this.getUser({
+        username: sUsername
     });
 };
 /**
@@ -125,8 +136,28 @@ SecurityPersistenceManager.prototype.assignUserRole = function(sUserId, sRoleId)
 SecurityPersistenceManager.prototype.unassignUserRole = function(sUserId, sRoleId) {
     // TODO: Deletes the user role corresponding to the given parameters
 };
-SecurityPersistenceManager.prototype.saveSession = function(oSession) {
-    // TODO: Creates a database entry corresponding to the provided object
+// Creates a database entry corresponding to the provided object
+SecurityPersistenceManager.prototype.saveSession = function(sToken, oDecodedToken, oConfig) {
+
+    var oSession = {
+        jwt: sToken,
+        jwt_algorithm: oConfig.algorithm,
+        user_id: oDecodedToken.sub,
+        original_exp: {
+            type: "timestamp",
+            value: oDecodedToken.exp
+        },
+        original_iat: {
+            type: "timestamp",
+            value: oDecodedToken.iat
+        }
+    };
+
+    var sQuery = this._formInsertQuery("SESSION", [oSession], Object.keys(oSession))
+    console.log(sQuery);
+    return this._query(sQuery).then(oQueryResult => {
+        return oQueryResult;
+    });
 };
 SecurityPersistenceManager.prototype.extendSession = function(oExtension) {
     // TODO: Creates a database entry corresponding to the provided object
@@ -176,6 +207,12 @@ SecurityPersistenceManager.prototype._formInsertQuery = function(sTable, aEntiti
     // Loop through all properties of the object and format as 'KEY = "value"'
     aEntities = aEntities.map(oObject => {
         var aProperties = Object.keys(oObject).map(sKey => {
+
+            // Special case for converting unix timestamp to datetime
+            if (typeof oObject[sKey] === "object" && oObject[sKey].type === "timestamp") {
+                return "(SELECT FROM_UNIXTIME("+oObject[sKey].value+"))";
+            }
+
             return `"${oObject[sKey]}"`;
         })
         return "(" + aProperties.join(", ") + ")";

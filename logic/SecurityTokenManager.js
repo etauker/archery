@@ -1,17 +1,53 @@
+var jwt = require('jsonwebtoken');
+
 /**
 *   Manages user session tokens.
 */
 
 class SecurityTokenManager {
-    constructor() {
+    constructor(oPersistenceManager) {
         console.log("SecurityTokenManager is being constructed");
+        this.persistenceManager = oPersistenceManager;
 
+        this.config = {
+            expiresIn: process.env.JWT_EXPIRES_IN || 60*60,
+            issuer: process.env.JWT_ISSUER || "com.etauker.security",
+            audience: process.env.JWT_AUDIENCE || "com.etauker.archery",
+            algorithm: process.env.JWT_ALGORITHM || "HS512"
+        }
     }
 }
+SecurityTokenManager.prototype.generateToken = function(oUser) {
 
-SecurityTokenManager.prototype.generateToken = function(sUsername) {
+    var token = "";
+    return this.persistenceManager.getRolesByUser(oUser).then(aRoles => {
+        // console.log(Array.isArray(aRoles));
+        aRoles = (Array.isArray(aRoles) ? aRoles : new Array(aRoles));
+        // console.log(Array.isArray(aRoles));
+        this.config.notBefore = Math.floor(Date.now() / 1000);
+
+        var sToken = jwt.sign({
+            user: oUser.username,
+            sub: oUser.uuid,
+            roles: aRoles.map(oRole => {
+                return {
+                    id: oRole.id,
+                    name: oRole.name,
+                    description: oRole.description
+                }
+            })
+        }, process.env.JWT_SECRET, this.config);
+
+        return sToken;
+    }).then(sToken => {
+        token = sToken;
+        return this.persistenceManager.saveSession(sToken, jwt.decode(sToken), this.config);
+    }).then(oResult => {
+        return token;
+    });
     // TODO: Returns a new json web token for the given user
     // TODO: Saves the session information in the SESSION table
+
 }
 SecurityTokenManager.prototype.extendToken = function(sToken) {
     // TODO: Returns a json web token with updated information

@@ -40,7 +40,7 @@ CREATE TABLE USER (
 );
 CREATE TABLE SESSION (
 	id				CHAR(36) 		  PRIMARY KEY,
-    jwt			    VARCHAR(255)      UNIQUE NOT NULL,
+    jwt			    TEXT      		  NOT NULL,
 	jwt_algorithm	VARCHAR(25)       ,  -- The algorithm that can be used to decode the jwt
 	user_id			CHAR(36)          ,  -- The user_id of the session owner
 	original_exp	DATETIME          ,  -- The date and time of the original token expiration

@@ -10,6 +10,9 @@
 var jwt = require('jsonwebtoken');
 const argon2 = require('argon2');
 var mysql = require('mysql');
+const SecurityPersistenceManager = require('../persistence/SecurityPersistenceManager.js');
+const SecurityPasswordManager = require('../logic/SecurityPasswordManager.js');
+const SecurityTokenManager = require('../logic/SecurityTokenManager.js');
 
 var connection = mysql.createConnection({
   host     : 'localhost',
@@ -18,25 +21,11 @@ var connection = mysql.createConnection({
   database : 'etauker_security'
 });
 
-var oConfig = {
-    expiresIn: process.env.JWT_EXPIRES_IN || 60*60,
-    issuer: process.env.JWT_ISSUER || "com.etauker.security",
-    audience: process.env.JWT_AUDIENCE || "com.etauker.archery",
-    algorithm: process.env.JWT_ALGORITHM || "HS512"
-}
-function generateToken(sUsername, aRoles) {
-    console.log(Array.isArray(aRoles));
-    aRoles = (Array.isArray(aRoles) ? aRoles : new Array(aRoles));
-    console.log(Array.isArray(aRoles));
-    oConfig.notBefore = Math.floor(Date.now() / 1000);
-    var sToken = jwt.sign({
-        sub: sUsername,
-        roles: aRoles
-    }, process.env.JWT_SECRET, oConfig);
+var securityPersistenceManager = new SecurityPersistenceManager();
+var securityPasswordManager = new SecurityPasswordManager(securityPersistenceManager);
+var securityTokenManager = new SecurityTokenManager(securityPersistenceManager);
 
-    console.log(jwt.decode(sToken));
-    return sToken;
-}
+
 
 
 module.exports = function(app) {
@@ -51,54 +40,58 @@ module.exports = function(app) {
     app.get('/security/token', function(req, res){
         // Develop as a GET for ease of testing
 
-
-
         // TODO: Verify credentials
         var sUsername = req.query.username;
         var sPassword = req.query.password;
         // var sPassword = req.query.password;
         // var decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-
-
-        connection.connect();
-
-        connection.query('SELECT password_hash AS hash, uuid FROM etauker_security.USER WHERE username = ?;', [sUsername], function (error, results, fields) {
-            // if (error) throw error;
-            console.log(error);
-
-            argon2.verify(results[0].hash, sPassword).then(match => {
-
-                if (match) {
-                    console.log("Match");
-
-
-                    var sQuery = `SELECT name AS roles
-                    FROM etauker_security.USER_ROLE AS u,
-                    etauker_security.ROLE AS r
-                    WHERE u.role_id = r.id
-                    AND u.user_id = ?;`;
-
-                    connection.query(sQuery, [results[0].uuid], function (error, results, fields) {
-
-                        // Generate and return a token
-                        var token = generateToken(sUsername, results[0].roles);
-                        res.send(token);
-
-                    })
-
-                } else {
-                    // password did not match
-                    console.log("Missmatch");
-
-                }
-                connection.end();
-            }).catch(err => {
-                connection.end();
-                // internal failure
-                console.log(err);
-            });
+        securityPasswordManager.verifyPassword(sUsername, sPassword).then((oUser) => {
+            return securityTokenManager.generateToken(oUser);
+        }).then((sToken) => {
+            res.send(sToken);
+        }).catch((oError) => {
+            console.log(oError);
+            res.send(oError);
         });
+
+        // connection.connect();
+        //
+        // connection.query('SELECT password_hash AS hash, uuid FROM etauker_security.USER WHERE username = ?;', [sUsername], function (error, results, fields) {
+        //     // if (error) throw error;
+        //     console.log(error);
+        //
+        //     argon2.verify(results[0].hash, sPassword).then(match => {
+        //
+        //         if (match) {
+        //             console.log("Match");
+        //
+        //
+        //             var sQuery = `SELECT name AS roles
+        //             FROM etauker_security.USER_ROLE AS u,
+        //             etauker_security.ROLE AS r
+        //             WHERE u.role_id = r.id
+        //             AND u.user_id = ?;`;
+        //
+        //             connection.query(sQuery, [results[0].uuid], function (error, results, fields) {
+        //
+        //                 // Generate and return a token
+        //                 var token = generateToken(sUsername, results[0].roles);
+        //                 res.send(token);
+        //
+        //             })
+        //
+        //         } else {
+        //             // password did not match
+        //             console.log("Missmatch");
+        //
+        //         }
+        //         connection.end();
+        //     }).catch(err => {
+        //         connection.end();
+        //         // internal failure
+        //         console.log(err);
+        //     });
+        // });
 
 
 
