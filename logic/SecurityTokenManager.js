@@ -1,4 +1,5 @@
 var jwt = require('jsonwebtoken');
+const SecurityErrorGenerator = require("../utils/SecurityErrorGenerator.js");
 
 /**
 *   Manages user session tokens.
@@ -6,8 +7,17 @@ var jwt = require('jsonwebtoken');
 
 class SecurityTokenManager {
     constructor(oPersistenceManager) {
-        console.log("SecurityTokenManager is being constructed");
         this.persistenceManager = oPersistenceManager;
+
+        this.error = new SecurityErrorGenerator(
+            "com.etauker.security",
+            "logic",
+            "SecurityTokenManager",
+            [
+                { code: 1, message: "Incorrect password provided." },
+                { code: 2, message: "An error occured while verifying user password." }
+            ]
+        );
 
         this.config = {
             expiresIn: process.env.JWT_EXPIRES_IN || 60*60,
@@ -21,9 +31,7 @@ SecurityTokenManager.prototype.generateToken = function(oUser) {
 
     var token = "";
     return this.persistenceManager.getRolesByUser(oUser).then(aRoles => {
-        // console.log(Array.isArray(aRoles));
         aRoles = (Array.isArray(aRoles) ? aRoles : new Array(aRoles));
-        // console.log(Array.isArray(aRoles));
         this.config.notBefore = Math.floor(Date.now() / 1000);
 
         var sToken = jwt.sign({
@@ -45,9 +53,6 @@ SecurityTokenManager.prototype.generateToken = function(oUser) {
     }).then(oResult => {
         return token;
     });
-    // TODO: Returns a new json web token for the given user
-    // TODO: Saves the session information in the SESSION table
-
 }
 SecurityTokenManager.prototype.extendToken = function(sToken) {
     // TODO: Returns a json web token with updated information

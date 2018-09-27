@@ -1,6 +1,7 @@
 // Requires
 const express = require('express');
 const open = require('open');
+const bodyParser = require('body-parser')
 
 // Configuration
 const port = process.env.PORT || 8888;
@@ -12,6 +13,11 @@ const url = 'http://localhost:' + port + webappEndpoint;
 const app = express();
 console.log("port: " + port);
 console.log("webappEndpoint: " + webappEndpoint);
+
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+}));
 
 // Import additional services
 // TODO: Refactor to require all files in the service directory

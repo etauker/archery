@@ -5,13 +5,31 @@
 var mysql = require('mysql');
 const util = require('util');
 const argon2 = require('argon2');
+const SecurityErrorGenerator = require("../utils/SecurityErrorGenerator.js");
+
 class SecurityPersistenceManager {
 
     constructor(oParams) {
 
+        // Objects
+        this.error = new SecurityErrorGenerator(
+            "com.etauker.security",
+            "persistence",
+            "SecurityPersistenceManager",
+            [
+                { code: 1, message: "Missing parameters" },
+                { code: 2, message: "Database connection pool issue occured. Pool likely does not exist." },
+                { code: 3, message: "Error getting database connection." },
+                { code: 4, message: "Error starting a transaction." },
+                { code: 5, message: "Error querying the database." },
+                { code: 6, message: "Error committing query to the database." },
+                { code: 7, message: "Unexpected number of results." },
+                { code: 8, message: "Hashing of provided password failed." }
+            ]
+        );
+
         // Set class variables
         oParams = oParams || {};
-        // let oDatabase = process.env ? (process.env["com.etauker.security.db"] || {}) : {};
         this.host = oParams.host || process.env.COM_ETAUKER_SECURITY_DB_HOST || 'localhost';
         this.user = oParams.user || process.env.COM_ETAUKER_SECURITY_DB_USER;
         this.password = oParams.password || process.env.COM_ETAUKER_SECURITY_DB_PASSWORD;
@@ -42,19 +60,18 @@ class SecurityPersistenceManager {
  *  Retrieves a user from the database.
  *  The properties names of the provided object must match the database columns.
  *  The values of those properties are the values that will be searched in the database.
- *
  *  @param {object} oUser - The object representing the user to be retrieved from the database.
  *  @return {promise} Resolves to the user entry from the database.
  */
 SecurityPersistenceManager.prototype.getUser = function(oUser) {
     var sQuery = this._formSelectQuery("USER", oUser)
     return this._query(sQuery).then(aQueryResult => {
+        if (aQueryResult.length > 1) throw this.error.getError(7, null, "", "Expected 1, received "+aQueryResult.length+".");
         return aQueryResult[0];
     });
 };
 /**
  *  Retrieves a user from the database.
- *
  *  @param {string} sUser - The username of the user to retrieve from the database.
  *  @return {promise} Resolves to the user entry from the database.
  */
@@ -67,7 +84,6 @@ SecurityPersistenceManager.prototype.getUserByUsername = function(sUsername) {
  *  Retrieves the roles for a given user.
  *  The provided user object must contain either a uuid or a username field.
  *  If a uuid field is provided for the user it will be used to retrieve the roles.
- *
  *  @param {object} oUser - The object representing the user who's roles should be retrieved from the database.
  *  @param {string=} oUser.uuid - The UUID of the user for which to retrieve the roles.
  *  @param {string=} oUser.username - The username of the user for which to retrieve the roles. Only used if the UUID is not provided.
@@ -85,14 +101,13 @@ SecurityPersistenceManager.prototype.getRolesByUser = function(oUser) {
     sQuery += ");";
 
     // Execute the query
-    return this._query(sQuery).then(oQueryResult => {
-        return oQueryResult;
+    return this._query(sQuery).then(aUserRoles => {
+        return aUserRoles;
     });
 };
 /**
  *  Creates a database entry for the given user object.
  *  The password must be provided separately and will be hashed before it is persisted.
-
  *  @param {object} oUser - The object representing the user that should be saved in the database.
  *  @param {string} sPassword - Plain-text password of the user. This function handles the hashing of this password before saving.
  *  @return {promise} Resolves to the database response object for the transaction.
@@ -100,8 +115,8 @@ SecurityPersistenceManager.prototype.getRolesByUser = function(oUser) {
 SecurityPersistenceManager.prototype.createUser = function(oUser, sPassword) {
 
     return argon2.hash(sPassword).then(sHash => {
-        if (!oUser) throw new Error("Hashing of the provided password failed - user parameter missing.");
-        if (!sPassword) throw new Error("Hashing of the provided password failed - password parameter missing.");
+        if (!oUser) throw this.error.getError(8, null, "", "User parameter missing.");
+        if (!sPassword) throw this.error.getError(8, null, "", "Password parameter missing.");
 
         oUser.password_hash = sHash;
         var sQuery = this._formInsertQuery("USER", [oUser], Object.keys(oUser))
@@ -109,9 +124,8 @@ SecurityPersistenceManager.prototype.createUser = function(oUser, sPassword) {
             return oQueryResult;
         })
     }).catch(oError => {
-        if (!oUser) throw new Error("Hashing of the provided password failed - user parameter missing.");
-        if (!sPassword) throw new Error("Hashing of the provided password failed - password parameter missing.");
-        throw new Error("Hashing of the provided password failed - " + oError.toString());
+        if (!oUser) throw this.error.getError(8, oError, "", "User parameter missing.");
+        if (!sPassword) throw this.error.getError(8, oError, "", "Password parameter missing.");
     });
 };
 SecurityPersistenceManager.prototype.createRole = function(oRole) {
@@ -153,8 +167,7 @@ SecurityPersistenceManager.prototype.saveSession = function(sToken, oDecodedToke
         }
     };
 
-    var sQuery = this._formInsertQuery("SESSION", [oSession], Object.keys(oSession))
-    console.log(sQuery);
+    var sQuery = this._formInsertQuery("SESSION", [oSession], Object.keys(oSession));
     return this._query(sQuery).then(oQueryResult => {
         return oQueryResult;
     });
@@ -172,7 +185,6 @@ SecurityPersistenceManager.prototype.extendSession = function(oExtension) {
  *  Generates a SELECT statement from the given object.
  *  Assumes that all properties of the object correspond to the database columns.
  *  Also assumes that the database entry has information identical to the provided property values.
-
  *  @param {string} sTable - The name of the database table which will be queried.
  *  @param {object} oEntity - The object containing the filter criteria.
  *  @return {string} The query to be excuted in the database.
@@ -194,7 +206,6 @@ SecurityPersistenceManager.prototype._formSelectQuery = function(sTable, oEntity
  *  Generates an INSERT statement from the given object.
  *  Assumes that all properties of the object correspond to the database columns.
  *  Also assumes that the database entry should contain the information provided in the property values.
- *
  *  @param {string} sTable - The name of the database table to which the information will be inserted.
  *  @param {object[]} aEntities - an array of entities to be inserted into the database
  *  @param {string[]=} aFields - The names of the database columns that should be inserted into. If not provided, the property keys of aEntities will be used.
@@ -223,38 +234,37 @@ SecurityPersistenceManager.prototype._formInsertQuery = function(sTable, aEntiti
 
 /**
  *  Executes the provided query in the database.
- *
  *  @param {string} sQuery - The query to be executed in the database.
  *  @param {any[]=} aParams - An array of values to replace the placeholders in the query.
  *  @return {promise} The insert statement to be excuted in the database.
  */
 SecurityPersistenceManager.prototype._query = function(sQuery, aParams) {
+    var oContext = this;
     return new Promise((fnResolve, fnReject) => {
 
         // Guard for non-exitent connection pool
         if (typeof this.pool.query !== 'function') {
-            console.log("Database connection pool issue occured. Pool likely does not exist.");
-            return;
+            throw this.error.getError(2, { pool: this.pool });
         }
 
         this.pool.getConnection(function(oError, oConnection) {
-            if (oError) throw oError;
+            if (oError) throw this.error.getError(3, oError);
 
             oConnection.beginTransaction(function(oError) {
-                if (oError) throw oError;
+                if (oError) throw this.error.getError(4, oError);
 
                 oConnection.query(sQuery, function (oError, aRows, fields) {
 
                     // Error while querying the database
                     if (oError) {
-                        oConnection.rollback(() => fnReject(oError));
+                        oConnection.rollback(() => fnReject(oContext.error.getError(5, oError)));
                     }
 
                     // Commit the query
                     if (this.commit) {
                         oConnection.commit((oError) => {
                             oConnection.release();
-                            if (oError) { fnReject(oError); }
+                            if (oError) { fnReject(oContext.error.getError(6, oError)); }
                             else {
                                 fnResolve(aRows);
                             }
@@ -275,15 +285,13 @@ SecurityPersistenceManager.prototype._query = function(sQuery, aParams) {
 
 /**
  *  Throws an error containing a message that a required parameter is missing.
- *
  *  @param {string} sParameter - The name of the required parameter that could not be accessed from the constructor.
  *  @throws An error describing what parameter is missing and how to supply it.
  */
 SecurityPersistenceManager.prototype._missingParameter = function(sParameter) {
-throw Error(`---
-Missing ${sParameter} parameter in the constructor of SecurityPersistenceManager.
-Ensure that process.env.com.etauker.security.db.${sParameter} is set or the parameter is otherwise provided.
----`);
-}
+    var sMessage = `Missing ${sParameter} parameter in the constructor of SecurityPersistenceManager. `;
+    sMessage += `Ensure that process.env.COM_ETAUKER_SECURITY_DB_${sParameter.toUpperCase()} is set or the parameter is otherwise provided.`;
+    throw this.error.getError(1, null, sMessage);
+};
 
 module.exports = SecurityPersistenceManager;
