@@ -14,6 +14,7 @@ global.SecurityPersistenceManagerPath = __dirname + "/dependencies/com.etauker.s
 global.SecurityTokenManagerPath = __dirname + "/dependencies/com.etauker.security/logic/SecurityTokenManager.js";
 global.SecurityErrorGeneratorPath = __dirname + "/dependencies/com.etauker.security/utils/SecurityErrorGenerator.js";
 global.SecurityPasswordManagerPath = __dirname + "/dependencies/com.etauker.security/utils/SecurityPasswordManager.js";
+global.SecurityServicePath = __dirname + "/dependencies/com.etauker.security/service/Security.js";
 
 
 // App preparation
@@ -28,7 +29,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 
 // Import additional services
 // TODO: Refactor to require all files in the service directory
-require('./service/Security.js')(app);
+require(SecurityServicePath)(app);
 
 // Import the webapp
 app.use(webappEndpoint, express.static(webappDirectory));

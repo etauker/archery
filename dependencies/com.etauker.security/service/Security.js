@@ -12,25 +12,25 @@ var securityPasswordManager = new SecurityPasswordManager(securityPersistenceMan
 var securityTokenManager = new SecurityTokenManager(securityPersistenceManager);
 
 module.exports = function(app) {
-    app.use( bodyParser.json() );       // to support JSON-encoded bodies
+    app.use(bodyParser.json());       // to support JSON-encoded bodies
     app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
       extended: true
     }));
 
     app.post('/security/token', function(req, res){
-        // var sUsername = req.body.username;
-        // var sPassword = req.body.password;
-        //
-        // securityPasswordManager.verifyPassword(sUsername, sPassword).then((oUser) => {
-        //     return securityTokenManager.generateToken(oUser);
-        // }).then(sToken => {
-        //     res.send(sToken);
-        // }).catch(oError => {
-        //     var oResponse = {};
-        //     oResponse.message = oError.message;
-        //     oResponse.code = oError.code;
-        //     res.status(500).send(oResponse);
-        // });
+        var sUsername = req.body.username;
+        var sPassword = req.body.password;
+
+        securityPasswordManager.verifyPassword(sUsername, sPassword).then((oUser) => {
+            return securityTokenManager.generateToken(oUser);
+        }).then(sToken => {
+            res.send(sToken);
+        }).catch(oError => {
+            var oResponse = {};
+            oResponse.message = oError.message;
+            oResponse.code = oError.code;
+            res.status(500).send(oResponse);
+        });
     });
 
     app.get('/security/token', function(req, res){
