@@ -33,7 +33,7 @@ SecurityPasswordManager.prototype.verifyPassword = function(sUsername, sPassword
 
         let user = {};
         this.persistenceManager.getUserByUsername(sUsername).then(oUser => {
-            if (!oUser) fnReject(this.error.getError(2, null));
+            if (!oUser) fnReject(this.error.getError(2));
             user = oUser;
             return argon2.verify(oUser.password_hash, sPassword);
         }).then(bMatch => {
@@ -42,7 +42,7 @@ SecurityPasswordManager.prototype.verifyPassword = function(sUsername, sPassword
                 fnReject(this.error.getError(1));
             };
         }).catch(oError => {
-            throw this.error.getError(3, oError);
+            fnReject(this.error.getError(3, oError));
         });
     });
 };

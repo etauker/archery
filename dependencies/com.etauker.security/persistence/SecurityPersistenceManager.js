@@ -134,7 +134,7 @@ SecurityPersistenceManager.prototype.createUser = function(oUser, sPassword) {
         return this._query(sQuery).then(oQueryResult => {
             return oQueryResult;
         });
-    })
+    });
 };
 SecurityPersistenceManager.prototype.createRole = function(oRole) {
     // TODO: Creates a database entry corresponding to the provided object
