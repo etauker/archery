@@ -2,10 +2,11 @@
 *   Loads and saves data related to security.
 */
 
-var mysql = require('mysql');
+const mysql = require('mysql');
 const util = require('util');
 const argon2 = require('argon2');
-const SecurityErrorGenerator = require("../utils/SecurityErrorGenerator.js");
+const SecurityErrorGenerator = require(SecurityErrorGeneratorPath);
+const SecurityPasswordManager = require(SecurityPasswordManagerPath);
 
 class SecurityPersistenceManager {
 
@@ -18,13 +19,12 @@ class SecurityPersistenceManager {
             "SecurityPersistenceManager",
             [
                 { code: 1, message: "Missing parameters" },
-                { code: 2, message: "Database connection pool issue occured. Pool likely does not exist." },
+                { code: 2, message: "Database connection pool issue occured." },
                 { code: 3, message: "Error getting database connection." },
                 { code: 4, message: "Error starting a transaction." },
                 { code: 5, message: "Error querying the database." },
                 { code: 6, message: "Error committing query to the database." },
-                { code: 7, message: "Unexpected number of results." },
-                { code: 8, message: "Hashing of provided password failed." }
+                { code: 7, message: "Unexpected number of results." }
             ]
         );
 
@@ -114,19 +114,27 @@ SecurityPersistenceManager.prototype.getRolesByUser = function(oUser) {
  */
 SecurityPersistenceManager.prototype.createUser = function(oUser, sPassword) {
 
-    return argon2.hash(sPassword).then(sHash => {
-        if (!oUser) throw this.error.getError(8, null, "", "User parameter missing.");
-        if (!sPassword) throw this.error.getError(8, null, "", "Password parameter missing.");
-
+    // return argon2.hash(sPassword).then(sHash => {
+    //     if (!oUser) throw this.error.getError(8, null, "", "User parameter missing.");
+    //     if (!sPassword) throw this.error.getError(8, null, "", "Password parameter missing.");
+    //
+    //     oUser.password_hash = sHash;
+    //     var sQuery = this._formInsertQuery("USER", [oUser], Object.keys(oUser))
+    //     return this._query(sQuery).then(oQueryResult => {
+    //         return oQueryResult;
+    //     })
+    // }).catch(oError => {
+    //     throw oError;
+    //     // if (!oUser) throw this.error.getError(8, oError, "", "User parameter missing.");
+    //     // if (!sPassword) throw this.error.getError(8, oError, "", "Password parameter missing.");
+    // });
+    return SecurityPasswordManager.verifyPassword(oUser.username, sPassword).then(sHash => {
         oUser.password_hash = sHash;
         var sQuery = this._formInsertQuery("USER", [oUser], Object.keys(oUser))
         return this._query(sQuery).then(oQueryResult => {
             return oQueryResult;
-        })
-    }).catch(oError => {
-        if (!oUser) throw this.error.getError(8, oError, "", "User parameter missing.");
-        if (!sPassword) throw this.error.getError(8, oError, "", "Password parameter missing.");
-    });
+        });
+    })
 };
 SecurityPersistenceManager.prototype.createRole = function(oRole) {
     // TODO: Creates a database entry corresponding to the provided object
@@ -244,7 +252,7 @@ SecurityPersistenceManager.prototype._query = function(sQuery, aParams) {
 
         // Guard for non-exitent connection pool
         if (typeof this.pool.query !== 'function') {
-            throw this.error.getError(2, { pool: this.pool });
+            throw this.error.getError(2, { pool: this.pool }, "", "Pool likely does not exist.");
         }
 
         this.pool.getConnection(function(oError, oConnection) {

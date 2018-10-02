@@ -1,10 +1,9 @@
 const argon2 = require('argon2');
-const SecurityErrorGenerator = require("../utils/SecurityErrorGenerator.js");
+const SecurityErrorGenerator = require(SecurityErrorGeneratorPath);
 
 /**
 *   Manages user passwords.
 */
-
 class SecurityPasswordManager {
     constructor(oPersistenceManager) {
         this.persistenceManager = oPersistenceManager;
@@ -16,7 +15,9 @@ class SecurityPasswordManager {
             [
                 { code: 1, message: "Incorrect password provided." },
                 { code: 2, message: "Incorrect username provided." },
-                { code: 3, message: "An error occured while verifying user password." }
+                { code: 3, message: "An error occured while verifying user password." },
+                { code: 4, message: "No username provided." },
+                { code: 5, message: "No password provided." }
             ]
         );
     }
@@ -25,7 +26,11 @@ SecurityPasswordManager.prototype.hashPassword = function(sPassword) {
     // TODO: Return a hashed password
 };
 SecurityPasswordManager.prototype.verifyPassword = function(sUsername, sPassword) {
+
     return new Promise((fnResolve, fnReject) => {
+        if (!sUsername) throw this.error.getError(4);
+        if (!sPassword) throw this.error.getError(5);
+
         let user = {};
         this.persistenceManager.getUserByUsername(sUsername).then(oUser => {
             if (!oUser) fnReject(this.error.getError(2, null));
@@ -37,8 +42,6 @@ SecurityPasswordManager.prototype.verifyPassword = function(sUsername, sPassword
                 fnReject(this.error.getError(1));
             };
         }).catch(oError => {
-            // console.log(oError);
-            // if (typeof oError.package === "string") throw oError;
             throw this.error.getError(3, oError);
         });
     });

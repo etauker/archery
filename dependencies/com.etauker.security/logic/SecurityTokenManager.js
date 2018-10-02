@@ -1,10 +1,9 @@
-var jwt = require('jsonwebtoken');
-const SecurityErrorGenerator = require("../utils/SecurityErrorGenerator.js");
+const jwt = require('jsonwebtoken');
+const SecurityErrorGenerator = require(SecurityErrorGeneratorPath);
 
 /**
 *   Manages user session tokens.
 */
-
 class SecurityTokenManager {
     constructor(oPersistenceManager) {
         this.persistenceManager = oPersistenceManager;

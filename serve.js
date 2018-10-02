@@ -9,6 +9,13 @@ const webappEndpoint = '/webapp';
 const webappDirectory = __dirname + "/archery-ui5/webapp";
 const url = 'http://localhost:' + port + webappEndpoint;
 
+// Global Import Paths
+global.SecurityPersistenceManagerPath = __dirname + "/dependencies/com.etauker.security/persistence/SecurityPersistenceManager.js";
+global.SecurityTokenManagerPath = __dirname + "/dependencies/com.etauker.security/logic/SecurityTokenManager.js";
+global.SecurityErrorGeneratorPath = __dirname + "/dependencies/com.etauker.security/utils/SecurityErrorGenerator.js";
+global.SecurityPasswordManagerPath = __dirname + "/dependencies/com.etauker.security/utils/SecurityPasswordManager.js";
+
+
 // App preparation
 const app = express();
 console.log("port: " + port);

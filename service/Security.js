@@ -3,9 +3,9 @@ const argon2 = require('argon2');
 const mysql = require('mysql');
 const bodyParser = require('body-parser')
 
-const SecurityPersistenceManager = require('../persistence/SecurityPersistenceManager.js');
-const SecurityPasswordManager = require('../logic/SecurityPasswordManager.js');
-const SecurityTokenManager = require('../logic/SecurityTokenManager.js');
+const SecurityPersistenceManager = require(SecurityPersistenceManagerPath);
+const SecurityPasswordManager = require(SecurityPasswordManagerPath);
+const SecurityTokenManager = require(SecurityTokenManagerPath);
 
 var securityPersistenceManager = new SecurityPersistenceManager();
 var securityPasswordManager = new SecurityPasswordManager(securityPersistenceManager);
@@ -18,19 +18,19 @@ module.exports = function(app) {
     }));
 
     app.post('/security/token', function(req, res){
-        var sUsername = req.body.username;
-        var sPassword = req.body.password;
-
-        securityPasswordManager.verifyPassword(sUsername, sPassword).then((oUser) => {
-            return securityTokenManager.generateToken(oUser);
-        }).then(sToken => {
-            res.send(sToken);
-        }).catch(oError => {
-            var oResponse = {};
-            oResponse.message = oError.message;
-            oResponse.code = oError.code;
-            res.status(500).send(oResponse);
-        });
+        // var sUsername = req.body.username;
+        // var sPassword = req.body.password;
+        //
+        // securityPasswordManager.verifyPassword(sUsername, sPassword).then((oUser) => {
+        //     return securityTokenManager.generateToken(oUser);
+        // }).then(sToken => {
+        //     res.send(sToken);
+        // }).catch(oError => {
+        //     var oResponse = {};
+        //     oResponse.message = oError.message;
+        //     oResponse.code = oError.code;
+        //     res.status(500).send(oResponse);
+        // });
     });
 
     app.get('/security/token', function(req, res){
