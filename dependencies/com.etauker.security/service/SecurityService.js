@@ -26,32 +26,23 @@ module.exports = function(app) {
         }).then(sToken => {
             res.send(sToken);
         }).catch(oError => {
-            var oResponse = {};
+
+            // Prepare the response object
+            let oResponse = {};
             oResponse.message = oError.message;
             oResponse.code = oError.code;
-            res.status(500).send(oResponse);
+            oResponse.status = oError.http ? oError.http : 500;
+
+            // Generalise between incorrect username and password for security purposes
+            if ([7.1, 7.2, 7.4, 7.5].includes(oResponse.code)) {
+                oResponse.message = "Incorrect username or password provided.";
+                oResponse.code = 7.6;
+            }
+
+            // Send the response
+            res.status(oResponse.status).send(oResponse);
         });
     });
-
-    app.get('/security/token', function(req, res){
-        // Develop as a GET for ease of testing
-
-        var sUsername = req.query.username;
-        var sPassword = req.query.password;
-        securityPasswordManager.verifyPassword(sUsername, sPassword).then((oUser) => {
-            return securityTokenManager.generateToken(oUser);
-        }).then(sToken => {
-            res.send(sToken);
-        }).catch(oError => {
-            var oResponse = {};
-            oResponse.message = oError.message;
-            oResponse.code = oError.code;
-            res.status(500).send(oResponse);
-        });
-    });
-
-
-
 
     app.post('/security/users', function(req, res){
         // argon2.hash(sPassword).then(sHash => {

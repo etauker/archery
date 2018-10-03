@@ -13,8 +13,8 @@ class SecurityTokenManager {
             "logic",
             "SecurityTokenManager",
             [
-                { code: 1, message: "Incorrect password provided." },
-                { code: 2, message: "An error occured while verifying user password." }
+                { code: 1, http: 401, message: "Incorrect password provided." },
+                { code: 2, http: 500, message: "An error occured while verifying user password." }
             ]
         );
 

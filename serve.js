@@ -10,11 +10,14 @@ const webappDirectory = __dirname + "/archery-ui5/webapp";
 const url = 'http://localhost:' + port + webappEndpoint;
 
 // Global Import Paths
+/* TODO: Refactor to automatically require all js files in:
+*   [ data, persistence, logic, service, util ] for each etauker dependency.
+*/
 global.SecurityPersistenceManagerPath = __dirname + "/dependencies/com.etauker.security/persistence/SecurityPersistenceManager.js";
 global.SecurityTokenManagerPath = __dirname + "/dependencies/com.etauker.security/logic/SecurityTokenManager.js";
 global.SecurityErrorGeneratorPath = __dirname + "/dependencies/com.etauker.security/utils/SecurityErrorGenerator.js";
 global.SecurityPasswordManagerPath = __dirname + "/dependencies/com.etauker.security/utils/SecurityPasswordManager.js";
-global.SecurityServicePath = __dirname + "/dependencies/com.etauker.security/service/Security.js";
+global.SecurityServicePath = __dirname + "/dependencies/com.etauker.security/service/SecurityService.js";
 
 
 // App preparation

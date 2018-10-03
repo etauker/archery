@@ -18,13 +18,13 @@ class SecurityPersistenceManager {
             "persistence",
             "SecurityPersistenceManager",
             [
-                { code: 1, message: "Missing parameters" },
-                { code: 2, message: "Database connection pool issue occured." },
-                { code: 3, message: "Error getting database connection." },
-                { code: 4, message: "Error starting a transaction." },
-                { code: 5, message: "Error querying the database." },
-                { code: 6, message: "Error committing query to the database." },
-                { code: 7, message: "Unexpected number of results." }
+                { code: 1, http: 500, message: "Missing parameters" },
+                { code: 2, http: 500, message: "Database connection pool issue occured." },
+                { code: 3, http: 500, message: "Error getting database connection." },
+                { code: 4, http: 500, message: "Error starting a transaction." },
+                { code: 5, http: 500, message: "Error querying the database." },
+                { code: 6, http: 500, message: "Error committing query to the database." },
+                { code: 7, http: 500, message: "Unexpected number of results." }
             ]
         );
 

@@ -7,18 +7,20 @@ const SecurityErrorGenerator = require(SecurityErrorGeneratorPath);
 class SecurityPasswordManager {
     constructor(oPersistenceManager) {
         this.persistenceManager = oPersistenceManager;
+        this.errorMessages = [
+            { code: 1, http: 401, message: "Incorrect password provided." },
+            { code: 2, http: 401, message: "Incorrect username provided." },
+            { code: 3, http: 500, message: "An error occured while verifying user password." },
+            { code: 4, http: 401, message: "No username provided." },
+            { code: 5, http: 401, message: "No password provided." },
+            { code: 6, http: 401, message: "Incorrect username or password provided." }
+        ];
 
         this.error = new SecurityErrorGenerator(
             "com.etauker.security",
-            "logic",
+            "utils",
             "SecurityPasswordManager",
-            [
-                { code: 1, message: "Incorrect password provided." },
-                { code: 2, message: "Incorrect username provided." },
-                { code: 3, message: "An error occured while verifying user password." },
-                { code: 4, message: "No username provided." },
-                { code: 5, message: "No password provided." }
-            ]
+            this.errorMessages
         );
     }
 };
