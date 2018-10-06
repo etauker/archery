@@ -7,6 +7,7 @@ const util = require('util');
 const argon2 = require('argon2');
 const SecurityErrorGenerator = require(SecurityErrorGeneratorPath);
 const SecurityPasswordManager = require(SecurityPasswordManagerPath);
+const SecurityParameterValidator = require(SecurityParameterValidatorPath);
 
 class SecurityPersistenceManager {
 
@@ -64,8 +65,14 @@ class SecurityPersistenceManager {
  *  @return {promise} Resolves to the user entry from the database.
  */
 SecurityPersistenceManager.prototype.getUser = function(oUser) {
-    var sQuery = this._formSelectQuery("USER", oUser)
-    return this._query(sQuery).then(aQueryResult => {
+
+    var sQuery = "";
+    return SecurityParameterValidator.validateUser(oUser).then(oUser => {
+        sQuery = this._formSelectQuery("USER", oUser)
+        return oUser;
+    }).then(oUser => {
+        return this._query(sQuery);
+    }).then(aQueryResult => {
         if (aQueryResult.length > 1) throw this.error.getError(7, null, "", "Expected 1, received "+aQueryResult.length+".");
         return aQueryResult[0];
     });
@@ -113,21 +120,6 @@ SecurityPersistenceManager.prototype.getRolesByUser = function(oUser) {
  *  @return {promise} Resolves to the database response object for the transaction.
  */
 SecurityPersistenceManager.prototype.createUser = function(oUser, sPassword) {
-
-    // return argon2.hash(sPassword).then(sHash => {
-    //     if (!oUser) throw this.error.getError(8, null, "", "User parameter missing.");
-    //     if (!sPassword) throw this.error.getError(8, null, "", "Password parameter missing.");
-    //
-    //     oUser.password_hash = sHash;
-    //     var sQuery = this._formInsertQuery("USER", [oUser], Object.keys(oUser))
-    //     return this._query(sQuery).then(oQueryResult => {
-    //         return oQueryResult;
-    //     })
-    // }).catch(oError => {
-    //     throw oError;
-    //     // if (!oUser) throw this.error.getError(8, oError, "", "User parameter missing.");
-    //     // if (!sPassword) throw this.error.getError(8, oError, "", "Password parameter missing.");
-    // });
     return SecurityPasswordManager.verifyPassword(oUser.username, sPassword).then(sHash => {
         oUser.password_hash = sHash;
         var sQuery = this._formInsertQuery("USER", [oUser], Object.keys(oUser))

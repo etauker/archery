@@ -6,6 +6,7 @@ const bodyParser = require('body-parser')
 const SecurityPersistenceManager = require(SecurityPersistenceManagerPath);
 const SecurityPasswordManager = require(SecurityPasswordManagerPath);
 const SecurityTokenManager = require(SecurityTokenManagerPath);
+const SecurityParameterValidator = require(SecurityParameterValidatorPath);
 
 var securityPersistenceManager = new SecurityPersistenceManager();
 var securityPasswordManager = new SecurityPasswordManager(securityPersistenceManager);
@@ -18,10 +19,17 @@ module.exports = function(app) {
     }));
 
     app.post('/security/token', function(req, res){
-        var sUsername = req.body.username;
-        var sPassword = req.body.password;
 
-        securityPasswordManager.verifyPassword(sUsername, sPassword).then((oUser) => {
+        let sUsername = "";
+        let sPassword = "";
+
+        SecurityParameterValidator.validateUsername(req.body.username).then(sValidatedUsername => {
+            sUsername = sValidatedUsername;
+            return SecurityParameterValidator.validatePassword(req.body.password);
+        }).then(sValidatedPassword => {
+            sUsername = sValidatedPassword;
+            return securityPasswordManager.verifyPassword(sUsername, sPassword)
+        }).then((oUser) => {
             return securityTokenManager.generateToken(oUser);
         }).then(sToken => {
             res.send(sToken);

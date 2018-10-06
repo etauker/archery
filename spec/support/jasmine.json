@@ -1,5 +1,5 @@
 {
-  "spec_dir": "test/persistence/",
+  "spec_dir": "dependencies/com.etauker.security/test/persistence/",
   "spec_files": [
     "**/*[sS]pec.js"
   ],
