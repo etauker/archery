@@ -65,14 +65,8 @@ class SecurityPersistenceManager {
  *  @return {promise} Resolves to the user entry from the database.
  */
 SecurityPersistenceManager.prototype.getUser = function(oUser) {
-
-    var sQuery = "";
-    return SecurityParameterValidator.validateUser(oUser).then(oUser => {
-        sQuery = this._formSelectQuery("USER", oUser)
-        return oUser;
-    }).then(oUser => {
-        return this._query(sQuery);
-    }).then(aQueryResult => {
+    var sQuery = this._formSelectQuery("USER", oUser);
+    return this._query(sQuery).then(aQueryResult => {
         if (aQueryResult.length > 1) throw this.error.getError(7, null, "", "Expected 1, received "+aQueryResult.length+".");
         return aQueryResult[0];
     });

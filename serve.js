@@ -17,6 +17,7 @@ global.SecurityPersistenceManagerPath = __dirname + "/dependencies/com.etauker.s
 global.SecurityTokenManagerPath = __dirname + "/dependencies/com.etauker.security/logic/SecurityTokenManager.js";
 global.SecurityErrorGeneratorPath = __dirname + "/dependencies/com.etauker.security/utils/SecurityErrorGenerator.js";
 global.SecurityParameterValidatorPath = __dirname + "/dependencies/com.etauker.security/utils/SecurityParameterValidator.js";
+global.SecurityServiceValidatorPath = __dirname + "/dependencies/com.etauker.security/utils/SecurityServiceValidator.js";
 global.SecurityPasswordManagerPath = __dirname + "/dependencies/com.etauker.security/utils/SecurityPasswordManager.js";
 global.SecurityServicePath = __dirname + "/dependencies/com.etauker.security/service/SecurityService.js";
 

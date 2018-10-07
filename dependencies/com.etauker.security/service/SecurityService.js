@@ -6,50 +6,61 @@ const bodyParser = require('body-parser')
 const SecurityPersistenceManager = require(SecurityPersistenceManagerPath);
 const SecurityPasswordManager = require(SecurityPasswordManagerPath);
 const SecurityTokenManager = require(SecurityTokenManagerPath);
-const SecurityParameterValidator = require(SecurityParameterValidatorPath);
+const SecurityServiceValidator = require(SecurityServiceValidatorPath);
 
-var securityPersistenceManager = new SecurityPersistenceManager();
-var securityPasswordManager = new SecurityPasswordManager(securityPersistenceManager);
-var securityTokenManager = new SecurityTokenManager(securityPersistenceManager);
+var persistence = new SecurityPersistenceManager();
+var password = new SecurityPasswordManager(persistence);
+var token = new SecurityTokenManager(persistence);
+var validator = new SecurityServiceValidator();
 
 module.exports = function(app) {
-    app.use(bodyParser.json());       // to support JSON-encoded bodies
+    app.use(bodyParser.json());         // to support JSON-encoded bodies
     app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-      extended: true
+        extended: true
     }));
 
-    app.post('/security/token', function(req, res){
+    app.post('/security/token', function(req, res) {
 
-        let sUsername = "";
-        let sPassword = "";
+        let sUsername = validator.validateUsername(req.body.username);
+        let sPassword = validator.validatePassword(req.body.password);
 
-        SecurityParameterValidator.validateUsername(req.body.username).then(sValidatedUsername => {
-            sUsername = sValidatedUsername;
-            return SecurityParameterValidator.validatePassword(req.body.password);
-        }).then(sValidatedPassword => {
-            sUsername = sValidatedPassword;
-            return securityPasswordManager.verifyPassword(sUsername, sPassword)
-        }).then((oUser) => {
-            return securityTokenManager.generateToken(oUser);
-        }).then(sToken => {
-            res.send(sToken);
-        }).catch(oError => {
+        if (!sUsername || !sPassword) {
+
+            password.verifyPassword(sUsername, sPassword).then((oUser) => {
+                return token.generateToken(oUser);
+            }).then(sToken => {
+                res.send(sToken);
+            }).catch(oError => {
+
+                // Prepare the response object
+                let oResponse = {};
+                oResponse.message = oError.message;
+                oResponse.code = oError.code;
+                oResponse.status = oError.http ? oError.http : 500;
+
+                // Generalise between incorrect username and password for security purposes
+                if ([7.1, 7.2, 7.4, 7.5].includes(oResponse.code)) {
+                    oError = validator.getIncorrectUsernameOrPasswordError();
+                    oResponse.message = oError.message;
+                    oResponse.code = oError.code;
+                    oResponse.status = oError.http;
+                }
+
+                // Send the response
+                res.status(oResponse.status).send(oResponse);
+            });
+        } else {
 
             // Prepare the response object
             let oResponse = {};
+            oError = validator.getInvalidUsernameOrPasswordError();
             oResponse.message = oError.message;
             oResponse.code = oError.code;
-            oResponse.status = oError.http ? oError.http : 500;
-
-            // Generalise between incorrect username and password for security purposes
-            if ([7.1, 7.2, 7.4, 7.5].includes(oResponse.code)) {
-                oResponse.message = "Incorrect username or password provided.";
-                oResponse.code = 7.6;
-            }
+            oResponse.status = oError.http;
 
             // Send the response
             res.status(oResponse.status).send(oResponse);
-        });
+        }
     });
 
     app.post('/security/users', function(req, res){
