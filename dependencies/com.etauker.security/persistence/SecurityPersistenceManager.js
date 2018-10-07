@@ -7,7 +7,6 @@ const util = require('util');
 const argon2 = require('argon2');
 const SecurityErrorGenerator = require(SecurityErrorGeneratorPath);
 const SecurityPasswordManager = require(SecurityPasswordManagerPath);
-const SecurityParameterValidator = require(SecurityParameterValidatorPath);
 
 class SecurityPersistenceManager {
 
@@ -45,7 +44,7 @@ class SecurityPersistenceManager {
             password : this.password,
             database : this.database,
             connectionLimit : 10
-        } );
+        });
 
         // Ensure that all mandatory parameters have a value
         if (!this.user) this._missingParameter("user");
@@ -169,6 +168,9 @@ SecurityPersistenceManager.prototype.saveSession = function(sToken, oDecodedToke
 SecurityPersistenceManager.prototype.extendSession = function(oExtension) {
     // TODO: Creates a database entry corresponding to the provided object
 };
+SecurityPersistenceManager.prototype.endSession = function(oExtension) {
+    // TODO: Update session table entry to invalidate current session
+};
 
 
 //===========================================
@@ -241,13 +243,13 @@ SecurityPersistenceManager.prototype._query = function(sQuery, aParams) {
             throw this.error.getError(2, { pool: this.pool }, "", "Pool likely does not exist.");
         }
 
-        this.pool.getConnection(function(oError, oConnection) {
+        this.pool.getConnection((oError, oConnection) => {
             if (oError) throw this.error.getError(3, oError);
 
-            oConnection.beginTransaction(function(oError) {
+            oConnection.beginTransaction(oError => {
                 if (oError) throw this.error.getError(4, oError);
 
-                oConnection.query(sQuery, function (oError, aRows, fields) {
+                oConnection.query(sQuery, (oError, aRows, fields) => {
 
                     // Error while querying the database
                     if (oError) {

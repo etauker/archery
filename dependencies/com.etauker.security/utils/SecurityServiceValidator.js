@@ -1,3 +1,5 @@
+const SecurityErrorGenerator = require(SecurityErrorGeneratorPath);
+
 class SecurityServiceValidator {
     constructor() {
         this.errorMessages = [
@@ -18,27 +20,27 @@ class SecurityServiceValidator {
     }
 };
 
-SecurityServiceValidator.validateUsername = function(sUsername) {
+SecurityServiceValidator.prototype.validateUsername = function(sUsername) {
     if (!sUsername) {
         this.lastError = this.error.getError(1);
         return null;
     }
     return sUsername;
 };
-SecurityServiceValidator.validatePassword = function(sPassword) {
+SecurityServiceValidator.prototype.validatePassword = function(sPassword) {
     if (!sPassword) {
         this.lastError = this.error.getError(2);
         return null;
     }
     return sPassword;
 };
-SecurityServiceValidator.getLastError = function() {
+SecurityServiceValidator.prototype.getLastError = function() {
     return this.lastError;
 };
-SecurityServiceValidator.getIncorrectUsernameOrPasswordError = function() {
+SecurityServiceValidator.prototype.getInvalidUsernameOrPasswordError = function() {
     return this.error.getError(3);
 };
-SecurityServiceValidator.getInvalidUsernameOrPasswordError = function() {
-    return this.error.getError(3);
+SecurityServiceValidator.prototype.getIncorrectUsernameOrPasswordError = function() {
+    return this.error.getError(4);
 };
 module.exports = SecurityServiceValidator;

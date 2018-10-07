@@ -20,12 +20,10 @@ module.exports = function(app) {
     }));
 
     app.post('/security/token', function(req, res) {
-
         let sUsername = validator.validateUsername(req.body.username);
         let sPassword = validator.validatePassword(req.body.password);
 
-        if (!sUsername || !sPassword) {
-
+        if (sUsername && sPassword) {
             password.verifyPassword(sUsername, sPassword).then((oUser) => {
                 return token.generateToken(oUser);
             }).then(sToken => {
@@ -39,7 +37,7 @@ module.exports = function(app) {
                 oResponse.status = oError.http ? oError.http : 500;
 
                 // Generalise between incorrect username and password for security purposes
-                if ([7.1, 7.2, 7.4, 7.5].includes(oResponse.code)) {
+                if ([7.1, 7.2, 7.4, 7.5].includes(oError.code) && oError.class === "SecurityPasswordManager") {
                     oError = validator.getIncorrectUsernameOrPasswordError();
                     oResponse.message = oError.message;
                     oResponse.code = oError.code;
@@ -61,6 +59,15 @@ module.exports = function(app) {
             // Send the response
             res.status(oResponse.status).send(oResponse);
         }
+    });
+
+    app.post('/security/invalidate', function(req, res){
+        // argon2.hash(sPassword).then(sHash => {
+        // }).catch(err => {
+        //     console.log(err);
+        //     res.send(err);
+        // });
+        res.send('/security/users');
     });
 
     app.post('/security/users', function(req, res){

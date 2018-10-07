@@ -39,22 +39,16 @@ SecurityErrorGenerator.prototype._getHttp = function(iCode) {
 }
 SecurityErrorGenerator.prototype._mapModuleToCode = function(sModule) {
     switch(sModule) {
-        case "data":
-            return "1";
         case "persistence":
-            return "2";
+            return "1";
         case "logic":
-            return "3";
+            return "2";
         case "service":
-            return "4";
-        case "client":
-            return "5";
-        case "libs":
-            return "6";
+            return "3";
         case "utils":
-            return "7";
+            return "4";
         default:
-            return "0";
+            return "-1";
     }
 }
 module.exports = SecurityErrorGenerator;
