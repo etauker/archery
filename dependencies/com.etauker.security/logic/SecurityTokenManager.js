@@ -62,8 +62,7 @@ SecurityTokenManager.prototype.verifyToken = function(sToken, sRole) {
     // TODO: Optionally checks if the token contains the given role
     // TODO: Potentially check the database table to check if the session has been invalidated
 }
-SecurityTokenManager.prototype.invalidateToken = function(sUsername) {
-    // TODO: Adds the username to an array of invalidated tokens
-    // TODO: Alternatively updates the session table to set the curreny sessions for this user as invalid
+SecurityTokenManager.prototype.invalidateToken = function(sToken) {
+    return this.persistenceManager.invalidateSession(sToken);
 }
 module.exports = SecurityTokenManager;

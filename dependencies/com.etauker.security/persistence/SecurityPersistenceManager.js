@@ -168,8 +168,11 @@ SecurityPersistenceManager.prototype.saveSession = function(sToken, oDecodedToke
 SecurityPersistenceManager.prototype.extendSession = function(oExtension) {
     // TODO: Creates a database entry corresponding to the provided object
 };
-SecurityPersistenceManager.prototype.endSession = function(oExtension) {
-    // TODO: Update session table entry to invalidate current session
+SecurityPersistenceManager.prototype.invalidateSession = function(sToken) {
+    var sQuery = 'UPDATE `etauker_security`.`SESSION` SET `invalid` = 1 WHERE `jwt` = "'+sToken+'";';
+    return this._query(sQuery).then(aQueryResult => {
+        return aQueryResult;
+    });
 };
 
 

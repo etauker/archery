@@ -19,7 +19,7 @@ module.exports = function(app) {
         extended: true
     }));
 
-    app.post('/security/token', function(req, res) {
+    app.post('/security/token2', function(req, res) {
         let sUsername = validator.validateUsername(req.body.username);
         let sPassword = validator.validatePassword(req.body.password);
 
@@ -61,13 +61,31 @@ module.exports = function(app) {
         }
     });
 
-    app.post('/security/invalidate', function(req, res){
-        // argon2.hash(sPassword).then(sHash => {
-        // }).catch(err => {
-        //     console.log(err);
-        //     res.send(err);
-        // });
-        res.send('/security/users');
+    app.post('/security/token', function(req, res) {
+        let sJwt = validator.validateToken("eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiYWRtaW4iLCJzdWIiOiIzNjNlOTVjZC1jYTdlLTExZTgtYTE1NC0wODAwMjdkMmM3ZGQiLCJyb2xlcyI6W3siaWQiOiIzNjNlMjk0OC1jYTdlLTExZTgtYTE1NC0wODAwMjdkMmM3ZGQiLCJuYW1lIjoiY29tLmV0YXVrZXIuYXJjaGVyeS5BZG1pbiIsImRlc2NyaXB0aW9uIjoiQ2x1YiBtZW1iZXIgd2hvIG1hbmFnZXMgdGhlIGNsdWJzIGluZm9ybWF0aW9uIGFuZCByZWdpc3RlcnMgbmV3IG1lbWJlcnMgb24gYmVoYWxmIG9mIHRoZSBjbHViLiJ9XSwiaWF0IjoxNTM4OTUwNDA5LCJuYmYiOjMwNzc5MDA4MTgsImV4cCI6MTUzODk1NDAwOSwiYXVkIjoiY29tLmV0YXVrZXIuYXJjaGVyeSIsImlzcyI6ImNvbS5ldGF1a2VyLnNlY3VyaXR5In0.Xmt8u3Z4H-yXySG7_yixAFNGaBuZVH1RhkCm3c-hvNLLT6bpGqQMX7Gs2_NlhIdkV-zDCpT4QcpLZTjb3nbfUw");
+
+        if (sJwt) {
+            token.invalidateToken(sJwt).then(() => {
+                res.send(true);
+            }).catch(oError => {
+console.log(oError);
+                // Prepare the response object
+                let oResponse = {};
+                oResponse.message = oError.message;
+                oResponse.code = oError.code;
+                oResponse.status = oError.http ? oError.http : 500;
+
+                // Send the response
+                res.status(oResponse.status).send(oResponse);
+            });
+        } else {
+            let oError = this.validator.getLastError();
+            let oResponse = {};
+            oResponse.message = oError.message;
+            oResponse.code = oError.code;
+            oResponse.status = oError.http ? oError.http : 500;
+            res.status(oResponse.status).send(oResponse);
+        }
     });
 
     app.post('/security/users', function(req, res){

@@ -45,7 +45,8 @@ CREATE TABLE SESSION (
 	user_id			CHAR(36)          ,  -- The user_id of the session owner
 	original_exp	DATETIME          ,  -- The date and time of the original token expiration
 	original_iat	DATETIME          ,  -- The date and time of the original token generation
-	info			VARCHAR(255) 	     -- Additional information about the session
+	info			VARCHAR(255) 	  ,  -- Additional information about the session
+	invalid 		TINYINT 		  DEFAULT 0
 );
 CREATE TABLE USER_ROLE (
 	role_id				CHAR(36),
