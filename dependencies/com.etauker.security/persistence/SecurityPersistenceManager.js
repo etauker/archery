@@ -147,6 +147,7 @@ SecurityPersistenceManager.prototype.unassignUserRole = function(sUserId, sRoleI
 SecurityPersistenceManager.prototype.saveSession = function(sToken, oDecodedToken, oConfig) {
 
     var oSession = {
+        id: oDecodedToken.id,
         jwt: sToken,
         jwt_algorithm: oConfig.algorithm,
         user_id: oDecodedToken.sub,
@@ -168,10 +169,17 @@ SecurityPersistenceManager.prototype.saveSession = function(sToken, oDecodedToke
 SecurityPersistenceManager.prototype.extendSession = function(oExtension) {
     // TODO: Creates a database entry corresponding to the provided object
 };
-SecurityPersistenceManager.prototype.invalidateSession = function(sToken) {
-    var sQuery = 'UPDATE `etauker_security`.`SESSION` SET `invalid` = 1 WHERE `jwt` = "'+sToken+'";';
+SecurityPersistenceManager.prototype.invalidateSession = function(sUuid) {
+    var sQuery = 'UPDATE `'+this.database+'`.`SESSION` SET `invalid` = 1 WHERE `id` = "'+sUuid+'";';
+    console.log(sQuery);
     return this._query(sQuery).then(aQueryResult => {
         return aQueryResult;
+    });
+};
+SecurityPersistenceManager.prototype.getUuid = function() {
+    var sQuery = 'SELECT UUID() AS uuid;';
+    return this._query(sQuery).then(aQueryResult => {
+        return aQueryResult[0].uuid;
     });
 };
 

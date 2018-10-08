@@ -13,8 +13,7 @@ class SecurityTokenManager {
             "logic",
             "SecurityTokenManager",
             [
-                { code: 1, http: 401, message: "Incorrect password provided." },
-                { code: 2, http: 500, message: "An error occured while verifying user password." }
+                { code: 1, http: 406, message: "Failed to decode token. It may be corrupt." }
             ]
         );
 
@@ -29,11 +28,16 @@ class SecurityTokenManager {
 SecurityTokenManager.prototype.generateToken = function(oUser) {
 
     var token = "";
-    return this.persistenceManager.getRolesByUser(oUser).then(aRoles => {
+    var uuid = "";
+    return this.persistenceManager.getUuid().then(sUuid => {
+        uuid = sUuid;
+        return this.persistenceManager.getRolesByUser(oUser);
+    }).then(aRoles => {
         aRoles = (Array.isArray(aRoles) ? aRoles : new Array(aRoles));
         this.config.notBefore = Math.floor(Date.now() / 1000);
 
         var sToken = jwt.sign({
+            id: uuid,
             user: oUser.username,
             sub: oUser.uuid,
             roles: aRoles.map(oRole => {
@@ -63,6 +67,13 @@ SecurityTokenManager.prototype.verifyToken = function(sToken, sRole) {
     // TODO: Potentially check the database table to check if the session has been invalidated
 }
 SecurityTokenManager.prototype.invalidateToken = function(sToken) {
-    return this.persistenceManager.invalidateSession(sToken);
+    var oDecoded = {};
+    try {
+        oDecoded = jwt.decode(sToken);
+    } catch (oError) {
+        oParsedError = this.error.getError(1, oError);
+        return new promise((fnResolve, fnReject) => fnReject(oParsedError));
+    }
+    return this.persistenceManager.invalidateSession(oDecoded.id);
 }
 module.exports = SecurityTokenManager;
