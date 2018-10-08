@@ -171,7 +171,6 @@ SecurityPersistenceManager.prototype.extendSession = function(oExtension) {
 };
 SecurityPersistenceManager.prototype.invalidateSession = function(sUuid) {
     var sQuery = 'UPDATE `'+this.database+'`.`SESSION` SET `invalid` = 1 WHERE `id` = "'+sUuid+'";';
-    console.log(sQuery);
     return this._query(sQuery).then(aQueryResult => {
         return aQueryResult;
     });
