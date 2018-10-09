@@ -20,12 +20,17 @@ global.SecurityServiceValidatorPath = __dirname + "/dependencies/com.etauker.sec
 global.SecurityPasswordManagerPath = __dirname + "/dependencies/com.etauker.security/utils/SecurityPasswordManager.js";
 global.SecurityServicePath = __dirname + "/dependencies/com.etauker.security/service/SecurityService.js";
 
+// Archery Import Path
+global.ArcheryPersistenceManagerPath = __dirname + "/persistence/ArcheryPersistenceManager.js";
+global.ArcheryServicePath = __dirname + "/service/ArcheryService.js";
+global.ArcheryErrorGeneratorPath = __dirname + "/utils/ArcheryErrorGenerator.js";
+
 // App preparation
 const app = express();
 console.log("port: " + port);
 console.log("webappEndpoint: " + webappEndpoint);
 
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.json());         // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
@@ -33,6 +38,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 // Import additional services
 // TODO: Refactor to require all files in the service directory
 require(SecurityServicePath)(app);
+require(ArcheryServicePath)(app);
 
 // Import the webapp
 app.use(webappEndpoint, express.static(webappDirectory));

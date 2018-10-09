@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const argon2 = require('argon2');
 const mysql = require('mysql');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 
 const SecurityPersistenceManager = require(SecurityPersistenceManagerPath);
 const SecurityPasswordManager = require(SecurityPasswordManagerPath);

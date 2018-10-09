@@ -1,7 +1,3 @@
-/**
-*   Loads and saves data related to security.
-*/
-
 const mysql = require('mysql');
 const util = require('util');
 const argon2 = require('argon2');
