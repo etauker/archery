@@ -37,12 +37,16 @@ module.exports = function(app) {
                 if ([7.1, 7.2, 7.4, 7.5].includes(oError.code) && oError.class === "SecurityPasswordManager") {
                     oResponse = _formatErrorResponse(validator.getIncorrectUsernameOrPasswordError());
                 }
+                let sRealm = (REALM ? 'realm="' + REALM + '"' : "");
+                res.append("WWW-Authenticate", "Bearer " + sRealm);
                 res.status(oResponse.status).send(oResponse);
             });
         } else {
 
             // Prepare the response object
             let oResponse = _formatErrorResponse(validator.getInvalidUsernameOrPasswordError());
+            let sRealm = (REALM ? 'realm="' + REALM + '"' : "");
+            res.append("WWW-Authenticate", "Bearer " + sRealm);
             res.status(oResponse.status).send(oResponse);
         }
     });

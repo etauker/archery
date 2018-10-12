@@ -9,6 +9,8 @@ const webappEndpoint = '/webapp';
 const webappDirectory = __dirname + "/archery-ui5/webapp";
 const url = 'http://localhost:' + port + webappEndpoint;
 
+global.REALM = "etauker.com";
+
 // Global Import Paths
 /* TODO: Refactor to automatically require all js files in:
 *   [ data, persistence, logic, service, util ] for each etauker dependency.
