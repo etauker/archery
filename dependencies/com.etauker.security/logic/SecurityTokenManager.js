@@ -1,13 +1,14 @@
 const jwt = require('jsonwebtoken');
 const SecurityErrorGenerator = require(SecurityErrorGeneratorPath);
+const SecurityPersistenceManager = require(SecurityPersistenceManagerPath);
 
 /**
 *   Manages user session tokens.
 */
 class SecurityTokenManager {
     constructor(oPersistenceManager) {
-        this.persistenceManager = oPersistenceManager;
-
+        // console.log(oPersistenceManager);
+        this.persistenceManager = oPersistenceManager || new SecurityPersistenceManager();
         this.error = new SecurityErrorGenerator(
             "com.etauker.security",
             "logic",
@@ -62,11 +63,12 @@ SecurityTokenManager.prototype.extendToken = function(sToken) {
     // TODO: Saves the session extension information in the SESSION_EXTENSION table
 }
 SecurityTokenManager.prototype.verifyToken = function(sToken, sRole) {
-    // TODO: Returns true if the token is valid
+    // TODO: Returns a promise that resolves sToken if the token is valid
     // TODO: Optionally checks if the token contains the given role
     // TODO: Potentially check the database table to check if the session has been invalidated
 }
 SecurityTokenManager.prototype.invalidateToken = function(sToken) {
+    console.log(this.persistenceManager.prototype);
     var oDecoded = {};
     try {
         oDecoded = jwt.decode(sToken);

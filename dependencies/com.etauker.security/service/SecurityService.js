@@ -11,6 +11,7 @@ const SecurityServiceValidator = require(SecurityServiceValidatorPath);
 var persistence = new SecurityPersistenceManager();
 var password = new SecurityPasswordManager(persistence);
 var token = new SecurityTokenManager(persistence);
+// console.log(token.persistenceManager);
 var validator = new SecurityServiceValidator();
 
 module.exports = function(app) {
@@ -20,8 +21,8 @@ module.exports = function(app) {
     }));
 
     app.post('/security/token', function(req, res) {
-        let sUsername = validator.validateUsername(req.body.username);
-        let sPassword = validator.validatePassword(req.body.password);
+        const sUsername = validator.validateUsername(req.body.username);
+        const sPassword = validator.validatePassword(req.body.password);
 
         if (sUsername && sPassword) {
             password.verifyPassword(sUsername, sPassword).then((oUser) => {
@@ -52,8 +53,7 @@ module.exports = function(app) {
     });
 
     app.get('/security/invalidate', function(req, res) {
-        let sBearer = req.headers.authorization.replace("Bearer ", "");
-        let sJwt = validator.validateToken(sBearer);
+        const sJwt = validator.validateToken(req.headers.authorization);
 
         if (sJwt) {
             token.invalidateToken(sJwt).then(() => {

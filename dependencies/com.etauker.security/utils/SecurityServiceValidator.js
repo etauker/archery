@@ -40,7 +40,7 @@ SecurityServiceValidator.prototype.validateToken = function(sToken) {
         this.lastError = this.error.getError(5);
         return null;
     }
-    return sToken;
+    return sToken.replace("Bearer ", "");
 };
 SecurityServiceValidator.prototype.getLastError = function() {
     return this.lastError;
