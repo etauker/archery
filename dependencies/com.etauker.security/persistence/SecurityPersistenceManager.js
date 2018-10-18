@@ -171,6 +171,18 @@ SecurityPersistenceManager.prototype.invalidateSession = function(sUuid) {
         return aQueryResult;
     });
 };
+/**
+ *  Checks the database to see if a session has been invalidated.
+ *  @param {object} sSessionId - The id of the session to check.
+ *  @return {promise} Resolves to true the session has not been invalidated.
+ */
+SecurityPersistenceManager.prototype.checkSessionValidity = function(sSessionId) {
+    var sQuery = `SELECT \`invalid\` FROM \`${this.database}\`.\`SESSION\` WHERE \`id\` = '${sSessionId}'`;
+    return this._query(sQuery).then(aQueryResult => {
+        if (aQueryResult.length > 1) throw this.error.getError(7, null, "", "Expected 1, received "+aQueryResult.length+".");
+        return (aQueryResult[0].invalid === 0);
+    });
+};
 SecurityPersistenceManager.prototype.getUuid = function() {
     var sQuery = 'SELECT UUID() AS uuid;';
     return this._query(sQuery).then(aQueryResult => {

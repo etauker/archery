@@ -14,7 +14,11 @@ class SecurityTokenManager {
             "logic",
             "SecurityTokenManager",
             [
-                { code: 1, http: 406, message: "Failed to decode token. It may be corrupt." }
+                { code: 1, http: 406, message: "Failed to decode token. It may be corrupt. Try to log out and log back in again." },
+                { code: 2, http: 401, message: "User session has expired." },
+                { code: 3, http: 401, message: "Invalid authentication token provided. Try to log out and log back in again." },
+                { code: 4, http: 401, message: "User session has been terminated." },
+                { code: 5, http: 403, message: "User does not have sufficient privileges to access the resource." }
             ]
         );
 
@@ -35,7 +39,6 @@ SecurityTokenManager.prototype.generateToken = function(oUser) {
         return this.persistenceManager.getRolesByUser(oUser);
     }).then(aRoles => {
         aRoles = (Array.isArray(aRoles) ? aRoles : new Array(aRoles));
-        this.config.notBefore = Math.floor(Date.now() / 1000);
 
         var sToken = jwt.sign({
             id: uuid,
@@ -49,7 +52,6 @@ SecurityTokenManager.prototype.generateToken = function(oUser) {
                 }
             })
         }, process.env.JWT_SECRET, this.config);
-
         return sToken;
     }).then(sToken => {
         token = sToken;
@@ -63,10 +65,43 @@ SecurityTokenManager.prototype.extendToken = function(sToken) {
     // TODO: Saves the session extension information in the SESSION_EXTENSION table
 }
 SecurityTokenManager.prototype.verifyToken = function(sToken, sRole) {
-    // TODO: Returns a promise that resolves sToken if the token is valid
-    // TODO: Optionally checks if the token contains the given role
-    // TODO: Potentially check the database table to check if the session has been invalidated
-}
+
+    return new Promise(async (fnResolve, fnReject) => {
+
+        // Local variables
+        let oToken;
+        const oOptions = {
+            algorithms: [ this.config.algorithm ],
+            audience: this.config.audience,
+            issuer: this.config.issuer,
+            maxAge: this.config.expiresIn
+        }
+
+        // Verify token
+        try {
+            oToken = jwt.verify(sToken, process.env.JWT_SECRET, oOptions);
+        }
+        catch (oError) {
+            if (oError.name === "TokenExpiredError") { fnReject(this.error.getError(2, oError)) }
+            if (oError.name === "JsonWebTokenError") { fnReject(this.error.getError(3, oError)) }
+            fnReject(this.error.getError(0))
+        }
+
+        // Check the if the session has been invalidated in the database
+        const bInvalidated = await this.persistenceManager.checkSessionValidity(oToken.id)
+            .then(bValid => !bValid)
+            .catch(oError => fnReject(oError))
+        if (bInvalidated) { fnReject(this.error.getError(4)) }
+
+        // Optionally check if the token contains a role
+        if (sRole) {
+            const bHasRole = (oToken.roles.filter(role => role.name === sRole).length > 0);
+            if (!bHasRole) { fnReject(this.error.getError(5)) }
+        }
+
+        fnResolve(sToken);
+    });
+};
 SecurityTokenManager.prototype.invalidateToken = function(sToken) {
     console.log(this.persistenceManager.prototype);
     var oDecoded = {};
