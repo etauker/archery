@@ -79,27 +79,31 @@ SecurityTokenManager.prototype.verifyToken = function(sToken, sRole) {
 
         // Verify token
         try {
-            oToken = jwt.verify(sToken, process.env.JWT_SECRET, oOptions);
+            oToken = await jwt.verify(sToken, process.env.JWT_SECRET, oOptions);
+            console.log("=== oToken ===");
+            console.log(oToken);
+
+            // Check the if the session has been invalidated in the database
+            const bInvalidated = await this.persistenceManager.checkSessionValidity(oToken.id)
+                .then(bValid => !bValid)
+                .catch(oError => fnReject(oError))
+            if (bInvalidated) { fnReject(this.error.getError(4)) }
+            else {
+
+                // Optionally check if the token contains a role
+                if (sRole) {
+                    const bHasRole = (oToken.roles.filter(role => role.name === sRole).length > 0);
+                    if (!bHasRole) { fnReject(this.error.getError(5)) }
+                }
+
+                fnResolve(sToken);
+            }
         }
         catch (oError) {
             if (oError.name === "TokenExpiredError") { fnReject(this.error.getError(2, oError)) }
             if (oError.name === "JsonWebTokenError") { fnReject(this.error.getError(3, oError)) }
             fnReject(this.error.getError(0))
         }
-
-        // Check the if the session has been invalidated in the database
-        const bInvalidated = await this.persistenceManager.checkSessionValidity(oToken.id)
-            .then(bValid => !bValid)
-            .catch(oError => fnReject(oError))
-        if (bInvalidated) { fnReject(this.error.getError(4)) }
-
-        // Optionally check if the token contains a role
-        if (sRole) {
-            const bHasRole = (oToken.roles.filter(role => role.name === sRole).length > 0);
-            if (!bHasRole) { fnReject(this.error.getError(5)) }
-        }
-
-        fnResolve(sToken);
     });
 };
 SecurityTokenManager.prototype.invalidateToken = function(sToken) {
