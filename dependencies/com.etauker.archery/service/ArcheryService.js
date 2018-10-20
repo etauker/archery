@@ -1,3 +1,5 @@
+const express = require('express');
+
 // const jwt = require('jsonwebtoken');
 // const argon2 = require('argon2');
 // const mysql = require('mysql');
@@ -15,12 +17,13 @@ var validator = new SecurityServiceValidator();
 // var password = new SecurityPasswordManager(persistence);
 
 module.exports = function(app) {
-    app.use(bodyParser.json());         // to support JSON-encoded bodies
-    app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+    const router = express.Router();
+    router.use(bodyParser.json());         // to support JSON-encoded bodies
+    router.use(bodyParser.urlencoded({     // to support URL-encoded bodies
         extended: true
     }));
 
-    app.get('/api/session/add', function(req, res) {
+    router.get('/session/add', function(req, res) {
         const sJwt = validator.validateToken(req.headers.authorization);
 
         // TODO: Implement SecurityTokenManager.verifyToken
@@ -42,7 +45,7 @@ module.exports = function(app) {
             })
     });
 
-    app.get('/api/invalidate', function(req, res) {
+    router.get('/invalidate', function(req, res) {
         // let sBearer = req.headers.authorization.replace("Bearer ", "");
         // let sJwt = validator.validateToken(sBearer);
         //
@@ -74,5 +77,5 @@ module.exports = function(app) {
         res.status(oResponse.status).send(oResponse);
         return true;
     }
-
+    return router;
 }

@@ -5,9 +5,9 @@ const bodyParser = require('body-parser')
 
 // Configuration
 const port = process.env.PORT || 8888;
-const webappEndpoint = '/webapp';
-const webappDirectory = __dirname + "/archery-ui5/webapp";
-const url = 'http://localhost:' + port + webappEndpoint;
+const archeryWebappEndpoint = '/archery';
+const archeryWebappDirectory = __dirname + "/presentation/com.etauker.archery/webapp";
+const url = 'http://localhost:' + port + archeryWebappEndpoint;
 
 global.REALM = "etauker.com";
 
@@ -23,14 +23,14 @@ global.SecurityPasswordManagerPath = __dirname + "/dependencies/com.etauker.secu
 global.SecurityServicePath = __dirname + "/dependencies/com.etauker.security/service/SecurityService.js";
 
 // Archery Import Path
-global.ArcheryPersistenceManagerPath = __dirname + "/persistence/ArcheryPersistenceManager.js";
-global.ArcheryServicePath = __dirname + "/service/ArcheryService.js";
-global.ArcheryErrorGeneratorPath = __dirname + "/utils/ArcheryErrorGenerator.js";
+global.ArcheryPersistenceManagerPath = __dirname + "/dependencies/com.etauker.archery/persistence/ArcheryPersistenceManager.js";
+global.ArcheryServicePath = __dirname + "/dependencies/com.etauker.archery/service/ArcheryService.js";
+global.ArcheryErrorGeneratorPath = __dirname + "/dependencies/com.etauker.archery/utils/ArcheryErrorGenerator.js";
 
 // App preparation
 const app = express();
 console.log("port: " + port);
-console.log("webappEndpoint: " + webappEndpoint);
+console.log("archeryWebappEndpoint: " + archeryWebappEndpoint);
 
 app.use(bodyParser.json());         // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
@@ -39,11 +39,13 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 
 // Import additional services
 // TODO: Refactor to require all files in the service directory
-require(SecurityServicePath)(app);
-require(ArcheryServicePath)(app);
+var securityRouter = require(SecurityServicePath)(app);
+app.use("/security", securityRouter)
+var archeryRouter = require(ArcheryServicePath)(app);
+app.use("/api", archeryRouter)
 
 // Import the webapp
-app.use(webappEndpoint, express.static(webappDirectory));
+app.use(archeryWebappEndpoint, express.static(archeryWebappDirectory));
 // app.configure(function () {
 //     app.use(express.logger('dev'));     /* 'default', 'short', 'tiny', 'dev' */
 //     app.use(express.bodyParser());

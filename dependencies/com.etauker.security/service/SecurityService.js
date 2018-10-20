@@ -1,3 +1,4 @@
+const express = require('express');
 const jwt = require('jsonwebtoken');
 const argon2 = require('argon2');
 const mysql = require('mysql');
@@ -15,12 +16,13 @@ var token = new SecurityTokenManager(persistence);
 var validator = new SecurityServiceValidator();
 
 module.exports = function(app) {
+    const router = express.Router();
     app.use(bodyParser.json());         // to support JSON-encoded bodies
     app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
         extended: true
     }));
 
-    app.post('/security/token', function(req, res) {
+    router.post('/token', function(req, res) {
         const sUsername = validator.validateUsername(req.body.username);
         const sPassword = validator.validatePassword(req.body.password);
 
@@ -52,7 +54,7 @@ module.exports = function(app) {
         }
     });
 
-    app.get('/security/invalidate', function(req, res) {
+    router.get('/invalidate', function(req, res) {
         const sJwt = validator.validateToken(req.headers.authorization);
 
         if (sJwt) {
@@ -68,13 +70,13 @@ module.exports = function(app) {
         }
     });
 
-    app.post('/security/users', function(req, res){
+    router.post('/users', function(req, res){
         // argon2.hash(sPassword).then(sHash => {
         // }).catch(err => {
         //     console.log(err);
         //     res.send(err);
         // });
-        res.send('/security/users');
+        res.send('/users');
     });
 
     function _formatErrorResponse(oError) {
@@ -85,4 +87,5 @@ module.exports = function(app) {
         return oResponse;
     }
 
+    return router;
 }
