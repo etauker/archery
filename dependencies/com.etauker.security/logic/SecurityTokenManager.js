@@ -107,7 +107,6 @@ SecurityTokenManager.prototype.verifyToken = function(sToken, sRole) {
     });
 };
 SecurityTokenManager.prototype.invalidateToken = function(sToken) {
-    console.log(this.persistenceManager.prototype);
     var oDecoded = {};
     try {
         oDecoded = jwt.decode(sToken);
