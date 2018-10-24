@@ -15,10 +15,10 @@ var token = new SecurityTokenManager(persistence);
 // console.log(token.persistenceManager);
 var validator = new SecurityServiceValidator();
 
-module.exports = function(app) {
+module.exports = function() {
     const router = express.Router();
-    app.use(bodyParser.json());         // to support JSON-encoded bodies
-    app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+    router.use(bodyParser.json());         // to support JSON-encoded bodies
+    router.use(bodyParser.urlencoded({     // to support URL-encoded bodies
         extended: true
     }));
 

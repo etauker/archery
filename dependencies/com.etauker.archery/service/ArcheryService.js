@@ -1,4 +1,4 @@
-module.exports = function(app) {
+module.exports = function() {
 
     // Imports
     const express = require('express');
