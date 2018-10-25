@@ -23,7 +23,8 @@ core.getTransactions = () => {
     })
 }
 core.saveTransaction = (oTransaction) => {
-    // return new Promise((fnResolve, fnReject) => {
+    return new Promise((fnResolve, fnReject) => {
+        fnResolve(true);
     //     fnResolve({
     //         sessionTypes: persistence.getSessionTypes(),
     //         sessionCategories: persistence.getSessionCategory(),
@@ -31,7 +32,7 @@ core.saveTransaction = (oTransaction) => {
     //         targetFaces: persistence.getTargetFaces(),
     //         bowCategories: persistence.getBowCategory()
     //     })
-    // })
+    })
 }
 
 // Error handling helpers

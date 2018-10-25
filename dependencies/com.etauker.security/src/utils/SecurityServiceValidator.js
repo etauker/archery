@@ -40,6 +40,13 @@ SecurityServiceValidator.prototype.validateToken = function(sToken) {
         this.lastError = this.error.getError(5);
         return null;
     }
+    return sToken;
+};
+SecurityServiceValidator.prototype.extractAndValidateToken = function(sToken) {
+    if (!sToken) {
+        this.lastError = this.error.getError(5);
+        return null;
+    }
     return sToken.replace("Bearer ", "");
 };
 SecurityServiceValidator.prototype.getLastError = function() {

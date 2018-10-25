@@ -80,7 +80,7 @@ GlucosePersistenceManager.prototype.getTransaction = function(oTransaction) {
  *  @return {promise} Resolves to an array of transactions from the database.
  */
 GlucosePersistenceManager.prototype.getTransactions = function(oTransactionFilter) {
-    let sQuery = `SELECT * FROM ${this.database}.\`TRANSACTION\` WHERE LIMIT 500;`;
+    let sQuery = `SELECT * FROM ${this.database}.\`TRANSACTION\` LIMIT 500;`;
     if (oTransactionFilter) sQuery = this._formSelectQuery('TRANSACTION', oTransactionFilter);
     return this._query(sQuery).then(aQueryResult => {
         return aQueryResult;

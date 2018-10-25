@@ -19,7 +19,7 @@ module.exports = function(app) {
 
     // Routes
     router.get('/session/add', function(req, res) {
-        const sJwt = validator.validateToken(req.headers.authorization);
+        const sJwt = validator.extractAndValidateToken(req.headers.authorization);
         token.verifyToken(sJwt, "com.etauker.archery.Archer")
             .then(core.getNewSessionOptions)
             .then(oNewSessionOptions => res.status(200).send(oNewSessionOptions))

@@ -55,7 +55,7 @@ module.exports = function(app) {
     });
 
     router.get('/invalidate', function(req, res) {
-        const sJwt = validator.validateToken(req.headers.authorization);
+        const sJwt = validator.extractAndValidateToken(req.headers.authorization);
 
         if (sJwt) {
             token.invalidateToken(sJwt).then(() => {
