@@ -15,7 +15,7 @@ var token = new SecurityTokenManager(persistence);
 // console.log(token.persistenceManager);
 var validator = new SecurityServiceValidator();
 
-module.exports = function() {
+module.exports = function(app) {
     const router = express.Router();
     router.use(bodyParser.json());         // to support JSON-encoded bodies
     router.use(bodyParser.urlencoded({     // to support URL-encoded bodies
@@ -86,6 +86,6 @@ module.exports = function() {
         oResponse.status = oError.http ? oError.http : 500;
         return oResponse;
     }
-
+console.log(router.prototype);
     return router;
 }

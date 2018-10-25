@@ -57,11 +57,11 @@ dependencies.forEach(library => {
 });
 
 // Import services
-var securityRouter = require(SecurityServicePath);
+var securityRouter = require(SecurityServicePath)(app);
 app.use("/security", securityRouter)
-var archeryRouter = require(ArcheryServicePath);
+var archeryRouter = require(ArcheryServicePath)(app);
 app.use("/api", archeryRouter)
-var glucoseRouter = require(GlucoseServicePath);
+var glucoseRouter = require(GlucoseServicePath)(app);
 app.use("/glucose", glucoseRouter)
 
 // Import the webapp
