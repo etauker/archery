@@ -16,7 +16,8 @@ const url = 'http://localhost:' + port + archeryWebappEndpoint;
 const modules = [ "persistence", "logic", "service", "utils" ];
 const dependencies = [
     "com.etauker.security",
-    "com.etauker.archery"
+    "com.etauker.archery",
+    "com.etauker.glucose"
 ];
 
 // App preparation
@@ -55,12 +56,13 @@ dependencies.forEach(library => {
     });
 });
 
-
 // Import services
 var securityRouter = require(SecurityServicePath);
 app.use("/security", securityRouter)
 var archeryRouter = require(ArcheryServicePath);
 app.use("/api", archeryRouter)
+var glucoseRouter = require(GlucoseServicePath);
+app.use("/glucose", glucoseRouter)
 
 // Import the webapp
 app.use(archeryWebappEndpoint, express.static(archeryWebappDirectory));
