@@ -37,7 +37,7 @@ dependencies.forEach(library => {
 
     // ...for each module...
     modules.forEach(module => {
-        let path = `${__dirname}/dependencies/${library}/${module}/`;
+        let path = `${__dirname}/dependencies/${library}/src/${module}/`;
         let count = 0;
         if (fs.existsSync(path)) {
 
