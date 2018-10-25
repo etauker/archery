@@ -13,7 +13,7 @@ class GlucoseErrorGenerator {
         };
     }
 }
-GlucoseErrorGenerator.prototype.getError = function (iCode, oOriginalError, sMessage, sAdditionalDetails) {
+GlucoseErrorGenerator.prototype.getError = function(iCode, oOriginalError, sMessage, sAdditionalDetails) {
     var oError = JSON.parse(JSON.stringify(this.template));
     oError.code = parseFloat(this.template.code + "." + (iCode || 0));
     oError.message = sMessage || this._getMessage(iCode);
@@ -22,20 +22,20 @@ GlucoseErrorGenerator.prototype.getError = function (iCode, oOriginalError, sMes
     oError.error = oOriginalError || {};
     // console.log(oError);
     return oError;
-};
-GlucoseErrorGenerator.prototype.registerErrors = function (aErrors) {
+}
+GlucoseErrorGenerator.prototype.registerErrors = function(aErrors) {
     this.errors = aErrors;
-};
-GlucoseErrorGenerator.prototype._getMessage = function (iCode) {
+}
+GlucoseErrorGenerator.prototype._getMessage = function(iCode) {
     var oError = this.errors.filter(oError => oError.code === iCode)[0] || this.errors[0];
     return oError.message;
-};
-GlucoseErrorGenerator.prototype._getHttp = function (iCode) {
+}
+GlucoseErrorGenerator.prototype._getHttp = function(iCode) {
     var oError = this.errors.filter(oError => oError.code === iCode)[0] || this.errors[0];
     return oError.http;
-};
-GlucoseErrorGenerator.prototype._mapModuleToCode = function (sModule) {
-    switch (sModule) {
+}
+GlucoseErrorGenerator.prototype._mapModuleToCode = function(sModule) {
+    switch(sModule) {
         case "persistence":
             return "1";
         case "logic":
@@ -47,5 +47,5 @@ GlucoseErrorGenerator.prototype._mapModuleToCode = function (sModule) {
         default:
             return "-1";
     }
-};
+}
 module.exports = GlucoseErrorGenerator;

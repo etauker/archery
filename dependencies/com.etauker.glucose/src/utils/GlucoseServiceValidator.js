@@ -1,15 +1,23 @@
 const GlucoseErrorGenerator = require(GlucoseErrorGeneratorPath);
+
 class GlucoseServiceValidator {
     constructor() {
         this.errorMessages = [
             { code: 1, http: 401, message: "Invalid username." }
         ];
-        this.error = new GlucoseErrorGenerator("com.etauker.glucose", "utils", "GlucoseServiceValidator", this.errorMessages);
+
+        this.error = new GlucoseErrorGenerator(
+            "com.etauker.glucose",
+            "utils",
+            "GlucoseServiceValidator",
+            this.errorMessages
+        );
+
         this.lastError = null;
     }
-}
-;
-GlucoseServiceValidator.prototype.validateTransaction = function (oTransaction) {
+};
+
+GlucoseServiceValidator.prototype.validateTransaction = function(oTransaction) {
     if (!oTransaction) {
         this.lastError = this.error.getError(1);
         return null;
@@ -37,7 +45,7 @@ GlucoseServiceValidator.prototype.validateTransaction = function (oTransaction) 
 //     }
 //     return sToken.replace("Bearer ", "");
 // };
-GlucoseServiceValidator.prototype.getLastError = function () {
+GlucoseServiceValidator.prototype.getLastError = function() {
     return this.lastError;
 };
 module.exports = GlucoseServiceValidator;
