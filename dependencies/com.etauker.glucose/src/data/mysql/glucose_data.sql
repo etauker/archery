@@ -1,6 +1,6 @@
 USE etauker_glucose;
 
-INSERT INTO `TRANSACTION` (`date_time`, `reading`, `carbohydrates`, `insulin_units_short`, `insulin_units_long`, `note`, `correction_units`, ` created_at`, `updated_at`) VALUES
+INSERT INTO `TRANSACTION` (`date_time`, `reading`, `carbohydrates`, `insulin_units_short`, `insulin_units_long`, `note`, `correction_units`, `created_at`, `updated_at`) VALUES
 ('2017-11-19 21:40:00', 4.7, NULL, NULL, NULL, '', NULL, NULL, NULL),
 ('2017-11-15 00:21:00', 16.9, NULL, 4, 14, '[Before Work] ', NULL, NULL, NULL),
 ('2017-11-15 08:44:00', 7.0, 70, 7, NULL, '[Breakfast] ', NULL, NULL, NULL),
@@ -704,7 +704,7 @@ INSERT INTO `TRANSACTION` (`date_time`, `reading`, `carbohydrates`, `insulin_uni
 ('2018-04-22 16:25:00', 8.8, 80, 17, NULL, '[Lunch] ', 1, NULL, NULL),
 ('2018-04-22 16:43:00', 40.0, 8, NULL, NULL, '', 11, NULL, NULL),
 ('2018-04-22 18:38:00', NULL, 75, 15, NULL, '[Dinner] after hypo.', 2, NULL, NULL);
-INSERT INTO `TRANSACTION` (`date_time`, `reading`, `carbohydrates`, `insulin_units_short`, `insulin_units_long`, `note`, `correction_units`, ` created_at`, `updated_at`) VALUES
+INSERT INTO `TRANSACTION` (`date_time`, `reading`, `carbohydrates`, `insulin_units_short`, `insulin_units_long`, `note`, `correction_units`, `created_at`, `updated_at`) VALUES
 ('2018-04-22 19:55:00', 5.2, NULL, NULL, NULL, '', NULL, NULL, NULL),
 ('2018-04-22 22:51:00', 5.8, NULL, NULL, NULL, '[Before Bed] ', NULL, NULL, NULL),
 ('2018-04-23 06:54:00', 6.5, NULL, NULL, 14, '[Before Work] ', NULL, NULL, NULL),
@@ -1455,7 +1455,7 @@ INSERT INTO `TRANSACTION` (`date_time`, `reading`, `carbohydrates`, `insulin_uni
 ('2018-09-22 10:56:00', 11.6, NULL, NULL, 14, '[Before Work] ', 2, NULL, NULL),
 ('2018-09-22 12:10:00', 12.0, 60, 7, NULL, '[Breakfast] ', 2, NULL, NULL),
 ('2018-09-22 17:27:00', 4.8, 65, 3, NULL, '[Dinner] ', NULL, NULL, NULL);
-INSERT INTO `TRANSACTION` (`date_time`, `reading`, `carbohydrates`, `insulin_units_short`, `insulin_units_long`, `note`, `correction_units`, ` created_at`, `updated_at`) VALUES
+INSERT INTO `TRANSACTION` (`date_time`, `reading`, `carbohydrates`, `insulin_units_short`, `insulin_units_long`, `note`, `correction_units`, `created_at`, `updated_at`) VALUES
 ('2018-09-22 18:46:00', 6.8, 10, NULL, NULL, '', NULL, NULL, NULL),
 ('2018-09-22 23:09:00', 8.0, 50, 4, 14, '[Before Bed] After basketball.', NULL, NULL, NULL),
 ('2018-09-23 09:53:00', 5.1, 85, 8, 14, '[Breakfast] ', 2, NULL, NULL),
