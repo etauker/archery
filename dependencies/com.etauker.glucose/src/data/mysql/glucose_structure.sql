@@ -1,9 +1,8 @@
-USE etauker_glucose;
-
+USE `etauker_glucose`;
 --
 -- DROP TABLES
 --
--- DROP TABLE IF EXISTS TRANSACTION;
+DROP TABLE IF EXISTS `TRANSACTION`;
 
 --
 -- CREATE TABLES
@@ -16,33 +15,33 @@ USE etauker_glucose;
 --
 
 CREATE TABLE `TRANSACTION` (
-  `id` 	                CHAR(36) 		PRIMARY KEY,
+  `id` 	                char(36) 		PRIMARY KEY,
   `date_time`           datetime        DEFAULT NULL,
   `reading`             float(3,1)      DEFAULT NULL,
   `carbohydrates`       smallint(6)     DEFAULT NULL,
   `insulin_units_short` tinyint(3)      UNSIGNED DEFAULT NULL,
   `insulin_units_long`  tinyint(3)      UNSIGNED DEFAULT NULL,
+  `meal`                varchar(20)     DEFAULT NULL,
   `note`                text            ,
   `correction_units`    tinyint(3)      UNSIGNED DEFAULT NULL,
-  `created_by`		    CHAR(36)		,
-  `created_at`		    TIMESTAMP 		DEFAULT CURRENT_TIMESTAMP,
-  `updated_by`          CHAR(36)		,
-  `updated_at`          TIMESTAMP 		DEFAULT CURRENT_TIMESTAMP
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  `created_by`		    char(36)		,
+  `created_at`		    timestamp 		DEFAULT CURRENT_TIMESTAMP,
+  `updated_by`          char(36)		,
+  `updated_at`          timestamp 		DEFAULT CURRENT_TIMESTAMP
+) DEFAULT CHARSET=latin1;
 
 
 --
 -- ALTER TABLES
 --
 -- TRANSACTION
-DELIMITER #
-CREATE TRIGGER insert_uuid_TRANSACTION
-BEFORE INSERT ON TRANSACTION
-FOR EACH ROW
-BEGIN
+DELIMITER $$
+CREATE TRIGGER `insert_id_TRANSACTION`
+BEFORE INSERT ON `TRANSACTION`
+FOR EACH ROW BEGIN
     IF (NEW.id IS NULL OR NEW.id = '') THEN
         SET NEW.id = UUID();
     END IF;
-END;
-#
+END
+$$
 DELIMITER ;
