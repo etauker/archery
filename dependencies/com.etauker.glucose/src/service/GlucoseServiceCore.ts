@@ -15,9 +15,14 @@ class GlucoseServiceCore {
         const GlucoseErrorGenerator = require(paths.GlucoseErrorGeneratorPath);
         this.GlucoseTransaction = require(paths.GlucoseTransactionPath);
         this.persistence = new GlucosePersistenceManager(null, paths);
-        this.error = new GlucoseErrorGenerator("com.etauker.glucose", "service", "GlucoseServiceCore", [
-
-        ], paths);
+        this.error = new GlucoseErrorGenerator(
+            'com.etauker.glucose',
+            'service',
+            'GlucoseServiceCore',
+            [
+                
+            ],
+        paths);
     };
 
     //===========================================
@@ -48,14 +53,12 @@ class GlucoseServiceCore {
         });
     };
     public parseErrorForClient = (oError: IGlucoseError) => {
+        let oDefaultError = this.error.getError();
         let oParsedError: IGlucoseHttpError = {
-            code: "",
-            message: "",
-            status: 500
+            code: oError.code || oDefaultError.code,
+            message: oError.message || oDefaultError.message,
+            status: oError.http || oDefaultError.status
         }
-        oParsedError.message = oError.message;
-        oParsedError.code = oError.code;
-        oParsedError.status = oError.http ? oError.http : 500;
         return oParsedError;
     };
     public sendErrorToClient = (oResponse, oError) => {

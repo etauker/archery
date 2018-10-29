@@ -17,7 +17,6 @@ class GlucoseServiceCore {
             });
         };
         this.getTransaction = (sTransactionId, sUserId) => {
-            console.log(sUserId);
             return new Promise((fnResolve, fnReject) => {
                 this.persistence.getTransactionById(sTransactionId, sUserId)
                     .then(oResult => fnResolve(oResult))
@@ -32,14 +31,12 @@ class GlucoseServiceCore {
             });
         };
         this.parseErrorForClient = (oError) => {
+            let oDefaultError = this.error.getError();
             let oParsedError = {
-                code: "",
-                message: "",
-                status: 500
+                code: oError.code || oDefaultError.code,
+                message: oError.message || oDefaultError.message,
+                status: oError.http || oDefaultError.status
             };
-            oParsedError.message = oError.message;
-            oParsedError.code = oError.code;
-            oParsedError.status = oError.http ? oError.http : 500;
             return oParsedError;
         };
         this.sendErrorToClient = (oResponse, oError) => {
