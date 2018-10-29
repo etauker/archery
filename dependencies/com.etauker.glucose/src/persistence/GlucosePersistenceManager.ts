@@ -1,3 +1,4 @@
+var GlucoseTransactionInstance;
 class GlucosePersistenceManager {
 
     //===========================================
@@ -19,7 +20,7 @@ class GlucosePersistenceManager {
 
         const mysql = require('mysql');
         const ErrorGenerator = require(paths.GlucoseErrorGeneratorPath);
-        const GlucoseTransaction = require(paths.GlucoseTransactionPath);
+        GlucoseTransactionInstance = require(paths.GlucoseTransactionPath);
 
         // Objects
         this.error = new ErrorGenerator(
@@ -89,14 +90,25 @@ class GlucosePersistenceManager {
         });
     };
     /**
+     *  Retrieves a transaction from the database.
+     *  The values of those properties are the values that will be searched in the database.
+     *  @param {string} sId - The id of the transaction to retrieve.
+     *  @return {promise} Resolves to the transaction entry from the database.
+     */
+    public getTransactionById = function(sId: string) {
+        let oTransaction: GlucoseTransaction = new GlucoseTransactionInstance();
+        oTransaction.id = sId;
+        return this.getTransaction(oTransaction);
+    };
+    /**
      *  Retrieves a set of transactions from the database.
      *  The properties names of the provided object must match the database columns.
      *  The values of those properties are the values that will be searched in the database.
      *  @param {object} oTransactionFilter - The object containing the filter criteria for the transactions to be retrieved from the database.
      *  @return {promise} Resolves to an array of transactions from the database.
      */
-    public getTransactions = function(oTransactionFilter: GlucoseTransaction) {
-        let sQuery = `SELECT * FROM ${this.database}.\`TRANSACTION\` LIMIT 500;`;
+    public getTransactions = function(oTransactionFilter) {
+        let sQuery = `SELECT * FROM ${this.database}.\`TRANSACTION\` ORDER BY date_time DESC LIMIT 500;`;
         if (oTransactionFilter) sQuery = this._formSelectQuery('TRANSACTION', oTransactionFilter);
         return this._query(sQuery).then(aQueryResult => {
             return aQueryResult;

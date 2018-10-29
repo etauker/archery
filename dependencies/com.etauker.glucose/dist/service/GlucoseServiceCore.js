@@ -14,6 +14,11 @@ class GlucoseServiceCore {
                 fnResolve(this.persistence.getTransactions());
             });
         };
+        this.getTransaction = (sTransactionId) => {
+            return new Promise((fnResolve, fnReject) => {
+                fnResolve(this.persistence.getTransactionById(sTransactionId));
+            });
+        };
         this.saveTransaction = (oTransaction) => {
             return new Promise((fnResolve, fnReject) => {
                 fnResolve(true);
@@ -44,6 +49,7 @@ class GlucoseServiceCore {
         };
         const GlucosePersistenceManager = require(paths.GlucosePersistenceManagerPath);
         const GlucoseErrorGenerator = require(paths.GlucoseErrorGeneratorPath);
+        this.GlucoseTransaction = require(paths.GlucoseTransactionPath);
         this.persistence = new GlucosePersistenceManager(null, paths);
         this.error = new GlucoseErrorGenerator("com.etauker.glucose", "service", "GlucoseServiceCore", [], paths);
     }

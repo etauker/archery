@@ -35,53 +35,53 @@ class GlucoseTransaction {
     //===========================================
     //               PROPERTIES
     //===========================================
-    private _id:                 string;
-    private _createdAt:          Date|null;
-    private _updatedAt:          Date|null;
-    private _createdBy:          string|null;
-    private _updatedBy:          string|null;
-    private _dateTime:           Date|null;
-    private _reading:            number|null;
-    private _carbohydrates:      number|null;
-    private _insulinUnitsShort:  number|null;
-    private _insulinUnitsLong:   number|null;
-    private _correctionUnits:    number|null;
-    private _meal:               string|null;
-    private _note:               string|null;
+    public id:                 string;
+    public createdAt:          Date|null;
+    public updatedAt:          Date|null;
+    public createdBy:          string|null;
+    public updatedBy:          string|null;
+    public dateTime:           Date|null;
+    public reading:            number|null;
+    public carbohydrates:      number|null;
+    public insulinUnitsShort:  number|null;
+    public insulinUnitsLong:   number|null;
+    public correctionUnits:    number|null;
+    public meal:               string|null;
+    public note:               string|null;
 
-    //===========================================
-    //                  GETTERS
-    //===========================================
-    get id():                   string          { return this._id; }
-    get createdAt():            Date|null       { return this._createdAt; }
-    get updatedAt():            Date|null       { return this._updatedAt; }
-    get createdBy():            string|null     { return this._createdBy; }
-    get updatedBy():            string|null     { return this._updatedBy; }
-    get dateTime():             Date|null       { return this._dateTime; }
-    get reading():              number|null     { return this._reading; }
-    get carbohydrates():        number|null     { return this._carbohydrates; }
-    get insulinUnitsShort():    number|null     { return this._insulinUnitsShort; }
-    get insulinUnitsLong():     number|null     { return this._insulinUnitsLong; }
-    get correctionUnits():      number|null     { return this._correctionUnits; }
-    get meal():                 string|null     { return this._meal; }
-    get note():                 string|null     { return this._note; }
-
-    //===========================================
-    //                  SETTERS
-    //===========================================
-    set id(newId: string)                       { console.log('GlucoseTransaction.id is readonly and cannot be updated'); }
-    set createdAt(newCreatedAt: Date|null)      { console.log('GlucoseTransaction.createdAt is readonly and cannot be updated'); }
-    set updatedAt(newUpdatedAt: Date|null)      { console.log('GlucoseTransaction.updatedAt is readonly and cannot be updated'); }
-    set createdBy(newCreatedBy: string|null)                    { this._createdBy = newCreatedBy; }
-    set updatedBy(newUpdatedBy: string|null)                    { this._updatedBy = newUpdatedBy; }
-    set dateTime(newDateTime: Date|null)                        { this._dateTime = newDateTime; }
-    set reading(newReading: number|null)                        { this._reading = newReading; }
-    set carbohydrates(newCarbohydrates: number|null)            { this._carbohydrates = newCarbohydrates; }
-    set insulinUnitsShort(newInsulinUnitsShort: number|null)    { this._insulinUnitsShort = newInsulinUnitsShort; }
-    set insulinUnitsLong(newInsulinUnitsLong: number|null)      { this._insulinUnitsLong = newInsulinUnitsLong; }
-    set correctionUnits(newCorrectionUnits: number|null)        { this._correctionUnits = newCorrectionUnits; }
-    set meal(newMeal: string|null)                              { this._meal = newMeal; }
-    set note(newNote: string|null)                              { this._note = newNote; }
+    // //===========================================
+    // //                  GETTERS
+    // //===========================================
+    // get id():                   string          { return this._id; }
+    // get createdAt():            Date|null       { return this._createdAt; }
+    // get updatedAt():            Date|null       { return this._updatedAt; }
+    // get createdBy():            string|null     { return this._createdBy; }
+    // get updatedBy():            string|null     { return this._updatedBy; }
+    // get dateTime():             Date|null       { return this._dateTime; }
+    // get reading():              number|null     { return this._reading; }
+    // get carbohydrates():        number|null     { return this._carbohydrates; }
+    // get insulinUnitsShort():    number|null     { return this._insulinUnitsShort; }
+    // get insulinUnitsLong():     number|null     { return this._insulinUnitsLong; }
+    // get correctionUnits():      number|null     { return this._correctionUnits; }
+    // get meal():                 string|null     { return this._meal; }
+    // get note():                 string|null     { return this._note; }
+    //
+    // //===========================================
+    // //                  SETTERS
+    // //===========================================
+    // set id(newId: string)                                       { this._id = newId; }
+    // set createdAt(newCreatedAt: Date|null)                      { this._createdAt = newCreatedAt; }
+    // set updatedAt(newUpdatedAt: Date|null)                      { this._updatedAt = newUpdatedAt; }
+    // set createdBy(newCreatedBy: string|null)                    { this._createdBy = newCreatedBy; }
+    // set updatedBy(newUpdatedBy: string|null)                    { this._updatedBy = newUpdatedBy; }
+    // set dateTime(newDateTime: Date|null)                        { this._dateTime = newDateTime; }
+    // set reading(newReading: number|null)                        { this._reading = newReading; }
+    // set carbohydrates(newCarbohydrates: number|null)            { this._carbohydrates = newCarbohydrates; }
+    // set insulinUnitsShort(newInsulinUnitsShort: number|null)    { this._insulinUnitsShort = newInsulinUnitsShort; }
+    // set insulinUnitsLong(newInsulinUnitsLong: number|null)      { this._insulinUnitsLong = newInsulinUnitsLong; }
+    // set correctionUnits(newCorrectionUnits: number|null)        { this._correctionUnits = newCorrectionUnits; }
+    // set meal(newMeal: string|null)                              { this._meal = newMeal; }
+    // set note(newNote: string|null)                              { this._note = newNote; }
 
     //===========================================
     //                  CONVERTERS
@@ -114,4 +114,4 @@ class GlucoseTransaction {
 // `updated_at`            timestamp 		DEFAULT CURRENT_TIMESTAMP
 
 
-module.exports.GlucoseTransaction = GlucoseTransaction;
+module.exports = GlucoseTransaction;

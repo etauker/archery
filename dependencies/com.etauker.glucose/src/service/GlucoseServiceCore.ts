@@ -5,6 +5,7 @@ class GlucoseServiceCore {
     //===========================================
     private persistence;
     private error: any;
+    private GlucoseTransaction;
 
     //===========================================
     //                CONSTRUCTOR
@@ -12,6 +13,7 @@ class GlucoseServiceCore {
     constructor(paths) {
         const GlucosePersistenceManager = require(paths.GlucosePersistenceManagerPath);
         const GlucoseErrorGenerator = require(paths.GlucoseErrorGeneratorPath);
+        this.GlucoseTransaction = require(paths.GlucoseTransactionPath);
         this.persistence = new GlucosePersistenceManager(null, paths);
         this.error = new GlucoseErrorGenerator("com.etauker.glucose", "service", "GlucoseServiceCore", [
 
@@ -29,8 +31,16 @@ class GlucoseServiceCore {
             fnResolve(this.persistence.getTransactions());
         });
     };
+    public getTransaction = (sTransactionId: string) => {
+        return new Promise((fnResolve, fnReject) => {
+            fnResolve(this.persistence.getTransactionById(sTransactionId));
+        });
+    };
     public saveTransaction = (oTransaction) => {
         return new Promise((fnResolve, fnReject) => {
+            
+
+
             fnResolve(true);
             //     fnResolve({
             //         sessionTypes: this.persistence.getSessionTypes(),

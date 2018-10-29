@@ -1,3 +1,4 @@
+var GlucoseTransactionInstance;
 class GlucosePersistenceManager {
     //===========================================
     //               CONSTRUCTOR
@@ -31,6 +32,17 @@ class GlucosePersistenceManager {
             });
         };
         /**
+         *  Retrieves a transaction from the database.
+         *  The values of those properties are the values that will be searched in the database.
+         *  @param {string} sId - The id of the transaction to retrieve.
+         *  @return {promise} Resolves to the transaction entry from the database.
+         */
+        this.getTransactionById = function (sId) {
+            let oTransaction = new GlucoseTransactionInstance();
+            oTransaction.id = sId;
+            return this.getTransaction(oTransaction);
+        };
+        /**
          *  Retrieves a set of transactions from the database.
          *  The properties names of the provided object must match the database columns.
          *  The values of those properties are the values that will be searched in the database.
@@ -38,7 +50,7 @@ class GlucosePersistenceManager {
          *  @return {promise} Resolves to an array of transactions from the database.
          */
         this.getTransactions = function (oTransactionFilter) {
-            let sQuery = `SELECT * FROM ${this.database}.\`TRANSACTION\` LIMIT 500;`;
+            let sQuery = `SELECT * FROM ${this.database}.\`TRANSACTION\` ORDER BY date_time DESC LIMIT 500;`;
             if (oTransactionFilter)
                 sQuery = this._formSelectQuery('TRANSACTION', oTransactionFilter);
             return this._query(sQuery).then(aQueryResult => {
@@ -163,7 +175,7 @@ class GlucosePersistenceManager {
         };
         const mysql = require('mysql');
         const ErrorGenerator = require(paths.GlucoseErrorGeneratorPath);
-        const GlucoseTransaction = require(paths.GlucoseTransactionPath);
+        GlucoseTransactionInstance = require(paths.GlucoseTransactionPath);
         // Objects
         this.error = new ErrorGenerator("com.etauker.glucose", "persistence", "GlucosePersistenceManager", [
             { code: 1, http: 500, message: "Missing parameters" },
