@@ -27,7 +27,7 @@ module.exports = function(app, paths) {
         if (!sJwt) core.sendErrorToClient(res, securityValidator.getLastError());
 
         token.verifyToken(sJwt, "com.etauker.glucose.Diabetic")
-            .then(core.getTransactions)
+            .then(oJwt => core.getTransactions(oJwt.sub))
             .then(aRecordedTransactions => res.status(200).send(aRecordedTransactions))
             .catch(core.sendErrorToClient.bind(this, res))
     });
@@ -40,7 +40,7 @@ module.exports = function(app, paths) {
         if (!sId) core.sendErrorToClient(res, glucoseValidator.getLastError());
 
         token.verifyToken(sJwt, "com.etauker.glucose.Diabetic")
-            .then(oJwt => core.getTransaction(sId))
+            .then(oJwt => core.getTransaction(sId, oJwt.sub))
             .then(aRecordedTransactions => res.status(200).send(aRecordedTransactions))
             .catch(core.sendErrorToClient.bind(this, res))
     });
@@ -50,7 +50,7 @@ module.exports = function(app, paths) {
         if (!sJwt) core.sendErrorToClient(res, securityValidator.getLastError());
 
         token.verifyToken(sJwt, "com.etauker.glucose.Diabetic")
-            .then(core.getTransactionOptions)
+            .then(oJwt => core.getTransactionOptions(oJwt.sub))
             .then(oTransactionOptions => res.status(200).send(oTransactionOptions))
             .catch(core.sendErrorToClient.bind(this, res))
     });
@@ -63,7 +63,7 @@ module.exports = function(app, paths) {
         if (!oTransaction) core.sendErrorToClient(res, glucoseValidator.getLastError());
 
         token.verifyToken(sJwt, "com.etauker.glucose.Diabetic")
-            .then(() => core.saveTransaction(oTransaction))
+            .then((oJwt) => core.saveTransaction(oTransaction, oJwt.sub))
             .then(() => res.status(201).send())
             .catch(core.sendErrorToClient.bind(this, res))
     });

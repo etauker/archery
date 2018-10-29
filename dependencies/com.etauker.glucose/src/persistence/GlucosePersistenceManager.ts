@@ -82,7 +82,8 @@ class GlucosePersistenceManager {
      *  @param {object} oTransaction - The object representing the transaction to be retrieved from the database.
      *  @return {promise} Resolves to the transaction entry from the database.
      */
-    public getTransaction = function(oTransactionObject: GlucoseTransaction) {
+    public getTransaction = function(oTransactionObject: GlucoseTransaction, sUserId: string) {
+        oTransactionObject.createdBy = sUserId;
         let oTransaction = GlucoseTransactionInstance.toDataLayerObject(oTransactionObject);
         var sQuery = this._formSelectQuery('TRANSACTION', oTransaction);
         return this._query(sQuery).then(aQueryResult => {
@@ -96,9 +97,10 @@ class GlucosePersistenceManager {
      *  @param {string} sId - The id of the transaction to retrieve.
      *  @return {promise} Resolves to the transaction entry from the database.
      */
-    public getTransactionById = function(sId: string) {
+    public getTransactionById = function(sId: string, sUserId: string) {
         let oTransaction: GlucoseTransaction = new GlucoseTransactionInstance();
         oTransaction.id = sId;
+        oTransaction.createdBy = sUserId;
         return this.getTransaction(oTransaction);
     };
     /**
@@ -108,9 +110,12 @@ class GlucosePersistenceManager {
      *  @param {object} oTransactionFilter - The object containing the filter criteria for the transactions to be retrieved from the database.
      *  @return {promise} Resolves to an array of transactions from the database.
      */
-    public getTransactions = function(oTransactionFilter) {
-        let sQuery = `SELECT * FROM ${this.database}.\`TRANSACTION\` ORDER BY date_time DESC LIMIT 500;`;
-        if (oTransactionFilter) sQuery = this._formSelectQuery('TRANSACTION', oTransactionFilter);
+    public getTransactions = function(oTransactionFilter, sUserId: string) {
+        let sQuery = `SELECT * FROM ${this.database}.\`TRANSACTION\` WHERE \`created_by\` = ${sUserId} ORDER BY date_time DESC LIMIT 500;`;
+        if (oTransactionFilter) {
+            oTransactionFilter.created_by = sUserId;
+            sQuery = this._formSelectQuery('TRANSACTION', oTransactionFilter);
+        }
         return this._query(sQuery).then(aQueryResult => {
             return aQueryResult;
         });
@@ -120,7 +125,9 @@ class GlucosePersistenceManager {
      *  @param {com.etauker.glucose.data.GlucoseTransaction} oTransaction - The object representing the user that should be saved in the database.
      *  @return {promise} Resolves to the database response object for the transaction.
      */
-    public saveTransaction = function(oTransactionObject: GlucoseTransaction) {
+    public saveTransaction = function(oTransactionObject: GlucoseTransaction, sUserId: string) {
+        oTransactionObject.createdBy = sUserId;
+        oTransactionObject.updatedBy = sUserId;
         let oTransaction = GlucoseTransactionInstance.toDataLayerObject(oTransactionObject);
         var sQuery = this._formInsertQuery("TRANSACTION", [oTransaction], Object.keys(oTransaction))
         return this._query(sQuery).then(oQueryResult => {

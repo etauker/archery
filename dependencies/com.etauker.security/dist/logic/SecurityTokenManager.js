@@ -80,8 +80,8 @@ SecurityTokenManager.prototype.verifyToken = function(sToken, sRole) {
         // Verify token
         try {
             oToken = await jwt.verify(sToken, process.env.JWT_SECRET, oOptions);
-            console.log("=== oToken ===");
-            console.log(oToken);
+            // console.log("=== oToken ===");
+            // console.log(oToken);
 
             // Check the if the session has been invalidated in the database
             const bInvalidated = await this.persistenceManager.checkSessionValidity(oToken.id)
@@ -96,7 +96,7 @@ SecurityTokenManager.prototype.verifyToken = function(sToken, sRole) {
                     if (!bHasRole) { fnReject(this.error.getError(5)) }
                 }
 
-                fnResolve(sToken);
+                fnResolve(oToken);
             }
         }
         catch (oError) {

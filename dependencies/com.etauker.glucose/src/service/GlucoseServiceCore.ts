@@ -26,25 +26,28 @@ class GlucoseServiceCore {
     public getTransactionOptions = () => {
         return new Promise(fnResolve => fnResolve({ meals: this.persistence.getMealTypes() }));
     };
-    public getTransactions = () => {
+    public getTransactions = (sUserId: string) => {
         return new Promise((fnResolve, fnReject) => {
-            fnResolve(this.persistence.getTransactions());
+            this.persistence.getTransactions(sUserId)
+                .then(aResult => fnResolve(aResult))
+                .catch(oError => fnReject(oError))
         });
     };
-    public getTransaction = (sTransactionId: string) => {
+    public getTransaction = (sTransactionId: string, sUserId: string) => {
         return new Promise((fnResolve, fnReject) => {
-            fnResolve(this.persistence.getTransactionById(sTransactionId));
+            this.persistence.getTransactionById(sTransactionId, sUserId)
+                .then(oResult => fnResolve(oResult))
+                .catch(oError => fnReject(oError))
         });
     };
-    public saveTransaction = (oTransaction: GlucoseTransaction) => {
+    public saveTransaction = (oTransaction: GlucoseTransaction, sUserId: string) => {
         return new Promise((fnResolve, fnReject) => {
-            this.persistence.saveTransaction(oTransaction)
+            this.persistence.saveTransaction(oTransaction, sUserId)
                 .then(() => fnResolve())
                 .catch(oError => fnReject(oError))
         });
     };
     public parseErrorForClient = (oError: IGlucoseError) => {
-        console.log(oError);
         let oParsedError: IGlucoseHttpError = {
             code: "",
             message: "",

@@ -9,25 +9,29 @@ class GlucoseServiceCore {
         this.getTransactionOptions = () => {
             return new Promise(fnResolve => fnResolve({ meals: this.persistence.getMealTypes() }));
         };
-        this.getTransactions = () => {
+        this.getTransactions = (sUserId) => {
             return new Promise((fnResolve, fnReject) => {
-                fnResolve(this.persistence.getTransactions());
+                this.persistence.getTransactions(sUserId)
+                    .then(aResult => fnResolve(aResult))
+                    .catch(oError => fnReject(oError));
             });
         };
-        this.getTransaction = (sTransactionId) => {
+        this.getTransaction = (sTransactionId, sUserId) => {
+            console.log(sUserId);
             return new Promise((fnResolve, fnReject) => {
-                fnResolve(this.persistence.getTransactionById(sTransactionId));
+                this.persistence.getTransactionById(sTransactionId, sUserId)
+                    .then(oResult => fnResolve(oResult))
+                    .catch(oError => fnReject(oError));
             });
         };
-        this.saveTransaction = (oTransaction) => {
+        this.saveTransaction = (oTransaction, sUserId) => {
             return new Promise((fnResolve, fnReject) => {
-                this.persistence.saveTransaction(oTransaction)
+                this.persistence.saveTransaction(oTransaction, sUserId)
                     .then(() => fnResolve())
                     .catch(oError => fnReject(oError));
             });
         };
         this.parseErrorForClient = (oError) => {
-            console.log(oError);
             let oParsedError = {
                 code: "",
                 message: "",
