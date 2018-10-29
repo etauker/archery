@@ -1,5 +1,5 @@
 USE etauker_glucose;
-TRUNCATE TABLE `TRANSACTION`;
+-- TRUNCATE TABLE `TRANSACTION`;
 INSERT INTO `TRANSACTION` (`date_time`, `reading`, `carbohydrates`, `insulin_units_short`, `insulin_units_long`, `meal`, `note`, `correction_units`, `created_at`, `updated_at`) VALUES
 ('2017-11-19 21:40:00', 4.7, NULL, NULL, NULL, '', '', NULL, NULL, NULL),
 ('2017-11-15 00:21:00', 16.9, NULL, 4, 14, 'Before Work', '', NULL, NULL, NULL),
