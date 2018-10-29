@@ -13,7 +13,7 @@ const port = process.env.PORT || 8888;
 const archeryWebappEndpoint = '/archery';
 const archeryWebappDirectory = __dirname + "/presentation/com.etauker.archery/archery-ui5/webapp";
 const url = 'http://localhost:' + port + archeryWebappEndpoint;
-const modules = [ "persistence", "logic", "service", "utils" ];
+const modules = [ "data", "persistence", "logic", "service", "utils" ];
 const dependencies = [
     "com.etauker.security",
     "com.etauker.archery",
@@ -26,6 +26,7 @@ app.use(bodyParser.json());         // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
     extended: true
 }));
+global.paths = {};
 
 // Print configuration
 console.log(`--- App configuration ---`);
@@ -49,7 +50,8 @@ dependencies.forEach(library => {
                 count++;
                 filename = filename.replace(".js", "");
                 let propertyName = `${filename}Path`;
-                global[propertyName] = `${path}${filename}`;
+                global.paths[propertyName] = `${path}${filename}`;
+                global[propertyName] = `${path}${filename}`;//Temp
             });
         }
         console.log(`Registered ${count} dependency paths for ${module}`);
@@ -61,7 +63,7 @@ var securityRouter = require(SecurityServicePath)(app);
 app.use("/security", securityRouter)
 var archeryRouter = require(ArcheryServicePath)(app);
 app.use("/api", archeryRouter)
-var glucoseRouter = require(GlucoseServicePath)(app);
+var glucoseRouter = require(GlucoseServicePath)(app, global.paths);
 app.use("/glucose", glucoseRouter)
 
 // Import the webapp

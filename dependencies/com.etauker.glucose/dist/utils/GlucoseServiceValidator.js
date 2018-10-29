@@ -1,6 +1,23 @@
-const GlucoseErrorGenerator = require(GlucoseErrorGeneratorPath);
 class GlucoseServiceValidator {
-    constructor() {
+    //===========================================
+    //               CONSTRUCTOR
+    //===========================================
+    constructor(paths) {
+        this.errorMessages = [];
+        //===========================================
+        //             PUBLIC FUNCTIONS
+        //===========================================
+        this.validateTransaction = function (oTransaction) {
+            if (!oTransaction) {
+                this.lastError = this.error.getError(1);
+                return null;
+            }
+            return oTransaction;
+        };
+        this.getLastError = function () {
+            return this.lastError;
+        };
+        const GlucoseErrorGenerator = require(paths.GlucoseErrorGeneratorPath);
         this.errorMessages = [
             { code: 1, http: 401, message: "Invalid username." }
         ];
@@ -9,35 +26,4 @@ class GlucoseServiceValidator {
     }
 }
 ;
-GlucoseServiceValidator.prototype.validateTransaction = function (oTransaction) {
-    if (!oTransaction) {
-        this.lastError = this.error.getError(1);
-        return null;
-    }
-    return oTransaction;
-};
-// GlucoseServiceValidator.prototype.validatePassword = function(sPassword) {
-//     if (!sPassword) {
-//         this.lastError = this.error.getError(2);
-//         return null;
-//     }
-//     return sPassword;
-// };
-// GlucoseServiceValidator.prototype.validateToken = function(sToken) {
-//     if (!sToken) {
-//         this.lastError = this.error.getError(5);
-//         return null;
-//     }
-//     return sToken;
-// };
-// GlucoseServiceValidator.prototype.extractAndValidateToken = function(sToken) {
-//     if (!sToken) {
-//         this.lastError = this.error.getError(5);
-//         return null;
-//     }
-//     return sToken.replace("Bearer ", "");
-// };
-GlucoseServiceValidator.prototype.getLastError = function () {
-    return this.lastError;
-};
 module.exports = GlucoseServiceValidator;

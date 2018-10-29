@@ -1,9 +1,9 @@
-interface DataLayerGlucoseTransaction {
+interface IDataLayerGlucoseTransaction {
     readonly id:            string;
     readonly created_at:    number|null;
-    readonly created_by:    string|null;
     readonly updated_at:    number|null;
-    readonly updated_by:    string|null;
+    created_by:             string|null;
+    updated_by:             string|null;
     date_time:              number|null;
     reading:                number|null;
     carbohydrates:          number|null;
@@ -14,12 +14,12 @@ interface DataLayerGlucoseTransaction {
     note:                   string|null;
 }
 
-interface PresentationLayerGlucoseTransaction {
+interface IPresentationLayerGlucoseTransaction {
     readonly id:            string;
     readonly createdAt:     number|null;
-    readonly createdBy:     string|null;
     readonly updatedAt:     number|null;
-    updatedBy:              string|null;
+    readonly createdBy:     string|null;
+    readonly updatedBy:     string|null;
     dateTime:               number|null;
     reading:                number|null;
     carbohydrates:          number|null;
@@ -31,126 +31,68 @@ interface PresentationLayerGlucoseTransaction {
 }
 
 class GlucoseTransaction {
-    private id:                 string;
-    private createdAt:          Date|null;
-    private createdBy:          string|null;
-    private updatedAt:          Date|null;
-    private updatedBy:          string|null;
-    private dateTime:           Date|null;
-    private reading:            number|null;
-    private carbohydrates:      number|null;
-    private insulinUnitsShort:  number|null;
-    private insulinUnitsLong:   number|null;
-    private correctionUnits:    number|null;
-    private meal:               string|null;
-    private note:               string|null;
 
-    // Getters
-    get id(): string {
-        return this.id;
-    }
-    get createdAt(): Date|null {
-        return this.createdAt;
-    }
-    get createdBy(): string|null {
-        return this.createdBy;
-    }
-    get updatedAt(): Date|null {
-        return this.updatedAt;
-    }
-    get updatedBy(): string|null {
-        return this.updatedBy;
-    }
-    get dateTime(): Date|null {
-        return this.dateTime;
-    }
-    get reading(): number|null {
-        return this.reading;
-    }
-    get carbohydrates(): number|null {
-        return this.carbohydrates;
-    }
-    get insulinUnitsShort(): number|null {
-        return this.insulinUnitsShort;
-    }
-    get insulinUnitsLong(): number|null {
-        return this.insulinUnitsLong;
-    }
-    get correctionUnits(): number|null {
-        return this.correctionUnits;
-    }
-    get meal(): string|null {
-        return this.meal;
-    }
-    get note(): string|null {
-        return this.note;
-    }
+    //===========================================
+    //               PROPERTIES
+    //===========================================
+    private _id:                 string;
+    private _createdAt:          Date|null;
+    private _updatedAt:          Date|null;
+    private _createdBy:          string|null;
+    private _updatedBy:          string|null;
+    private _dateTime:           Date|null;
+    private _reading:            number|null;
+    private _carbohydrates:      number|null;
+    private _insulinUnitsShort:  number|null;
+    private _insulinUnitsLong:   number|null;
+    private _correctionUnits:    number|null;
+    private _meal:               string|null;
+    private _note:               string|null;
 
-    // Setters
-    set id(newId: string) {
-        console.log('GlucoseTransaction.id is readonly and cannot be updated');
-        return this;
-    }
-    set createdAt(newCreatedAt: Date|null) {
-        console.log('GlucoseTransaction.createdAt is readonly and cannot be updated');
-        return this;
-    }
-    set createdBy(newCreatedBy: string|null) {
-        console.log('GlucoseTransaction.createdBy is readonly and cannot be updated');
-        return this;
-    }
-    set updatedAt(newUpdatedAt: Date|null) {
-        console.log('GlucoseTransaction.updatedAt is readonly and cannot be updated');
-        return this;
-    }
-    set updatedBy(newUpdatedBy: string|null) {
-        // let idRegex = /.{8}-.{4}-.{4}-.{4}-.{12}/g;
-        // if (!idRegex.test(newUpdatedBy)) {
-        //     console.log('GlucoseTransaction.updatedBy cannot be set to an invalid UUID')
-        // } else {
-            this.updatedBy = newUpdatedBy;
-        // }
-        return this;
-    }
-    set dateTime(newDateTime: Date|null) {
-        this.dateTime = newDateTime;
-        return this;
-    }
-    set reading(newReading: number|null) {
-        this.reading = newReading;
-        return this;
-    }
-    set carbohydrates(newCarbohydrates: number|null) {
-        this.carbohydrates = newCarbohydrates;
-        return this;
-    }
-    set insulinUnitsShort(newInsulinUnitsShort: number|null) {
-        this.insulinUnitsShort = newInsulinUnitsShort;
-        return this;
-    }
-    set insulinUnitsLong(newInsulinUnitsLong: number|null) {
-        this.insulinUnitsLong = newInsulinUnitsLong;
-        return this;
-    }
-    set correctionUnits(newCorrectionUnits: number|null) {
-        this.correctionUnits = newCorrectionUnits;
-        return this;
-    }
-    set meal(newMeal: string|null) {
-        this.meal = newMeal;
-        return this;
-    }
-    set note(newNote: string|null) {
-        this.note = newNote;
-        return this;
-    }
+    //===========================================
+    //                  GETTERS
+    //===========================================
+    get id():                   string          { return this._id; }
+    get createdAt():            Date|null       { return this._createdAt; }
+    get updatedAt():            Date|null       { return this._updatedAt; }
+    get createdBy():            string|null     { return this._createdBy; }
+    get updatedBy():            string|null     { return this._updatedBy; }
+    get dateTime():             Date|null       { return this._dateTime; }
+    get reading():              number|null     { return this._reading; }
+    get carbohydrates():        number|null     { return this._carbohydrates; }
+    get insulinUnitsShort():    number|null     { return this._insulinUnitsShort; }
+    get insulinUnitsLong():     number|null     { return this._insulinUnitsLong; }
+    get correctionUnits():      number|null     { return this._correctionUnits; }
+    get meal():                 string|null     { return this._meal; }
+    get note():                 string|null     { return this._note; }
 
-    fromDataLayerObject(oObject) {
+    //===========================================
+    //                  SETTERS
+    //===========================================
+    set id(newId: string)                       { console.log('GlucoseTransaction.id is readonly and cannot be updated'); }
+    set createdAt(newCreatedAt: Date|null)      { console.log('GlucoseTransaction.createdAt is readonly and cannot be updated'); }
+    set updatedAt(newUpdatedAt: Date|null)      { console.log('GlucoseTransaction.updatedAt is readonly and cannot be updated'); }
+    set createdBy(newCreatedBy: string|null)                    { this._createdBy = newCreatedBy; }
+    set updatedBy(newUpdatedBy: string|null)                    { this._updatedBy = newUpdatedBy; }
+    set dateTime(newDateTime: Date|null)                        { this._dateTime = newDateTime; }
+    set reading(newReading: number|null)                        { this._reading = newReading; }
+    set carbohydrates(newCarbohydrates: number|null)            { this._carbohydrates = newCarbohydrates; }
+    set insulinUnitsShort(newInsulinUnitsShort: number|null)    { this._insulinUnitsShort = newInsulinUnitsShort; }
+    set insulinUnitsLong(newInsulinUnitsLong: number|null)      { this._insulinUnitsLong = newInsulinUnitsLong; }
+    set correctionUnits(newCorrectionUnits: number|null)        { this._correctionUnits = newCorrectionUnits; }
+    set meal(newMeal: string|null)                              { this._meal = newMeal; }
+    set note(newNote: string|null)                              { this._note = newNote; }
+
+    //===========================================
+    //                  CONVERTERS
+    //===========================================
+    fromDataLayerObject(oObject: IDataLayerGlucoseTransaction) {
+    console.log(oObject);
         console.log("Generating GlucoseTransaction from DataLayerObject.");
         return this;
     }
-
-    fromPresentationLayerObject(oObject) {
+    fromPresentationLayerObject(oObject: IPresentationLayerGlucoseTransaction) {
+        console.log(oObject);
         console.log("Generating GlucoseTransaction from PresentationLayerObject.");
         return this;
     }
@@ -172,6 +114,4 @@ class GlucoseTransaction {
 // `updated_at`            timestamp 		DEFAULT CURRENT_TIMESTAMP
 
 
-module.exports.DataLayerGlucoseTransaction = DataLayerGlucoseTransaction;
-module.exports.PresentationLayerGlucoseTransaction = PresentationLayerGlucoseTransaction;
 module.exports.GlucoseTransaction = GlucoseTransaction;
