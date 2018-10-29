@@ -110,11 +110,12 @@ class GlucosePersistenceManager {
      *  @param {object} oTransactionFilter - The object containing the filter criteria for the transactions to be retrieved from the database.
      *  @return {promise} Resolves to an array of transactions from the database.
      */
-    public getTransactions = function(oTransactionFilter, sUserId: string) {
+    public getTransactions = function(oTransactionFilter: GlucoseTransaction, sUserId: string) {
         let sQuery = `SELECT * FROM ${this.database}.\`TRANSACTION\` WHERE \`created_by\` = ${sUserId} ORDER BY date_time DESC LIMIT 500;`;
         if (oTransactionFilter) {
-            oTransactionFilter.created_by = sUserId;
-            sQuery = this._formSelectQuery('TRANSACTION', oTransactionFilter);
+            let oTransaction = GlucoseTransactionInstance.toDataLayerObject(oTransactionFilter);
+            console.log(oTransactionFilter)
+            sQuery = this._formSelectQuery('TRANSACTION', oTransaction);
         }
         return this._query(sQuery).then(aQueryResult => {
             return aQueryResult;

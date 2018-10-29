@@ -5,6 +5,9 @@
         "target": "es6"
     },
     "include": [
-        "./dependencies/com.etauker.glucose/src/**/*"
+        "./dependencies/com.etauker.glucose/src/data/**/*",
+        "./dependencies/com.etauker.glucose/src/persistence/**/*",
+        "./dependencies/com.etauker.glucose/src/service/**/*",
+        "./dependencies/com.etauker.glucose/src/utils/**/*"
     ]
 }

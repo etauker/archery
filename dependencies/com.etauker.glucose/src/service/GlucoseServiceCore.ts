@@ -1,3 +1,5 @@
+var GlucoseTransactionInstance;
+
 class GlucoseServiceCore {
 
     //===========================================
@@ -13,16 +15,15 @@ class GlucoseServiceCore {
     constructor(paths) {
         const GlucosePersistenceManager = require(paths.GlucosePersistenceManagerPath);
         const GlucoseErrorGenerator = require(paths.GlucoseErrorGeneratorPath);
-        this.GlucoseTransaction = require(paths.GlucoseTransactionPath);
+        GlucoseTransactionInstance = require(paths.GlucoseTransactionPath);
         this.persistence = new GlucosePersistenceManager(null, paths);
         this.error = new GlucoseErrorGenerator(
             'com.etauker.glucose',
             'service',
             'GlucoseServiceCore',
-            [
-                
-            ],
-        paths);
+            [],
+            paths
+        );
     };
 
     //===========================================
@@ -32,36 +33,27 @@ class GlucoseServiceCore {
         return new Promise(fnResolve => fnResolve({ meals: this.persistence.getMealTypes() }));
     };
     public getTransactions = (sUserId: string) => {
-        return new Promise((fnResolve, fnReject) => {
-            this.persistence.getTransactions(sUserId)
-                .then(aResult => fnResolve(aResult))
-                .catch(oError => fnReject(oError))
-        });
+        let oTransaction: GlucoseTransaction = new GlucoseTransactionInstance();
+        oTransaction.createdBy = sUserId;
+        return this.persistence.getTransactions(oTransaction);
     };
     public getTransaction = (sTransactionId: string, sUserId: string) => {
-        return new Promise((fnResolve, fnReject) => {
-            this.persistence.getTransactionById(sTransactionId, sUserId)
-                .then(oResult => fnResolve(oResult))
-                .catch(oError => fnReject(oError))
-        });
+        return this.persistence.getTransactionById(sTransactionId, sUserId);
     };
     public saveTransaction = (oTransaction: GlucoseTransaction, sUserId: string) => {
-        return new Promise((fnResolve, fnReject) => {
-            this.persistence.saveTransaction(oTransaction, sUserId)
-                .then(() => fnResolve())
-                .catch(oError => fnReject(oError))
-        });
+        return this.persistence.saveTransaction(oTransaction, sUserId);
     };
     public parseErrorForClient = (oError: IGlucoseError) => {
         let oDefaultError = this.error.getError();
         let oParsedError: IGlucoseHttpError = {
             code: oError.code || oDefaultError.code,
             message: oError.message || oDefaultError.message,
-            status: oError.http || oDefaultError.status
+            status: oError.http || oDefaultError.http
         }
         return oParsedError;
     };
     public sendErrorToClient = (oResponse, oError) => {
+        console.log(oError);
         const oParsedError: IGlucoseHttpError = this.parseErrorForClient(oError);
         oResponse.status(oParsedError.status).send(oParsedError);
     };
