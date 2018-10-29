@@ -1,10 +1,10 @@
 interface IDataLayerGlucoseTransaction {
-    readonly id:            string;
-    readonly created_at:    number|null;
-    readonly updated_at:    number|null;
+    id:                     string;
+    created_at:             string|null;
+    updated_at:             string|null;
     created_by:             string|null;
     updated_by:             string|null;
-    date_time:              number|null;
+    date_time:              string|null;
     reading:                number|null;
     carbohydrates:          number|null;
     insulin_units_short:    number|null;
@@ -15,11 +15,7 @@ interface IDataLayerGlucoseTransaction {
 }
 
 interface IPresentationLayerGlucoseTransaction {
-    readonly id:            string;
-    readonly createdAt:     number|null;
-    readonly updatedAt:     number|null;
-    readonly createdBy:     string|null;
-    readonly updatedBy:     string|null;
+    id:                     string;
     dateTime:               number|null;
     reading:                number|null;
     carbohydrates:          number|null;
@@ -65,7 +61,7 @@ class GlucoseTransaction {
     // get correctionUnits():      number|null     { return this._correctionUnits; }
     // get meal():                 string|null     { return this._meal; }
     // get note():                 string|null     { return this._note; }
-    //
+
     // //===========================================
     // //                  SETTERS
     // //===========================================
@@ -86,32 +82,90 @@ class GlucoseTransaction {
     //===========================================
     //                  CONVERTERS
     //===========================================
-    fromDataLayerObject(oObject: IDataLayerGlucoseTransaction) {
-    console.log(oObject);
+    public static fromDataLayerObject = (oObject: IDataLayerGlucoseTransaction): GlucoseTransaction => {
         console.log("Generating GlucoseTransaction from DataLayerObject.");
-        return this;
+        let instance = Object.create(GlucoseTransaction);
+        instance.id = oObject.id || null;
+        instance.createdAt = (oObject.created_at ? new Date(oObject.created_at) : null);
+        instance.updatedAt = (oObject.updated_at ? new Date(oObject.updated_at) : null);
+        instance.createdBy = oObject.created_by || null;
+        instance.updatedBy = oObject.updated_by || null;
+        instance.dateTime = (oObject.date_time ? new Date(oObject.date_time) : null);
+        instance.reading = oObject.reading || null;
+        instance.carbohydrates = oObject.carbohydrates || null;
+        instance.insulinUnitsShort = oObject.insulin_units_short || null;
+        instance.insulinUnitsLong = oObject.insulin_units_long || null;
+        instance.correctionUnits = oObject.correction_units || null;
+        instance.meal = oObject.meal || null;
+        instance.note = oObject.note || null;
+        return instance;
     }
-    fromPresentationLayerObject(oObject: IPresentationLayerGlucoseTransaction) {
-        console.log(oObject);
+    public static fromPresentationLayerObject = (oObject: IPresentationLayerGlucoseTransaction): GlucoseTransaction => {
         console.log("Generating GlucoseTransaction from PresentationLayerObject.");
-        return this;
+        let instance = Object.create(GlucoseTransaction);
+        instance.id = oObject.id || null;
+        instance.createdAt = null;
+        instance.updatedAt = null;
+        instance.createdBy = null;
+        instance.updatedBy = null;
+        instance.dateTime = new Date(oObject.dateTime) || null;
+        instance.reading = oObject.reading || null;
+        instance.carbohydrates = oObject.carbohydrates || null;
+        instance.insulinUnitsShort = oObject.insulinUnitsShort || null;
+        instance.insulinUnitsLong = oObject.insulinUnitsLong || null;
+        instance.correctionUnits = oObject.correctionUnits || null;
+        instance.meal = oObject.meal || null;
+        instance.note = oObject.note || null;
+        return instance;
     }
+    public static toDataLayerObject = (oObject: GlucoseTransaction): IDataLayerGlucoseTransaction => {
+        console.log("Generating DataLayerObject from GlucoseTransaction.");
 
+        let instance = {
+            id: oObject.id || null,
+            created_at: (oObject.createdAt ? GlucoseTransaction.formatDateTime(oObject.createdAt) : null),
+            updated_at: (oObject.updatedAt ? GlucoseTransaction.formatDateTime(oObject.updatedAt) : null),
+            created_by: oObject.createdBy || null,
+            updated_by: oObject.updatedBy || null,
+            date_time: (oObject.dateTime ? GlucoseTransaction.formatDateTime(oObject.dateTime) : null),
+            reading: oObject.reading || null,
+            carbohydrates: oObject.carbohydrates || null,
+            insulin_units_short: oObject.insulinUnitsShort || null,
+            insulin_units_long: oObject.insulinUnitsLong || null,
+            correction_units: oObject.correctionUnits || null,
+            meal: oObject.meal || null,
+            note: oObject.note || null
+        }
+        instance = GlucoseTransaction.removeNullProperties(instance);
+        return instance;
+    }
+    public static toPresentationLayerObject = (oObject: GlucoseTransaction): IPresentationLayerGlucoseTransaction => {
+        console.log("Generating PresentationLayerObject from GlucoseTransaction.");
+
+        let instance = {
+            id: oObject.id || null,
+            dateTime: oObject.dateTime ? oObject.dateTime.valueOf() : null,
+            reading: oObject.reading || null,
+            carbohydrates: oObject.carbohydrates || null,
+            insulinUnitsShort: oObject.insulinUnitsShort || null,
+            insulinUnitsLong: oObject.insulinUnitsLong || null,
+            correctionUnits: oObject.correctionUnits || null,
+            meal: oObject.meal || null,
+            note: oObject.note || null
+        }
+        instance = GlucoseTransaction.removeNullProperties(instance);
+        return instance;
+    }
+    public static removeNullProperties = (oObject) => {
+        for (let property in oObject) {
+            if (oObject[property] === null) delete oObject[property];
+        }
+        return oObject;
+    }
+    public static formatDateTime = (oDate: Date): string => {
+        let sDateString = oDate.toISOString().slice(0, 19).replace('T', ' ');
+        return sDateString;
+    }
 }
-
-// `id` 	                char(36) 		PRIMARY KEY,
-// `date_time`             datetime        DEFAULT NULL,
-// `reading`               float(3,1)      DEFAULT NULL,
-// `carbohydrates`         smallint(6)     DEFAULT NULL,
-// `insulin_units_short`   tinyint(3)      UNSIGNED DEFAULT NULL,
-// `insulin_units_long`    tinyint(3)      UNSIGNED DEFAULT NULL,
-// `meal`                  varchar(20)     DEFAULT NULL,
-// `note`                  text            ,
-// `correction_units`      tinyint(3)      UNSIGNED DEFAULT NULL,
-// `created_by`		    char(36)		,
-// `created_at`		    timestamp 		DEFAULT CURRENT_TIMESTAMP,
-// `updated_by`            char(36)		,
-// `updated_at`            timestamp 		DEFAULT CURRENT_TIMESTAMP
-
 
 module.exports = GlucoseTransaction;

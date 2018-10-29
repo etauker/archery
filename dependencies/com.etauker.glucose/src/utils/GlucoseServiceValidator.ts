@@ -1,3 +1,5 @@
+var GlucoseTransactionInstance;
+
 class GlucoseServiceValidator {
 
     //===========================================
@@ -13,6 +15,7 @@ class GlucoseServiceValidator {
     //===========================================
     constructor(paths) {
         const GlucoseErrorGenerator = require(paths.GlucoseErrorGeneratorPath);
+        GlucoseTransactionInstance = require(paths.GlucoseTransactionPath);
 
         this.errorMessages = [
             { code: 1, http: 422, message: "Invalid uuid provided." },
@@ -32,19 +35,19 @@ class GlucoseServiceValidator {
     //===========================================
     //             PUBLIC FUNCTIONS
     //===========================================
-    public validateUuid = function(sId: string) {
+    public validateUuid = (sId: string): string => {
         if (!sId || !this.idRegex.test(sId)) {
             this.lastError = this.error.getError(1, { sProvidedId: sId });
             return null;
         }
         return sId;
     };
-    public validateTransaction = function(oTransaction: IPresentationLayerGlucoseTransaction) {
+    public validateTransaction = (oTransaction: IPresentationLayerGlucoseTransaction): GlucoseTransaction => {
         if (!oTransaction) {
             this.lastError = this.error.getError(2);
             return null;
         }
-        return oTransaction;
+        return GlucoseTransactionInstance.fromPresentationLayerObject(oTransaction);
     };
     public getLastError = function() {
         return this.lastError;

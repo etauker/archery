@@ -23,8 +23,10 @@ class GlucosePersistenceManager {
          *  @param {object} oTransaction - The object representing the transaction to be retrieved from the database.
          *  @return {promise} Resolves to the transaction entry from the database.
          */
-        this.getTransaction = function (oTransaction) {
+        this.getTransaction = function (oTransactionObject) {
+            let oTransaction = GlucoseTransactionInstance.toDataLayerObject(oTransactionObject);
             var sQuery = this._formSelectQuery('TRANSACTION', oTransaction);
+            console.log(sQuery);
             return this._query(sQuery).then(aQueryResult => {
                 if (aQueryResult.length > 1)
                     throw this.error.getError(7, null, "", "Expected 1, received " + aQueryResult.length + ".");
@@ -59,10 +61,11 @@ class GlucosePersistenceManager {
         };
         /**
          *  Creates a database entry for the given transaction object.
-         *  @param {object} oTransaction - The object representing the user that should be saved in the database.
+         *  @param {com.etauker.glucose.data.GlucoseTransaction} oTransaction - The object representing the user that should be saved in the database.
          *  @return {promise} Resolves to the database response object for the transaction.
          */
-        this.saveTransaction = function (oTransaction) {
+        this.saveTransaction = function (oTransactionObject) {
+            let oTransaction = GlucoseTransactionInstance.toDataLayerObject(oTransactionObject);
             var sQuery = this._formInsertQuery("TRANSACTION", [oTransaction], Object.keys(oTransaction));
             return this._query(sQuery).then(oQueryResult => {
                 return oQueryResult;
@@ -83,7 +86,14 @@ class GlucosePersistenceManager {
             var sQuery = `SELECT * FROM ${this.database}.${sTable} WHERE `;
             // Loop through all properties of the object and format as 'KEY = "value"'
             var aProperties = Object.keys(oEntity).map(sKey => {
-                return `${sKey} = "${oEntity[sKey]}"`;
+                // Special case for converting unix timestamp to datetime
+                if (typeof oEntity[sKey] === "object" && oEntity[sKey].type === "timestamp") {
+                    return "(SELECT FROM_UNIXTIME(" + oEntity[sKey].value + "))";
+                }
+                if (typeof oEntity[sKey] === 'string')
+                    return `${sKey} = "${oEntity[sKey]}"`;
+                if (typeof oEntity[sKey] === 'number')
+                    return `${sKey} = ${oEntity[sKey]}`;
             });
             // Join the individual lines with AND and add semicolon at the end
             sQuery += aProperties.join(" AND ") + " LIMIT 1000;";

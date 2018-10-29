@@ -1,3 +1,4 @@
+var GlucoseTransactionInstance;
 class GlucoseServiceValidator {
     //===========================================
     //               CONSTRUCTOR
@@ -8,24 +9,25 @@ class GlucoseServiceValidator {
         //===========================================
         //             PUBLIC FUNCTIONS
         //===========================================
-        this.validateUuid = function (sId) {
+        this.validateUuid = (sId) => {
             if (!sId || !this.idRegex.test(sId)) {
                 this.lastError = this.error.getError(1, { sProvidedId: sId });
                 return null;
             }
             return sId;
         };
-        this.validateTransaction = function (oTransaction) {
+        this.validateTransaction = (oTransaction) => {
             if (!oTransaction) {
                 this.lastError = this.error.getError(2);
                 return null;
             }
-            return oTransaction;
+            return GlucoseTransactionInstance.fromPresentationLayerObject(oTransaction);
         };
         this.getLastError = function () {
             return this.lastError;
         };
         const GlucoseErrorGenerator = require(paths.GlucoseErrorGeneratorPath);
+        GlucoseTransactionInstance = require(paths.GlucoseTransactionPath);
         this.errorMessages = [
             { code: 1, http: 422, message: "Invalid uuid provided." },
             { code: 2, http: 400, message: "Missing transaction object in the request body." }

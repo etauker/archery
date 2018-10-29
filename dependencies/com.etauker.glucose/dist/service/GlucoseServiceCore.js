@@ -21,14 +21,9 @@ class GlucoseServiceCore {
         };
         this.saveTransaction = (oTransaction) => {
             return new Promise((fnResolve, fnReject) => {
-                fnResolve(true);
-                //     fnResolve({
-                //         sessionTypes: this.persistence.getSessionTypes(),
-                //         sessionCategories: this.persistence.getSessionCategory(),
-                //         distances: this.persistence.getDistance(),
-                //         targetFaces: this.persistence.getTargetFaces(),
-                //         bowCategories: this.persistence.getBowCategory()
-                //     })
+                this.persistence.saveTransaction(oTransaction)
+                    .then(() => fnResolve())
+                    .catch(oError => fnReject(oError));
             });
         };
         this.parseErrorForClient = (oError) => {
