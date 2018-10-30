@@ -11,7 +11,9 @@ global.REALM = "etauker.com";
 const app = express();
 const port = process.env.PORT || 8888;
 const archeryWebappEndpoint = '/archery';
+const glucoseWebappEndpoint = '/glucose';
 const archeryWebappDirectory = __dirname + "/presentation/com.etauker.archery/archery-ui5/webapp";
+const glucoseWebappDirectory = __dirname + "/presentation/com.etauker.glucose/webapp";
 const url = 'http://localhost:' + port + archeryWebappEndpoint;
 const modules = [ "data", "persistence", "logic", "service", "utils" ];
 const dependencies = [
@@ -32,6 +34,7 @@ global.paths = {};
 console.log(`--- App configuration ---`);
 console.log("Port: " + port);
 console.log("Archery webapp endpoint: " + archeryWebappEndpoint);
+console.log("Glucose Monitoring webapp endpoint: " + glucoseWebappEndpoint);
 
 // For each dependency...
 dependencies.forEach(library => {
@@ -68,6 +71,7 @@ app.use("/glucose", glucoseRouter)
 
 // Import the webapp
 app.use(archeryWebappEndpoint, express.static(archeryWebappDirectory));
+app.use(glucoseWebappEndpoint, express.static(glucoseWebappDirectory));
 
 // Start the server
 app.listen(port);

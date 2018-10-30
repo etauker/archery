@@ -1,0 +1,41 @@
+<mvc:View
+	controllerName="com.etauker.glucose.sessions.Sessions"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc" width="100%">
+
+	<VBox width="100%">
+		<List items="{sessions>/sessions}" >
+			<items>
+				<StandardListItem
+					title="{sessions>location}"
+					description="{sessions>type}">
+				</StandardListItem>
+			</items>
+			<headerToolbar>
+				<Toolbar>
+					<!-- <ToolbarSpacer /> -->
+					<Title text="" level="H2" textAlign="Center"/>
+					<ToolbarSpacer />
+					<Button
+						icon="sap-icon://add"
+						press="onAddSession" />
+					<!-- <Button -->
+						<!-- icon="sap-icon://person-placeholder" -->
+						<!-- press="handleButtonPress" /> -->
+					<!-- <Button -->
+						<!-- icon="sap-icon://drop-down-list" -->
+						<!-- press="handleButtonPress" /> -->
+				</Toolbar>
+			</headerToolbar>
+			<!-- <infoToolbar> -->
+				<!-- <Toolbar -->
+					<!-- active="true" -->
+					<!-- press="handleInfobarPress" > -->
+					<!-- <Label text="This is the info bar" /> -->
+				<!-- </Toolbar> -->
+			<!-- </infoToolbar> -->
+		</List>
+	</VBox>
+
+</mvc:View>

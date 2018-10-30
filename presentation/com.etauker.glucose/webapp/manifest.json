@@ -1,0 +1,123 @@
+{
+	"_version": "1.8.0",
+	"sap.app": {
+		"id": "com.etauker.glucose",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"ach": "CA-UI5-FST",
+		"dataSources": {
+			"transactions": {
+				"add": {
+					"uri": "http://localhost:8888/glucose/transactions/add"
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+  	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "com.etauker.glucose.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.30",
+			"libs": {
+				"sap.m": { }
+			}
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "com.etauker.glucose.i18n.i18n"
+				}
+			},
+			"preferences": {
+				"type": "sap.ui.model.json.JSONModel"
+			},
+			"readings": {
+				"type": "sap.ui.model.json.JSONModel"
+			}
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "com.etauker.glucose.view",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"transition": "slide",
+				"bypassed": {
+					"target": "notFound"
+				},
+				"async": true
+			},
+			"routes": [{
+				"pattern": "",
+				"name": "appHome",
+				"target": "home"
+			},
+			{
+				"pattern": "readings/add",
+				"name": "addReading",
+				"target": "addReading"
+			},
+			{
+				"pattern": "login",
+				"name": "login",
+				"target": "login"
+			},
+			{
+				"pattern": "createUser",
+				"name": "createUser",
+				"target": "createUser"
+			}],
+			"targets": {
+				"home": {
+					"viewId": "home",
+					"viewName": "Home",
+					"viewPath": "com.etauker.glucose.home",
+					"viewLevel" : 1
+				},
+				"addReading": {
+					"viewId": "AddReading",
+					"viewPath": "com.etauker.glucose.readings",
+					"viewName": "AddReading",
+					"viewLevel" : 2
+				},
+				"notFound": {
+					"viewId": "notFound",
+					"viewPath": "com.etauker.glucose.notFound",
+					"viewName": "NotFound",
+					"transition": "show"
+				},
+				"login": {
+					"viewId": "login",
+					"viewPath": "com.etauker.glucose.login",
+					"viewName": "Login",
+					"viewLevel" : 2
+				},
+				"createUser": {
+					"viewId": "createUser",
+					"viewPath": "com.etauker.glucose.createUser",
+					"viewName": "CreateUser",
+					"viewLevel" : 3
+				}
+			}
+		}
+	}
+}
