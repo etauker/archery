@@ -32,10 +32,16 @@ class GlucoseServiceCore {
     public getTransactionOptions = () => {
         return new Promise(fnResolve => fnResolve({ meals: this.persistence.getMealTypes() }));
     };
-    public getTransactions = (sUserId: string) => {
+    public getTransactions = async (sUserId: string) => {
         let oTransaction: GlucoseTransaction = new GlucoseTransactionInstance();
         oTransaction.createdBy = sUserId;
-        return this.persistence.getTransactions(oTransaction);
+        let aResults = await this.persistence.getTransactions(oTransaction);
+        let aObjects: GlucoseTransaction[] = aResults.map(oResult => {
+            return GlucoseTransactionInstance.fromDataLayerObject(oResult)
+        });
+        return aObjects.map(oObject => {
+            return GlucoseTransactionInstance.toPresentationLayerObject(oObject)
+        });
     };
     public getTransaction = (sTransactionId: string, sUserId: string) => {
         return this.persistence.getTransactionById(sTransactionId, sUserId);

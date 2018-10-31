@@ -1,0 +1,45 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ViewSettingsDialog confirm="handleFilterDialogConfirm">
+		<filterItems>
+			<ViewSettingsFilterItem
+				text="Meal"
+				key="Meal"
+				multiSelect="false">
+				<items>
+					<ViewSettingsItem text="Before Work" key="meal___EQ___Before Work___X" />
+					<ViewSettingsItem text="Breakfast" key="meal___EQ___Breakfast___X" />
+                    <ViewSettingsItem text="Lunch" key="meal___EQ___Lunch___X" />
+                    <ViewSettingsItem text="Dinner" key="meal___EQ___Dinner___X" />
+                    <ViewSettingsItem text="Before Bed" key="meal___EQ___Before Bed___X" />
+				</items>
+			</ViewSettingsFilterItem>
+			<!-- <ViewSettingsFilterItem
+				text="Weekday"
+				key="Weekday"
+				multiSelect="false">
+				<items>
+					<ViewSettingsItem text="Monday" key="weekday___EQ___Monday___X" />
+					<ViewSettingsItem text="Tuesday" key="weekday___EQ___Tuesday___X" />
+					<ViewSettingsItem text="Wednesday" key="weekday___EQ___Wednesday___X" />
+					<ViewSettingsItem text="Thursday" key="weekday___EQ___Thursday___X" />
+					<ViewSettingsItem text="Friday" key="weekday___EQ___Friday___X" />
+					<ViewSettingsItem text="Saturday" key="weekday___EQ___Saturday___X" />
+					<ViewSettingsItem text="Sunday" key="weekday___EQ___Sunday___X" />
+				</items>
+			</ViewSettingsFilterItem> -->
+			<!-- <ViewSettingsFilterItem
+				text="Reading"
+				key="Reading"
+				multiSelect="false">
+				<items>
+					<ViewSettingsItem text="Low" key="Reading___LT___4.5___X" />
+					<ViewSettingsItem text="Within Range" key="Reading___BT___4.5___8" />
+					<ViewSettingsItem text="Slightly High" key="Reading___BT___8.1___14" />
+					<ViewSettingsItem text="Very High" key="Reading___GT___14___X" />
+				</items>
+			</ViewSettingsFilterItem> -->
+		</filterItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

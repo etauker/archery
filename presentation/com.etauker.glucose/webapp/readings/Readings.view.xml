@@ -5,30 +5,87 @@
 	xmlns:mvc="sap.ui.core.mvc" width="100%">
 
 	<VBox width="100%">
-		<List items="{readings>/readings}" >
-			<items>
-				<StandardListItem
-					title="{readings>location}"
-					description="{readings>type}">
-				</StandardListItem>
-			</items>
+		<Table id="readingsTable"
+			inset="false"
+			alternateRowColors="true"
+			items="{
+				path: 'readings>/readings',
+				sorter: {
+					path: 'dateTime',
+					descending: true,
+					group: '.groupByWeekday'
+				}
+			}">
 			<headerToolbar>
 				<Toolbar>
-					<!-- <ToolbarSpacer /> -->
-					<Title text="" level="H2" textAlign="Center"/>
+					<Title text="Readings" level="H2"/>
 					<ToolbarSpacer />
 					<Button
 						icon="sap-icon://add"
 						press="onAddReading" />
-					<!-- <Button -->
-						<!-- icon="sap-icon://person-placeholder" -->
-						<!-- press="handleButtonPress" /> -->
-					<!-- <Button -->
-						<!-- icon="sap-icon://drop-down-list" -->
-						<!-- press="handleButtonPress" /> -->
+					<Button
+						tooltip="View Filter Settings"
+						icon="sap-icon://filter"
+						press="onFilterButtonPressed" />
+					<Button
+						tooltip="View Sort Settings"
+						icon="sap-icon://sort"
+						press="onSortButtonPressed" />
+					<Button
+						tooltip="View Group Settings"
+						icon="sap-icon://group-2"
+						press="onGroupButtonPressed" />
 				</Toolbar>
 			</headerToolbar>
-		</List>
+			<columns>
+				<Column demandPopin="true" hAlign="Center">
+					<Text text="Date" />
+				</Column>
+				<Column demandPopin="true" hAlign="Center">
+					<Text text="Time" />
+				</Column>
+				<Column demandPopin="true" hAlign="Center">
+					<Text text="Weekday" />
+				</Column>
+				<Column demandPopin="true" hAlign="Center">
+					<Text text="Meal" />
+				</Column>
+				<Column demandPopin="true" hAlign="Center">
+					<Text text="Reading" />
+				</Column>
+				<Column demandPopin="true" hAlign="Center">
+					<Text text="Carbohydrates" />
+				</Column>
+				<Column demandPopin="true" hAlign="Center">
+					<Text text="Insulin Units (Short Acting)" />
+				</Column>
+				<Column demandPopin="true" hAlign="Center">
+					<Text text="Insulin Units (Long Acting)" />
+				</Column>
+				<Column demandPopin="true" hAlign="Center">
+					<Text text="Correction Units" />
+				</Column>
+				<Column demandPopin="true" hAlign="Begin">
+					<Text text="Notes" />
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem>
+					<cells>
+						<Text text="{path: 'readings>dateTime', formatter: '.formatter.getDate'}" />
+						<Text text="{path: 'readings>dateTime', formatter: '.formatter.getTime'}" />
+						<Text text="{path: 'readings>dateTime', formatter: '.formatter.getWeekday'}" />
+						<Text text="{path: 'readings>meal'}" />
+						<Text text="{path: 'readings>reading'}" />
+						<Text text="{path: 'readings>carbohydrates'}" />
+						<Text text="{path: 'readings>insulinUnitsShort'}" />
+						<Text text="{path: 'readings>insulinUnitsLong'}" />
+						<Text text="{path: 'readings>correctionUnits'}" />
+						<Text text="{path: 'readings>note'}" />
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
 	</VBox>
 
 </mvc:View>

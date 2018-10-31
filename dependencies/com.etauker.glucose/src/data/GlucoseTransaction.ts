@@ -153,7 +153,7 @@ class GlucoseTransaction {
             meal: oObject.meal || null,
             note: oObject.note || null
         }
-        instance = GlucoseTransaction.removeNullProperties(instance);
+        // instance = GlucoseTransaction.removeNullProperties(instance);
         return instance;
     }
     public static removeNullProperties = (oObject) => {
