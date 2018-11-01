@@ -14,7 +14,9 @@ sap.ui.define([
 	ReadingsController.prototype.onInit = function() {
 		this.oReadingModel = this.getOwnerComponent().getModel("readings");
 		this._mViewSettingsDialogs = {};
-
+		this._retrieveReadings().then(function(oResponse) {
+			this.oReadingModel.setProperty("/readings", oResponse);
+		}.bind(this));
 		this.mGroupFunctions = {
 			Weekday: function(oBindingContext) {
 				let iDateTime = oBindingContext.getProperty("dateTime");
@@ -44,9 +46,9 @@ sap.ui.define([
 		this.createViewSettingsDialog("com.etauker.glucose.readings.fragment.GroupDialog").open();
 	};
 	ReadingsController.prototype.onRouteMatched = function() {
-		this._retrieveReadings().then(function(oResponse) {
-			this.oReadingModel.setData(oResponse);
-		}.bind(this));
+		// this._retrieveReadings().then(function(oResponse) {
+		// 	this.oReadingModel.setData(oResponse);
+		// }.bind(this));
 	};
 
 	ReadingsController.prototype.handleFilterDialogConfirm = function (oEvent) {
@@ -148,7 +150,7 @@ sap.ui.define([
 
 
 
-	ReadingsController.prototype._retrieveReadings = function() {
+	ReadingsController.prototype._retrieveReadings = async function() {
 		let sUrl = this.getOwnerComponent().getManifestEntry("/sap.app/dataSources/transactions/get/uri");
 		sUrl = sUrl.replace("localhost", "dev01"); //for development
 
@@ -157,8 +159,7 @@ sap.ui.define([
 			url: sUrl,
 			method: sMethod
 		};
-		return this.getOwnerComponent().sendRestRequest(oRequest)
-			.then(oResult => { return { readings: oResult }; });
+		return await this.getOwnerComponent().sendRestRequest(oRequest);
 		// var oSampleReadingData = {
 		// 	readings: [{
 		// 		id: "aaaaaaaa",

@@ -2,8 +2,9 @@ sap.ui.define([
 	"com/etauker/glucose/base/BaseController",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageToast",
-	"com/etauker/security/Component"
-], function (BaseController, JSONModel, MessageToast, SecurityController) {
+	"com/etauker/security/Component",
+	"sap/ui/core/format/DateFormat"
+], function (BaseController, JSONModel, MessageToast, SecurityComponent, DateFormat) {
 	"use strict";
 
 	var AddReadingController = BaseController.extend("com.etauker.glucose.readings.AddReading");
@@ -14,101 +15,81 @@ sap.ui.define([
 		this.oReadingModel = this.getOwnerComponent().getModel("readings");
 		this.oReadingModel.setProperty("/new", this._getBlankReading());
 		this.oReadingModel.setProperty("/options", this._getBlankOptions());
+		console.log(this.oReadingModel.getData());
 	};
 	AddReadingController.prototype.handleRouteMatched = function() {
+		this.oReadingModel.setProperty("/new", this._getBlankReading());
 		BaseController.prototype.handleRouteMatched.call(this);
 		this._getOptions()
 			.then(oResult => this.oReadingModel.setProperty("/options", oResult))
 			.fail(this._onRequestFailed.bind(this));
 	};
 	AddReadingController.prototype.onSave = function() {
-		this._saveReading().then(function(oResponse) {
+		console.log(this.oReadingModel.getData());
+		let oObjectBoundToView = this.oReadingModel.getProperty("/new");
+		let oNewObject = this._mapViewObjectToPostObject(oObjectBoundToView);
+
+		this._saveReading(oNewObject).then(function(oResponse) {
 			MessageToast.show("Reading saved");
 			this.oReadingModel.setData(oResponse);
 			this.handleNavBack();
 		}.bind(this));
 	};
-	AddReadingController.prototype.onSaveAndContinue = function() {
-		this._saveReading().then(function(oResponse) {
-			MessageToast.show("Reading saved");
-			this.oReadingModel.setData(oResponse);
-			this.getRouter().navTo("addScores");
-		}.bind(this));
-	};
 	AddReadingController.prototype.onCancel = function() {
-		this.oReadingModel.setProperty("/new", {});
+		this.oReadingModel.setProperty("/new", this._getBlankReading());
 		this.handleNavBack();
 	};
 	AddReadingController.prototype._onRequestFailed = function(oError) {
 		console.log(oError);
 		// this.handleNavBack();
 	};
+	AddReadingController.prototype._mapViewObjectToPostObject = function(oViewObject) {
+		// let oDateTime = new Date(DateFormat.getDateTimeInstance(oViewObject.dateTime).toString());
+		let oRegex = /(.)\/(..)\/(....) (..):(..)/;
+		let aMatches = oViewObject.dateTime.match(oRegex);
+		let sDate = (aMatches[1].length === 1 ? `0${aMatches[1]}` : aMatches[1]);
+		let sMonth = (aMatches[2].length === 1 ? `0${aMatches[2]-1}` : aMatches[2]-1);
+		let sYear = aMatches[3];
+		let sHours = (aMatches[4].length === 1 ? `0${aMatches[4]}` : aMatches[4]);
+		let sMinutes = (aMatches[5].length === 1 ? `0${aMatches[5]}` : aMatches[5]);
 
-	AddReadingController.prototype._saveReading = function() {
-		var oSampleReadingData = {
-			readings: [{
-				date: "22/06/2018",
-				startTime: "19:30",
-				arrowCount: 30,
-				location: "Home",
-				type: "Training",
-				sessionCategory: "Indoor",
-				distance: "18m",
-				targetFaceType: "3 spot",
-				notes: "Tired after work.",
-				bowCategory: "Recurve",
-				identifier: "Evening"
-			},
-			{
-				date: "25/06/2018",
-				startTime: "20:00",
-				arrowCount: 102,
-				location: "Kingfisher, Galway",
-				type: "Training",
-				sessionCategory: "Outdoor",
-				distance: "70m",
-				targetFaceType: "90cm",
-				notes: "Scorching sun.",
-				bowCategory: "Recurve",
-				identifier: "Evening"
-			},
-			{
-				date: "26/06/2018",
-				startTime: "10:00",
-				arrowCount: 72,
-				location: "University of Limerick",
-				type: "Competition",
-				sessionCategory: "Indoor",
-				distance: "18m",
-				targetFaceType: "3 spot",
-				notes: "Keep bow arm up after release.",
-				bowCategory: "Recurve",
-				identifier: "Morning"
-			},
-			{
-				date: "26/06/2018",
-				startTime: "18:00",
-				arrowCount: 72,
-				location: "Home",
-				type: "Training",
-				sessionCategory: "Indoor",
-				distance: "18m",
-				targetFaceType: "3 spot",
-				notes: "Training after competition.",
-				bowCategory: "Recurve",
-				identifier: "Evening"
-			}]
+		let sDateTime = `${sYear}-${sMonth}-${sDate}T${sHours}:${sMinutes}:00.000Z`;
+
+		let oPostObject = {
+			reading: oViewObject.reading ? parseFloat(oViewObject.reading) : null,
+			carbohydrates: oViewObject.carbohydrates ? parseInt(oViewObject.carbohydrates) : null,
+			insulinUnitsShort: oViewObject.insulinUnitsShort ? parseInt(oViewObject.insulinUnitsShort) : null,
+			insulinUnitsLong: oViewObject.insulinUnitsLong ? parseInt(oViewObject.insulinUnitsLong) : null,
+			correctionUnits: oViewObject.correctionUnits ? parseInt(oViewObject.correctionUnits) : null,
+			dateTime: sDateTime,//new Date(oViewObject.dateTime).valueOf(),
+			note: oViewObject.note
+		}
+		return oPostObject;
+	};
+
+	AddReadingController.prototype._saveReading = function(oReading) {
+		console.log(oReading);
+		// return new Promise((fnResolve, fnReject) => {
+		// 	let oResult = { readings: [oReading] };
+		// 	fnResolve(oResult);
+		// })
+
+		var sUrl = this.getOwnerComponent().getManifestEntry("/sap.app/dataSources/transactions/add/uri");
+		sUrl = sUrl.replace("localhost", "dev01"); //for development
+
+		var sMethod = "POST";
+		var oRequest = {
+		    url: sUrl,
+			method: sMethod,
+			data: oReading
 		};
-		return new Promise(function(resolve, reject) {
-		  	setTimeout(resolve, 100, oSampleReadingData);
-		});
+		return this.getOwnerComponent().sendRestRequest(oRequest);
 	};
 	AddReadingController.prototype._getOptions = function() {
 		var sUrl = this.getOwnerComponent().getManifestEntry("/sap.app/dataSources/transactions/add/uri");
 		sUrl = sUrl.replace("localhost", "dev01"); //for development
 
 		var sMethod = "GET";
-
 		var oRequest = {
 		    url: sUrl,
 			method: sMethod
@@ -116,31 +97,23 @@ sap.ui.define([
 		return this.getOwnerComponent().sendRestRequest(oRequest);
 	};
 	AddReadingController.prototype._getBlankReading = function() {
+		let oDateFormat = DateFormat.getDateTimeInstance({pattern: "dd/MM/yyyy HH:mm"});
+		let sDate = oDateFormat.format(new Date(), true);
 		return {
-			date: "",
-			startTime: "",
-			arrowCount: 0,
-			location: "",
-			type: "",
-			sessionCategory: "",
-			distance: "",
-			targetFaceType: "",
-			notes: "",
-			bowCategory: "",
-			identifier: ""
+			reading: null,
+			carbohydrates: null,
+			insulinUnitsShort: null,
+			insulinUnitsLong: null,
+			correctionUnits: null,
+			dateTime: sDate,
+			note: ""
 		};
 	};
 	AddReadingController.prototype._getBlankOptions = function() {
 		return {
-			sessionTypes: [],
-            sessionCategories: [],
-            distances: [],
-            targetFaces: [],
-            bowCategories: []
+			meals: []
 		};
 	};
-
-
 
 	return AddReadingController;
 });

@@ -23,85 +23,43 @@
 			singleContainerFullSize="false" >
 
 			<f:content>
-				<core:Title text="Context" />
-
-				<Label text="Reading Type" />
-				<!-- <Text text="{new>/type}" /> -->
-				<Select items="{path: 'readings>/options/sessionTypes/'}">
-					<core:Item key="{path: 'readings>'}" text="{path: 'readings>'}" />
-				</Select>
-
-				<Label text="Location" />
-				<!-- <Text text="{new>/location}" /> -->
-				<Input type="Text" text="{new>/location}" />
-
-				<Label text="Reading Identifier" />
-				<!-- <Text text="{new>/identifier}" /> -->
-				<Input type="Text" text="{new>/identifier}" />
-
-				<Label text="Date" />
-				<!-- <Text text="{new>/date}" /> -->
-				<DatePicker selectedKey="{new>/date}" />
-
-				<Label text="Start Time" />
-				<!-- <Text text="{new>/startTime}" /> -->
-				<TimePicker selectedKey="{new>/startTime}" />
-
-
-
-
-
-
 
 				<core:Title text="Details" />
 
-				<Label text="Reading Category" />
-				<!-- <Text text="{new>/type}" /> -->
-				<Select items="{path: 'readings>/options/sessionCategories/'}">
+				<Label text="Reading" />
+				<Input type="Number" text="{readings>/new/reading}" value="{readings>/new/reading}" />
+
+				<Label text="Carbohydrates" />
+				<Input type="Number" text="{readings>/new/carbohydrates}" value="{readings>/new/carbohydrates}"/>
+
+				<Label text="Insulin Units (Short Acting)" />
+				<Input type="Number" text="{readings>/new/insulinUnitsShort}" value="{readings>/new/insulinUnitsShort}"/>
+
+				<Label text="Insulin Units (Long Acting)" />
+				<Input type="Number" text="{readings>/new/insulinUnitsLong}" value="{readings>/new/insulinUnitsLong}"/>
+
+				<Label text="Correction Units" />
+				<Input type="Number" text="{readings>/new/correctionUnits}" value="{readings>/new/correctionUnits}"/>
+
+
+
+
+
+				<core:Title text="Context" />
+
+				<Label text="Date" />
+				<DateTimePicker displayFormat="short" value="{readings>/new/dateTime}"/>
+
+				<Label text="Meal" />
+				<Select items="{path: 'readings>/options/meals/'}">
 					<core:Item key="{path: 'readings>'}" text="{path: 'readings>'}" />
 				</Select>
-
-				<Label text="Arrow Count" />
-				<!-- <Text text="{new>/location}" /> -->
-				<Input type="Number" text="{new>/arrowCount}" />
-
-				<Label text="Distance" />
-				<Select items="{path: 'readings>/options/distances/'}">
-					<core:Item key="{path: 'readings>'}" text="{path: 'readings>'}" />
-				</Select>
-
-				<Label text="Target Face" />
-				<Select items="{path: 'readings>/options/targetFaces/'}">
-					<core:Item key="{path: 'readings>'}" text="{path: 'readings>'}" />
-				</Select>
-
-				<Label text="Bow Category" />
-				<Select items="{path: 'readings>/options/bowCategories/'}">
-					<core:Item key="{path: 'readings>'}" text="{path: 'readings>'}" />
-				</Select>
-
-				<core:Title text="Notes" />
-				<!-- <RatingIndicator value="{Rating}" displayOnly="true" /> -->
 
 				<Label text="Notes" />
-				<!-- <Text text="{new>/notes}" /> -->
-				<Input type="Text" text="{new>/notes}" />
-				<!-- <ProgressIndicator percentValue="{Disposable}" displayOnly="true" /> -->
+				<TextArea rows="5" growing="true" value="{readings>/new/note}"/>
+
 			</f:content>
 		</f:SimpleForm>
-	<!-- type: "Training", -->
-	<!-- location: "Home", -->
-	<!-- identifier: "Evening" -->
-	<!-- date: "22/06/2018", -->
-	<!-- startTime: "19:30", -->
-
-	<!-- sessionCategory: "Indoor", -->
-	<!-- arrowCount: 30, -->
-	<!-- distance: "18m", -->
-	<!-- targetFaceType: "3 spot", -->
-	<!-- bowCategory: "Recurve", -->
-
-	<!-- notes: "Tired after work.", -->
 	</VBox>
 
 </core:FragmentDefinition>
