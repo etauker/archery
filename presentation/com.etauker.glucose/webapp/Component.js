@@ -48,7 +48,19 @@ sap.ui.define([
 		oPreferences.appHome.defaultTab = oPreferences.appHome.defaultTab || oDefaultPreferences.appHome.defaultTab;
 
 		return oPreferences;
-	}
+	};
+
+	GlucoseAppComponent.prototype.retrieveReadings = function() {
+		let sUrl = this.getManifestEntry("/sap.app/dataSources/transactions/get/uri");
+		sUrl = sUrl.replace("localhost", "dev01"); //for development
+
+		let sMethod = "GET";
+		let oRequest = {
+			url: sUrl,
+			method: sMethod
+		};
+		return this.sendRestRequest(oRequest);
+	};
 
 
 

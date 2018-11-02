@@ -5,11 +5,16 @@ module.exports = function (app, paths) {
     const GlucoseServiceCore = require(paths.GlucoseServiceCorePath);
     const SecurityTokenManager = require(paths.SecurityTokenManagerPath);
     const SecurityServiceValidator = require(paths.SecurityServiceValidatorPath);
+    const GlucoseServiceParser = require(paths.GlucoseServiceParserPath);
     const GlucoseServiceValidator = require(paths.GlucoseServiceValidatorPath);
+    const GlucoseTransactionInstance = require(paths.GlucoseTransactionPath);
+    const GlucoseLogger = require(paths.GlucoseLoggerPath);
     // Instantiations
     const token = new SecurityTokenManager();
     const securityValidator = new SecurityServiceValidator();
+    const glucoseParser = new GlucoseServiceParser(paths);
     const glucoseValidator = new GlucoseServiceValidator(paths);
+    const logger = new GlucoseLogger(paths);
     const core = new GlucoseServiceCore(paths);
     const router = express.Router();
     router.use(bodyParser.json()); // to support JSON-encoded bodies
@@ -50,12 +55,23 @@ module.exports = function (app, paths) {
             .catch(core.sendErrorToClient.bind(this, res));
     });
     router.post('/transactions/add', function (req, res) {
+        // logger.logObject(req, 'req', `router.post('/transactions/add'`, 'GlucoseService');
         const sJwt = securityValidator.extractAndValidateToken(req.headers.authorization);
-        const oTransaction = glucoseValidator.validateTransaction(req.body);
-        if (!sJwt)
+        if (!sJwt) {
             core.sendErrorToClient(res, securityValidator.getLastError());
-        if (!oTransaction)
+            return null;
+        }
+        const oParsedObject = glucoseParser.parseTransaction(req.body);
+        if (!oParsedObject) {
+            core.sendErrorToClient(res, glucoseParser.getLastError());
+            return null;
+        }
+        const oValidatedObject = glucoseValidator.validateTransaction(oParsedObject);
+        if (!oValidatedObject) {
             core.sendErrorToClient(res, glucoseValidator.getLastError());
+            return null;
+        }
+        const oTransaction = GlucoseTransactionInstance.fromPresentationLayerObject(oValidatedObject);
         token.verifyToken(sJwt, "com.etauker.glucose.Diabetic")
             .then((oJwt) => core.saveTransaction(oTransaction, oJwt.sub))
             .then(() => res.status(201).send())

@@ -19,20 +19,25 @@ class GlucoseServiceCore {
             return new Promise(fnResolve => fnResolve({ meals: this.persistence.getMealTypes() }));
         };
         this.getTransactions = (sUserId) => __awaiter(this, void 0, void 0, function* () {
+            // this.logger.logObject(sUserId, 'sUserId', 'getTransactions', 'GlucoseServiceCore');
             let oTransaction = new GlucoseTransactionInstance();
             oTransaction.createdBy = sUserId;
-            let aResults = yield this.persistence.getTransactions(oTransaction);
+            let aResults = yield this.persistence.getTransactions(null, sUserId);
             let aObjects = aResults.map(oResult => {
                 return GlucoseTransactionInstance.fromDataLayerObject(oResult);
             });
-            return aObjects.map(oObject => {
+            let aResult = aObjects.map(oObject => {
                 return GlucoseTransactionInstance.toPresentationLayerObject(oObject);
             });
+            // this.logger.logObject(aResult, 'end', 'getTransactions', 'GlucoseServiceCore');
+            return aResult;
         });
         this.getTransaction = (sTransactionId, sUserId) => {
             return this.persistence.getTransactionById(sTransactionId, sUserId);
         };
         this.saveTransaction = (oTransaction, sUserId) => {
+            this.logger.logObject(oTransaction, 'sUserId', 'saveTransaction', 'GlucoseServiceCore');
+            this.logger.logObject(oTransaction, 'oTransaction', 'saveTransaction', 'GlucoseServiceCore');
             return this.persistence.saveTransaction(oTransaction, sUserId);
         };
         this.parseErrorForClient = (oError) => {
@@ -51,7 +56,9 @@ class GlucoseServiceCore {
         };
         const GlucosePersistenceManager = require(paths.GlucosePersistenceManagerPath);
         const GlucoseErrorGenerator = require(paths.GlucoseErrorGeneratorPath);
+        const GlucoseLogger = require(paths.GlucoseLoggerPath);
         GlucoseTransactionInstance = require(paths.GlucoseTransactionPath);
+        this.logger = new GlucoseLogger(paths);
         this.persistence = new GlucosePersistenceManager(null, paths);
         this.error = new GlucoseErrorGenerator('com.etauker.glucose', 'service', 'GlucoseServiceCore', [], paths);
     }

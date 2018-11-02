@@ -29,11 +29,15 @@ sap.ui.define([
 		let oObjectBoundToView = this.oReadingModel.getProperty("/new");
 		let oNewObject = this._mapViewObjectToPostObject(oObjectBoundToView);
 
-		this._saveReading(oNewObject).then(function(oResponse) {
-			MessageToast.show("Reading saved");
-			this.oReadingModel.setData(oResponse);
-			this.handleNavBack();
-		}.bind(this));
+		this._saveReading(oNewObject)
+			.then(() => {
+				MessageToast.show("Reading saved");
+				return this.getOwnerComponent().retrieveReadings();
+			})
+			.then(oResponse => {
+				this.oReadingModel.setProperty("/readings", oResponse);
+				this.handleNavBack();
+			});
 	};
 	AddReadingController.prototype.onCancel = function() {
 		this.oReadingModel.setProperty("/new", this._getBlankReading());
@@ -45,7 +49,7 @@ sap.ui.define([
 	};
 	AddReadingController.prototype._mapViewObjectToPostObject = function(oViewObject) {
 		// let oDateTime = new Date(DateFormat.getDateTimeInstance(oViewObject.dateTime).toString());
-		let oRegex = /(.)\/(..)\/(....) (..):(..)/;
+		let oRegex = /(..)\/(..)\/(....), (..):(..)/;
 		let aMatches = oViewObject.dateTime.match(oRegex);
 		let sDate = (aMatches[1].length === 1 ? `0${aMatches[1]}` : aMatches[1]);
 		let sMonth = (aMatches[2].length === 1 ? `0${aMatches[2]-1}` : aMatches[2]-1);
@@ -53,7 +57,14 @@ sap.ui.define([
 		let sHours = (aMatches[4].length === 1 ? `0${aMatches[4]}` : aMatches[4]);
 		let sMinutes = (aMatches[5].length === 1 ? `0${aMatches[5]}` : aMatches[5]);
 
-		let sDateTime = `${sYear}-${sMonth}-${sDate}T${sHours}:${sMinutes}:00.000Z`;
+		// let sDateTime = `${sYear}-${sMonth}-${sDate}T${sHours}:${sMinutes}:00.000Z`;
+
+		let oDateTime = new Date();
+		oDateTime.setDate(sDate);
+		oDateTime.setMonth(sMonth);
+		oDateTime.setFullYear(sYear);
+		oDateTime.setHours(sHours);
+		oDateTime.setMinutes(sMinutes);
 
 		let oPostObject = {
 			reading: oViewObject.reading ? parseFloat(oViewObject.reading) : null,
@@ -61,7 +72,7 @@ sap.ui.define([
 			insulinUnitsShort: oViewObject.insulinUnitsShort ? parseInt(oViewObject.insulinUnitsShort) : null,
 			insulinUnitsLong: oViewObject.insulinUnitsLong ? parseInt(oViewObject.insulinUnitsLong) : null,
 			correctionUnits: oViewObject.correctionUnits ? parseInt(oViewObject.correctionUnits) : null,
-			dateTime: sDateTime,//new Date(oViewObject.dateTime).valueOf(),
+			dateTime: oDateTime.valueOf(),//new Date(oViewObject.dateTime).valueOf(),
 			note: oViewObject.note
 		}
 		return oPostObject;
@@ -97,7 +108,7 @@ sap.ui.define([
 		return this.getOwnerComponent().sendRestRequest(oRequest);
 	};
 	AddReadingController.prototype._getBlankReading = function() {
-		let oDateFormat = DateFormat.getDateTimeInstance({pattern: "dd/MM/yyyy HH:mm"});
+		let oDateFormat = DateFormat.getDateTimeInstance({pattern: "dd/MM/yyyy, HH:mm"});
 		let sDate = oDateFormat.format(new Date(), true);
 		return {
 			reading: null,

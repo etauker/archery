@@ -14,9 +14,9 @@ sap.ui.define([
 	ReadingsController.prototype.onInit = function() {
 		this.oReadingModel = this.getOwnerComponent().getModel("readings");
 		this._mViewSettingsDialogs = {};
-		this._retrieveReadings().then(function(oResponse) {
-			this.oReadingModel.setProperty("/readings", oResponse);
-		}.bind(this));
+		this.getOwnerComponent().retrieveReadings()
+			.then(oResponse => this.oReadingModel.setProperty("/readings", oResponse));
+			
 		this.mGroupFunctions = {
 			Weekday: function(oBindingContext) {
 				let iDateTime = oBindingContext.getProperty("dateTime");
@@ -146,69 +146,6 @@ sap.ui.define([
 			// }
 		}
 		return oDialog;
-	};
-
-
-
-	ReadingsController.prototype._retrieveReadings = async function() {
-		let sUrl = this.getOwnerComponent().getManifestEntry("/sap.app/dataSources/transactions/get/uri");
-		sUrl = sUrl.replace("localhost", "dev01"); //for development
-
-		let sMethod = "GET";
-		let oRequest = {
-			url: sUrl,
-			method: sMethod
-		};
-		return await this.getOwnerComponent().sendRestRequest(oRequest);
-		// var oSampleReadingData = {
-		// 	readings: [{
-		// 		id: "aaaaaaaa",
-		// 	    dateTime: 1540818000000,
-		// 	    reading: 7,
-		// 	    carbohydrates: 100,
-		// 	    insulinUnitsShort: 10,
-		// 	    insulinUnitsLong: null,
-		// 	    correctionUnits: 0,
-		// 	    meal: "Lunch",
-		// 	    note: null
-		// 	},
-		// 	{
-		// 		id: "bbbbbbbb",
-		// 	    dateTime:  1540837440000,
-		// 	    reading: 9,
-		// 	    carbohydrates: 80,
-		// 	    insulinUnitsShort: 9,
-		// 	    insulinUnitsLong: null,
-		// 	    correctionUnits: 1,
-		// 	    meal: "Dinner",
-		// 	    note: null
-		// 	},
-		// 	{
-		// 		id: "cccccccc",
-		// 	    dateTime: 1540853880000,
-		// 	    reading: 3.6,
-		// 	    carbohydrates: 40,
-		// 	    insulinUnitsShort: 3,
-		// 	    insulinUnitsLong: 16,
-		// 	    correctionUnits: -1,
-		// 	    meal: "Before Bed",
-		// 	    note: "After excercise"
-		// 	},
-		// 	{
-		// 		id: "dddddddd",
-		// 	    dateTime: 1540884840000,
-		// 	    reading: 17,
-		// 	    carbohydrates: 70,
-		// 	    insulinUnitsShort: 10,
-		// 	    insulinUnitsLong: 14,
-		// 	    correctionUnits: 3,
-		// 	    meal: "Breakfast",
-		// 	    note: "snacked during the night"
-		// 	}]
-		// };
-		// return new Promise(function(resolve, reject) {
-		//   	setTimeout(resolve, 100, oSampleReadingData);
-		// });
 	};
 
 	return ReadingsController;

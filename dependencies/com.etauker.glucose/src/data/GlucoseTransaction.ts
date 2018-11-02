@@ -1,5 +1,5 @@
 interface IDataLayerGlucoseTransaction {
-    id:                     string;
+    id:                     string|null;
     created_at:             string|null;
     updated_at:             string|null;
     created_by:             string|null;
@@ -15,7 +15,7 @@ interface IDataLayerGlucoseTransaction {
 }
 
 interface IPresentationLayerGlucoseTransaction {
-    id:                     string;
+    id:                     string|null;
     dateTime:               number|null;
     reading:                number|null;
     carbohydrates:          number|null;
@@ -83,7 +83,7 @@ class GlucoseTransaction {
     //                  CONVERTERS
     //===========================================
     public static fromDataLayerObject = (oObject: IDataLayerGlucoseTransaction): GlucoseTransaction => {
-        console.log("Generating GlucoseTransaction from DataLayerObject.");
+        // console.log("Generating GlucoseTransaction from DataLayerObject.");
         let instance = Object.create(GlucoseTransaction);
         instance.id = oObject.id || null;
         instance.createdAt = (oObject.created_at ? new Date(oObject.created_at) : null);
@@ -101,7 +101,7 @@ class GlucoseTransaction {
         return instance;
     }
     public static fromPresentationLayerObject = (oObject: IPresentationLayerGlucoseTransaction): GlucoseTransaction => {
-        console.log("Generating GlucoseTransaction from PresentationLayerObject.");
+        // console.log("Generating GlucoseTransaction from PresentationLayerObject.");
         let instance = Object.create(GlucoseTransaction);
         instance.id = oObject.id || null;
         instance.createdAt = null;
@@ -119,7 +119,7 @@ class GlucoseTransaction {
         return instance;
     }
     public static toDataLayerObject = (oObject: GlucoseTransaction): IDataLayerGlucoseTransaction => {
-        console.log("Generating DataLayerObject from GlucoseTransaction.");
+        // console.log("Generating DataLayerObject from GlucoseTransaction.");
 
         let instance = {
             id: oObject.id || null,
@@ -140,8 +140,10 @@ class GlucoseTransaction {
         return instance;
     }
     public static toPresentationLayerObject = (oObject: GlucoseTransaction): IPresentationLayerGlucoseTransaction => {
-        console.log("Generating PresentationLayerObject from GlucoseTransaction.");
-
+        // console.log("Generating PresentationLayerObject from GlucoseTransaction.");
+        // console.log("--- toPresentationLayerObject start---");
+        // console.log(oObject);
+        // console.log("--- /toPresentationLayerObject start---");
         let instance = {
             id: oObject.id || null,
             dateTime: oObject.dateTime ? oObject.dateTime.valueOf() : null,
@@ -154,6 +156,9 @@ class GlucoseTransaction {
             note: oObject.note || null
         }
         // instance = GlucoseTransaction.removeNullProperties(instance);
+        // console.log("--- toPresentationLayerObject end---");
+        // console.log(instance);
+        // console.log("--- /toPresentationLayerObject end---");
         return instance;
     }
     public static removeNullProperties = (oObject) => {

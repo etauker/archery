@@ -53,13 +53,16 @@ class GlucosePersistenceManager {
          *  @return {promise} Resolves to an array of transactions from the database.
          */
         this.getTransactions = function (oTransactionFilter, sUserId) {
-            let sQuery = `SELECT * FROM ${this.database}.\`TRANSACTION\` WHERE \`created_by\` = ${sUserId} ORDER BY date_time DESC LIMIT 500;`;
-            if (oTransactionFilter) {
-                let oTransaction = GlucoseTransactionInstance.toDataLayerObject(oTransactionFilter);
-                console.log(oTransactionFilter);
-                sQuery = this._formSelectQuery('TRANSACTION', oTransaction);
-            }
+            this.logger.logObject(sUserId, 'sUserId', 'getTransactions', 'GlucosePersistenceManager');
+            // this.logger.logObject(oTransactionFilter, 'oTransactionFilter', 'getTransactions', 'GlucosePersistenceManager');
+            let sQuery = `SELECT * FROM ${this.database}.\`TRANSACTION\` WHERE \`created_by\` = "${sUserId}" ORDER BY \`date_time\` DESC LIMIT 200;`;
+            // if (oTransactionFilter) {
+            //     let oTransaction = GlucoseTransactionInstance.toDataLayerObject(oTransactionFilter);
+            //     sQuery = this._formSelectQuery('TRANSACTION', oTransaction);
+            // }
+            this.logger.logObject(sQuery, 'sQuery', 'getTransactions', 'GlucosePersistenceManager');
             return this._query(sQuery).then(aQueryResult => {
+                // this.logger.logObject(aQueryResult, 'aQueryResult', 'getTransactions', 'GlucosePersistenceManager');
                 return aQueryResult;
             });
         };
@@ -69,11 +72,15 @@ class GlucosePersistenceManager {
          *  @return {promise} Resolves to the database response object for the transaction.
          */
         this.saveTransaction = function (oTransactionObject, sUserId) {
+            this.logger.logObject(sUserId, 'sUserId', 'saveTransaction', 'GlucosePersistenceManager');
+            this.logger.logObject(oTransactionObject, 'oTransactionObject', 'saveTransaction', 'GlucosePersistenceManager');
             oTransactionObject.createdBy = sUserId;
             oTransactionObject.updatedBy = sUserId;
             let oTransaction = GlucoseTransactionInstance.toDataLayerObject(oTransactionObject);
             var sQuery = this._formInsertQuery("TRANSACTION", [oTransaction], Object.keys(oTransaction));
+            this.logger.logObject(sQuery, 'sQuery', 'saveTransaction', 'GlucosePersistenceManager');
             return this._query(sQuery).then(oQueryResult => {
+                this.logger.logObject(oQueryResult, 'oQueryResult', 'saveTransaction', 'GlucosePersistenceManager');
                 return oQueryResult;
             });
         };
@@ -190,9 +197,11 @@ class GlucosePersistenceManager {
             throw this.error.getError(1, null, sMessage);
         };
         const mysql = require('mysql');
+        const GlucoseLogger = require(paths.GlucoseLoggerPath);
         const ErrorGenerator = require(paths.GlucoseErrorGeneratorPath);
         GlucoseTransactionInstance = require(paths.GlucoseTransactionPath);
         // Objects
+        this.logger = new GlucoseLogger(paths);
         this.error = new ErrorGenerator("com.etauker.glucose", "persistence", "GlucosePersistenceManager", [
             { code: 1, http: 500, message: "Missing parameters" },
             { code: 2, http: 500, message: "Database connection pool issue occured." },
