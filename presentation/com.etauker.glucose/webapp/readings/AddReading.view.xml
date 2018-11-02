@@ -6,7 +6,6 @@
 	<Page title="Add Reading" class="sapUiResponsiveContentPadding" showNavButton="true">
 		<headerContent>
 			<Button icon="sap-icon://log" tooltip="Logout" press="onLogout"/>
-			<!-- <Button icon="sap-icon://log" tooltip="Logout" press="onLogout"/> -->
 		</headerContent>
 
 		<content>

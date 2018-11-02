@@ -16,7 +16,7 @@ sap.ui.define([
 		this._mViewSettingsDialogs = {};
 		this.getOwnerComponent().retrieveReadings()
 			.then(oResponse => this.oReadingModel.setProperty("/readings", oResponse));
-			
+
 		this.mGroupFunctions = {
 			Weekday: function(oBindingContext) {
 				let iDateTime = oBindingContext.getProperty("dateTime");
@@ -46,9 +46,7 @@ sap.ui.define([
 		this.createViewSettingsDialog("com.etauker.glucose.readings.fragment.GroupDialog").open();
 	};
 	ReadingsController.prototype.onRouteMatched = function() {
-		// this._retrieveReadings().then(function(oResponse) {
-		// 	this.oReadingModel.setData(oResponse);
-		// }.bind(this));
+		
 	};
 
 	ReadingsController.prototype.handleFilterDialogConfirm = function (oEvent) {

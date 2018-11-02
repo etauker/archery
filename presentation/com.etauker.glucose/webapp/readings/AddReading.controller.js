@@ -15,21 +15,18 @@ sap.ui.define([
 		this.oReadingModel = this.getOwnerComponent().getModel("readings");
 		this.oReadingModel.setProperty("/new", this._getBlankReading());
 		this.oReadingModel.setProperty("/options", this._getBlankOptions());
-		console.log(this.oReadingModel.getData());
 	};
 	AddReadingController.prototype.handleRouteMatched = function() {
-		this.oReadingModel.setProperty("/new", this._getBlankReading());
 		BaseController.prototype.handleRouteMatched.call(this);
-		this._getOptions()
+		this.oReadingModel.setProperty("/new", this._getBlankReading());
+		this.getOwnerComponent().retrieveOptions()
 			.then(oResult => this.oReadingModel.setProperty("/options", oResult))
 			.fail(this._onRequestFailed.bind(this));
 	};
 	AddReadingController.prototype.onSave = function() {
-		console.log(this.oReadingModel.getData());
 		let oObjectBoundToView = this.oReadingModel.getProperty("/new");
 		let oNewObject = this._mapViewObjectToPostObject(oObjectBoundToView);
-
-		this._saveReading(oNewObject)
+		this.getOwnerComponent().saveReading(oNewObject)
 			.then(() => {
 				MessageToast.show("Reading saved");
 				return this.getOwnerComponent().retrieveReadings();
@@ -45,10 +42,9 @@ sap.ui.define([
 	};
 	AddReadingController.prototype._onRequestFailed = function(oError) {
 		console.log(oError);
-		// this.handleNavBack();
 	};
 	AddReadingController.prototype._mapViewObjectToPostObject = function(oViewObject) {
-		// let oDateTime = new Date(DateFormat.getDateTimeInstance(oViewObject.dateTime).toString());
+
 		let oRegex = /(..)\/(..)\/(....), (..):(..)/;
 		let aMatches = oViewObject.dateTime.match(oRegex);
 		let sDate = (aMatches[1].length === 1 ? `0${aMatches[1]}` : aMatches[1]);
@@ -56,8 +52,6 @@ sap.ui.define([
 		let sYear = aMatches[3];
 		let sHours = (aMatches[4].length === 1 ? `0${aMatches[4]}` : aMatches[4]);
 		let sMinutes = (aMatches[5].length === 1 ? `0${aMatches[5]}` : aMatches[5]);
-
-		// let sDateTime = `${sYear}-${sMonth}-${sDate}T${sHours}:${sMinutes}:00.000Z`;
 
 		let oDateTime = new Date();
 		oDateTime.setDate(sDate);
@@ -72,40 +66,10 @@ sap.ui.define([
 			insulinUnitsShort: oViewObject.insulinUnitsShort ? parseInt(oViewObject.insulinUnitsShort) : null,
 			insulinUnitsLong: oViewObject.insulinUnitsLong ? parseInt(oViewObject.insulinUnitsLong) : null,
 			correctionUnits: oViewObject.correctionUnits ? parseInt(oViewObject.correctionUnits) : null,
-			dateTime: oDateTime.valueOf(),//new Date(oViewObject.dateTime).valueOf(),
+			dateTime: oDateTime.valueOf(),
 			note: oViewObject.note
 		}
 		return oPostObject;
-	};
-
-	AddReadingController.prototype._saveReading = function(oReading) {
-		console.log(oReading);
-		// return new Promise((fnResolve, fnReject) => {
-		// 	let oResult = { readings: [oReading] };
-		// 	fnResolve(oResult);
-		// })
-
-		var sUrl = this.getOwnerComponent().getManifestEntry("/sap.app/dataSources/transactions/add/uri");
-		sUrl = sUrl.replace("localhost", "dev01"); //for development
-
-		var sMethod = "POST";
-		var oRequest = {
-		    url: sUrl,
-			method: sMethod,
-			data: oReading
-		};
-		return this.getOwnerComponent().sendRestRequest(oRequest);
-	};
-	AddReadingController.prototype._getOptions = function() {
-		var sUrl = this.getOwnerComponent().getManifestEntry("/sap.app/dataSources/transactions/add/uri");
-		sUrl = sUrl.replace("localhost", "dev01"); //for development
-
-		var sMethod = "GET";
-		var oRequest = {
-		    url: sUrl,
-			method: sMethod
-		};
-		return this.getOwnerComponent().sendRestRequest(oRequest);
 	};
 	AddReadingController.prototype._getBlankReading = function() {
 		let oDateFormat = DateFormat.getDateTimeInstance({pattern: "dd/MM/yyyy, HH:mm"});
@@ -125,6 +89,5 @@ sap.ui.define([
 			meals: []
 		};
 	};
-
 	return AddReadingController;
 });

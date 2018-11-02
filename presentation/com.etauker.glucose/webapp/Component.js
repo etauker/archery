@@ -33,23 +33,19 @@ sap.ui.define([
 	};
 
 	GlucoseAppComponent.prototype.getUserPreferences = function() {
-
 		const oDefaultPreferences = {
 			appHome: {
 				defaultTab: "readings"
 			}
 		};
-
+		
 		// TODO: Get preferences from the server
 		let oPreferences = {};
-
 		oPreferences = oPreferences || oDefaultPreferences;
 		oPreferences.appHome = oPreferences.appHome || oDefaultPreferences.appHome;
 		oPreferences.appHome.defaultTab = oPreferences.appHome.defaultTab || oDefaultPreferences.appHome.defaultTab;
-
 		return oPreferences;
 	};
-
 	GlucoseAppComponent.prototype.retrieveReadings = function() {
 		let sUrl = this.getManifestEntry("/sap.app/dataSources/transactions/get/uri");
 		sUrl = sUrl.replace("localhost", "dev01"); //for development
@@ -61,13 +57,28 @@ sap.ui.define([
 		};
 		return this.sendRestRequest(oRequest);
 	};
+	GlucoseAppComponent.prototype.retrieveOptions = function() {
+		var sUrl = this.getManifestEntry("/sap.app/dataSources/transactions/add/uri");
+		sUrl = sUrl.replace("localhost", "dev01"); //for development
 
+		var sMethod = "GET";
+		var oRequest = {
+		    url: sUrl,
+			method: sMethod
+		};
+		return this.sendRestRequest(oRequest);
+	};
+	GlucoseAppComponent.prototype.saveReading = function(oReading) {
+		var sUrl = this.getManifestEntry("/sap.app/dataSources/transactions/add/uri");
+		sUrl = sUrl.replace("localhost", "dev01"); //for development
 
-
-
-
-
-
-
+		var sMethod = "POST";
+		var oRequest = {
+		    url: sUrl,
+			method: sMethod,
+			data: oReading
+		};
+		return this.sendRestRequest(oRequest);
+	};
 	return GlucoseAppComponent;
 });
