@@ -19,11 +19,9 @@ sap.ui.define([
 		this.oSecurity = new SecurityComponent();
 		this.oSecurity.setup(this, arguments);
 	};
-
 	GlucoseAppComponent.prototype.navigateToTarget = function(sTargetName) {
 		this.getRouter().navTo(sTargetName);
 	};
-
 	GlucoseAppComponent.prototype.sendRestRequest = function(oRequest) {
 		var sToken = localStorage.getItem('com.etauker.glucose.security.token');
 		oRequest.beforeSend = (xhr) => {
@@ -31,14 +29,13 @@ sap.ui.define([
 		}
 		return $.ajax(oRequest);
 	};
-
 	GlucoseAppComponent.prototype.getUserPreferences = function() {
 		const oDefaultPreferences = {
 			appHome: {
 				defaultTab: "readings"
 			}
 		};
-		
+
 		// TODO: Get preferences from the server
 		let oPreferences = {};
 		oPreferences = oPreferences || oDefaultPreferences;

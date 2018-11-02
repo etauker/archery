@@ -16,8 +16,13 @@ sap.ui.define([
 		this._mViewSettingsDialogs = {};
 		this.getOwnerComponent().retrieveReadings()
 			.then(oResponse => this.oReadingModel.setProperty("/readings", oResponse));
+		this.oReadingModel.setProperty("/state", {
+			tableId: "readingsTable",
+			grouping: this._getGroupingFunctions(),
+			filtering: this._getFilteringFunctions()
+		});
 
-		this.mGroupFunctions = {
+		this.groupFunctions = {
 			Weekday: function(oBindingContext) {
 				let iDateTime = oBindingContext.getProperty("dateTime");
 				return {
@@ -26,9 +31,13 @@ sap.ui.define([
 				};
 			}
 		}
+
+		// this.SortingFunctions = this._getSorterFunctions();
+
+
 		this.getRouter().attachRoutePatternMatched(this.onRouteMatched, this);
 
-		// this.byId("readingsTable").addEventDelegate({
+		// this.byId(this.oReadingModel.getProperty("/state/tableId")).addEventDelegate({
 		//      onAfterRendering: this.applyGrouping.bind(this, "Weekday")
 		//  }, this);
 
@@ -39,99 +48,63 @@ sap.ui.define([
 	ReadingsController.prototype.onFilterButtonPressed = function(oEvent) {
 		this.createViewSettingsDialog("com.etauker.glucose.readings.fragment.FilterDialog").open();
 	};
-	ReadingsController.prototype.onSortButtonPressed = function() {
-		this.createViewSettingsDialog("com.etauker.glucose.readings.fragment.SortDialog").open();
-	};
 	ReadingsController.prototype.onGroupButtonPressed = function() {
 		this.createViewSettingsDialog("com.etauker.glucose.readings.fragment.GroupDialog").open();
 	};
 	ReadingsController.prototype.onRouteMatched = function() {
-		
+
 	};
 
+	// TODO: Implement
 	ReadingsController.prototype.handleFilterDialogConfirm = function (oEvent) {
-		console.log(oEvent);
-		let oTable = this.byId("readingsTable"),
-			mParams = oEvent.getParameters(),
-			oBinding = oTable.getBinding("items"),
-			aFilters = [];
+		let oTable = this.byId(this.oReadingModel.getProperty("/state/tableId"));
+		let oParams = oEvent.getParameters();
+		let oBinding = oTable.getBinding("items");
+		let aFilters = [];
+		let aFunctions = [];
 
-		mParams.filterItems.forEach(function(oItem) {
-			let aSplit = oItem.getKey().split("___"),
-				sPath = aSplit[0],
-				sOperator = aSplit[1],
-				sValue1 = aSplit[2],
-				sValue2 = aSplit[3],
-				oFilter = new Filter(sPath, sOperator, sValue1, sValue2);
-			aFilters.push(oFilter);
+
+		aFunctions = Object.keys(oParams.filterCompoundKeys)
+			.map(sKey => {
+				return {
+					filterFunction: sKey,
+					acceptedValues: Object.keys(oParams.filterCompoundKeys[sKey])
+				};
+			})
+
+		aFunctions.forEach(oFilter => {
+			let fnFilter = this.oReadingModel.getProperty(`/state/filtering/${oFilter.filterFunction}/function`);
+			aFilters.push(fnFilter(oFilter.acceptedValues));
 		});
 
 		// apply filter settings
 		oBinding.filter(aFilters);
-
-		// update filter bar
-		// this.byId("vsdFilterBar").setVisible(aFilters.length > 0);
-		// this.byId("vsdFilterLabel").setText(mParams.filterString);
-	};
-	ReadingsController.prototype.handleSortDialogConfirm = function(oEvent) {
-		var oTable = this.byId("readingsTable"),
-			mParams = oEvent.getParameters(),
-			oBinding = oTable.getBinding("items"),
-			sPath,
-			bDescending,
-			aSorters = [];
-
-		sPath = mParams.sortItem.getKey();
-		bDescending = mParams.sortDescending;
-		aSorters.push(new Sorter(sPath, bDescending));
-
-		// apply the selected sort and group settings
-		oBinding.sort(aSorters);
 	};
 	ReadingsController.prototype.handleGroupDialogConfirm = function(oEvent) {
-		var oTable = this.byId("readingsTable"),
-			mParams = oEvent.getParameters(),
-			oBinding = oTable.getBinding("items"),
-			sPath,
-			bDescending,
-			vGroup,
-			aGroups = [];
+		let oTable = this.byId(this.oReadingModel.getProperty("/state/tableId"));
+		let oParams = oEvent.getParameters();
+		let oBinding = oTable.getBinding("items");
 
-		if (mParams.groupItem) {
-			sPath = mParams.groupItem.getKey();
-			bDescending = mParams.groupDescending;
-			vGroup = this.mGroupFunctions[sPath];
-			aGroups.push(new Sorter(sPath, bDescending, vGroup.bind(this)));
-			// apply the selected group settings
-			oBinding.sort(aGroups);
+		// Reset initial table state
+		this._showAllColumns();
+		oBinding.sort(this._getDefaultSorter());
+
+		if (oParams.groupItem) {
+			let bDescending = oParams.groupDescending;
+			let sFunction = oParams.groupItem.getKey() || "removeGrouping";
+			let sColumn = this.oReadingModel.getProperty(`/state/grouping/${sFunction}/field`);
+			let fnGrouping = this.oReadingModel.getProperty(`/state/grouping/${sFunction}/function`);
+			oBinding.sort(new Sorter(sColumn, bDescending, fnGrouping.bind(this)));
 		}
 	};
-	//TODO: Refactor to use this
-	// ReadingsController.prototype.applyGrouping = function(sGroupFunctionName) {
-	// 	let oTable = this.byId("readingsTable");
-	// 	let aItems = oTable.getItems();
-	// 	let vGroup = this.mGroupFunctions[sGroupFunctionName];
-	// 	let aGroups = [];
-	// 	aItems.forEach(oItem => {
-	// 		let oBindingContext = oItem.getBindingContext("readings");
-	// 		let sPath = oBindingContext.getPath() + "/dateTime";
-	// 		aGroups.push(new Sorter(sPath, true, vGroup.bind(this)));
-	// 	})
-	//
-	// 	// apply the selected group settings
-	// 	oTable.getBinding("items").sort(aGroups);
-	// };
-	ReadingsController.prototype.groupByWeekday = function(oBindingContext) {
-		var oTable = this.byId("readingsTable"),
-			oBinding = oTable.getBinding("items"),
-			vGroup = this.mGroupFunctions["Weekday"],
-			aGroups = [];
-
-			aGroups.push(new Sorter(oBindingContext.getPath(), true, vGroup.bind(this)));
-			// apply the selected group settings
-			oBinding.sort(aGroups);
+	ReadingsController.prototype._showAllColumns = function() {
+		this.byId(this.oReadingModel.getProperty("/state/tableId")).getColumns()
+			.forEach(oColumn => oColumn.setVisible(true))
 	};
-
+	ReadingsController.prototype._getDefaultSorter = function() {
+		// TODO: Implement preferences based initial sorting
+		return new Sorter('dateTime', true);
+	};
 	ReadingsController.prototype.createViewSettingsDialog = function (sDialogFragmentName) {
 		var oDialog = this._mViewSettingsDialogs[sDialogFragmentName];
 
@@ -145,6 +118,247 @@ sap.ui.define([
 		}
 		return oDialog;
 	};
+
+
+	ReadingsController.prototype._getReadingGroup = function() {
+		return {
+			periods: [
+				{
+					periodId: 'beforeBreakfast',
+					periodText: 'Before Breakfast',
+					startTime: '06:01',
+					endTime: '10:00',
+					groups: [
+						{
+							groupId: 'low',
+							groupText: 'Low',
+							minValue: 0,
+							maxValue: 5.5
+						},
+						{
+							groupId: 'good',
+							groupText: 'Good',
+							minValue: 5.6,
+							maxValue: 7.5
+						},
+						{
+							groupId: 'high',
+							groupText: 'High',
+							minValue: 7.6,
+							maxValue: 14
+						},
+						{
+							groupId: 'veryHigh',
+							groupText: 'Very High',
+							minValue: 14.1,
+							maxValue: 50
+						}
+					]
+				},
+				{
+					periodId: 'beforeMeals',
+					periodText: 'Before Meals',
+					startTime: '10:01',
+					endTime: '22:00',
+					groups: [
+						{
+							groupId: 'low',
+							groupText: 'Low',
+							minValue: 0,
+							maxValue: 4.5
+						},
+						{
+							groupId: 'good',
+							groupText: 'Good',
+							minValue: 4.6,
+							maxValue: 7.5
+						},
+						{
+							groupId: 'high',
+							groupText: 'High',
+							minValue: 7.6,
+							maxValue: 14
+						},
+						{
+							groupId: 'veryHigh',
+							groupText: 'Very High',
+							minValue: 14.1,
+							maxValue: 50
+						}
+					]
+				},
+				{
+					periodId: 'beforeBed',
+					periodText: 'Before Bed',
+					startTime: '22:01',
+					endTime: '06:00',
+					groups: [
+						{
+							groupId: 'low',
+							groupText: 'Low',
+							minValue: 0,
+							maxValue: 6.5
+						},
+						{
+							groupId: 'good',
+							groupText: 'Good',
+							minValue: 6.6,
+							maxValue: 8
+						},
+						{
+							groupId: 'high',
+							groupText: 'High',
+							minValue: 8.1,
+							maxValue: 14
+						},
+						{
+							groupId: 'veryHigh',
+							groupText: 'Very High',
+							minValue: 14.1,
+							maxValue: 50
+						}
+					]
+				}
+			]
+		};
+	};
+	ReadingsController.prototype._getGroupingFunctions = () => {
+		return {
+			groupByMeals: {
+				field: "meal",
+				function: function(oBindingContext) {
+					let sMeal = oBindingContext.getProperty("meal");
+
+					return {
+						key: sMeal,
+						text: sMeal ? sMeal : "Meal Unknown"
+					};
+				}
+			},
+			groupByReadingGroups: {
+				field: "reading",
+				function: function(oBindingContext) {
+					let iDateTime = oBindingContext.getProperty("dateTime");
+					let fReading = parseFloat(oBindingContext.getProperty("reading"));
+					let oFilterObject = {
+						key: "",
+						text: "Unknown Reading Group"
+					};
+					if (!iDateTime || !fReading) return oFilterObject;
+
+					// TODO: Change to get the reading groups from the backend
+					let oReadingGroup = this._getReadingGroup();
+					let oDate = new Date(iDateTime);
+
+					oReadingGroup.periods.some(oPeriod => {
+						let oDateStart = new Date(oDate.valueOf());
+						let sStartHour = oPeriod.startTime.substring(0,2);
+						let sStartMinute = oPeriod.startTime.substring(3,5);
+						oDateStart.setHours(parseInt(sStartHour));
+						oDateStart.setMinutes(parseInt(sStartMinute));
+
+						let oDateEnd = new Date(oDate.valueOf());
+						let sEndHour = oPeriod.endTime.substring(0,2);
+						let sEndMinute = oPeriod.endTime.substring(3,5);
+						oDateEnd.setHours(parseInt(sEndHour));
+						oDateEnd.setMinutes(parseInt(sEndMinute));
+
+						// Where period start and end times span over two days
+						if (sEndHour < sStartHour && oDate.getHours() < 12) {
+							oDateStart.setDate(oDateStart.getDate()-1);
+						}
+						else if (sEndHour < sStartHour && oDate.getHours() >= 12) {
+							oDateEnd.setDate(oDateEnd.getDate()+1);
+						}
+
+						if (oDate >= oDateStart && oDate <= oDateEnd) {
+							return oPeriod.groups.some(oReadingGroup => {
+								let fMin = parseFloat(oReadingGroup.minValue.toString());
+								let fMax = parseFloat(oReadingGroup.maxValue.toString());
+								if (fReading >= fMin && fReading <= fMax) {
+									oFilterObject = {
+										key: oReadingGroup.groupId,
+										text: oReadingGroup.groupText
+									}
+									return true;
+								}
+							});
+						}
+					});
+					return oFilterObject;
+				}
+			},
+			groupByWeekdays: {
+				field: "dateTime",
+				function: function(oBindingContext) {
+					let iDateTime = oBindingContext.getProperty("dateTime");
+					if (!iDateTime) return null;
+
+					let sWeekday = this.formatter.getWeekday(iDateTime);
+					let sDate = this.formatter.getDate(iDateTime);
+
+					this.byId(this.oReadingModel.getProperty("/state/tableId")).getColumns()
+						.forEach(oColumn => {
+							if (oColumn.getHeader().getText() === "Date" || oColumn.getHeader().getText() === "Weekday")
+								oColumn.setVisible(false);
+						})
+
+					return {
+						key: sWeekday,
+						text: `${sWeekday} (${sDate})`
+					};
+				}
+			},
+			groupByDayGroups: {
+				field: "dateTime",
+				function: function(oBindingContext) {
+					let iDateTime = oBindingContext.getProperty("dateTime");
+					if (!iDateTime) return null;
+
+					let oDate = new Date(iDateTime);
+					let sGroup = (oDate.getDay() === 0 || oDate.getDay() === 6) ? "Weekend" : "Weekday";
+
+					return {
+						key: sGroup,
+						text: sGroup
+					};
+				}
+			}
+		}
+	};
+	ReadingsController.prototype._getFilteringFunctions = () => {
+		return {
+			filterByMeals: {
+				field: "meal",
+				function: function(aAcceptedValues) {
+					let sPath = "meal";
+					let sOperator = sap.ui.model.FilterOperator.EQ;
+					// TODO: Refactor to accept an array of values
+					let sValue1 = aAcceptedValues[0];//aAcceptedValues.map(value => new Filter(sPath, 'EQ', value));
+					return new Filter(sPath, sOperator, sValue1);
+				}
+			},
+			filterByReadingGroups: {
+				field: "reading",
+				function: function(oBindingContext) {
+
+				}
+			},
+			filterByDayGroups: {
+				field: "dateTime",
+				function: function(oBindingContext) {
+
+				}
+			},
+			filterByTimestamp: {
+				field: "meal",
+				function: function(oBindingContext) {
+
+				}
+			}
+		}
+	};
+
 
 	return ReadingsController;
 });

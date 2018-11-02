@@ -67,6 +67,7 @@ sap.ui.define([
 			insulinUnitsLong: oViewObject.insulinUnitsLong ? parseInt(oViewObject.insulinUnitsLong) : null,
 			correctionUnits: oViewObject.correctionUnits ? parseInt(oViewObject.correctionUnits) : null,
 			dateTime: oDateTime.valueOf(),
+			meal: oViewObject.meal,
 			note: oViewObject.note
 		}
 		return oPostObject;
@@ -81,7 +82,8 @@ sap.ui.define([
 			insulinUnitsLong: null,
 			correctionUnits: null,
 			dateTime: sDate,
-			note: ""
+			meal: '',
+			note: ''
 		};
 	};
 	AddReadingController.prototype._getBlankOptions = function() {

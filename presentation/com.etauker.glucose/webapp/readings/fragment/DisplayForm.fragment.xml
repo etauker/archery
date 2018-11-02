@@ -50,9 +50,9 @@
 				<Label text="Date" />
 				<DateTimePicker displayFormat="short" value="{readings>/new/dateTime}"/>
 
-				<Label text="Meal" />
-				<Select items="{path: 'readings>/options/meals/'}">
-					<core:Item key="{path: 'readings>'}" text="{path: 'readings>'}" />
+				<Label text="Meal"/>
+				<Select items="{path: 'readings>/options/meals/'}" selectedKey="{path: 'readings>/new/meal'}">
+					<core:Item key="{path: 'readings>'}" text="{path: 'readings>'}"/>
 				</Select>
 
 				<Label text="Notes" />

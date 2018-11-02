@@ -4,17 +4,59 @@
 	<ViewSettingsDialog confirm="handleFilterDialogConfirm">
 		<filterItems>
 			<ViewSettingsFilterItem
-				text="Meal"
-				key="Meal"
+				text="Reading Groups"
+				key="filterByReadingGroups"
 				multiSelect="false">
 				<items>
-					<ViewSettingsItem text="Before Work" key="meal___EQ___Before Work___X" />
-					<ViewSettingsItem text="Breakfast" key="meal___EQ___Breakfast___X" />
-                    <ViewSettingsItem text="Lunch" key="meal___EQ___Lunch___X" />
-                    <ViewSettingsItem text="Dinner" key="meal___EQ___Dinner___X" />
-                    <ViewSettingsItem text="Before Bed" key="meal___EQ___Before Bed___X" />
+					<ViewSettingsItem text="Low" key="low" />
+					<ViewSettingsItem text="Good" key="good" />
+					<ViewSettingsItem text="High" key="high" />
+					<ViewSettingsItem text="Very High" key="veryHigh" />
 				</items>
 			</ViewSettingsFilterItem>
+
+			<ViewSettingsFilterItem
+				text="Meal"
+				key="filterByMeals"
+				multiSelect="false">
+				<items>
+					<ViewSettingsItem text="Before Work" key="Before Work" />
+					<ViewSettingsItem text="Breakfast" key="Breakfast" />
+                    <ViewSettingsItem text="Lunch" key="Lunch" />
+                    <ViewSettingsItem text="Dinner" key="Dinner" />
+                    <ViewSettingsItem text="Before Bed" key="Before Bed" />
+				</items>
+			</ViewSettingsFilterItem>
+
+			<ViewSettingsFilterItem
+				text="Day"
+				key="filterByDayGroups"
+				multiSelect="false">
+				<items>
+					<ViewSettingsItem text="Monday" key="Monday" />
+					<ViewSettingsItem text="Tuesday" key="Tuesday" />
+					<ViewSettingsItem text="Wednesday" key="Wednesday" />
+					<ViewSettingsItem text="Thursday" key="Thursday" />
+					<ViewSettingsItem text="Friday" key="Friday" />
+					<ViewSettingsItem text="Saturday" key="Saturday" />
+					<ViewSettingsItem text="Sunday" key="Sunday" />
+				</items>
+			</ViewSettingsFilterItem>
+
+			<ViewSettingsFilterItem
+				text="Date and Time"
+				key="filterByTimestamp"
+				multiSelect="false">
+				<items>
+					<!-- <ViewSettingsItem text="Before Work" key="Before Work" />
+					<ViewSettingsItem text="Breakfast" key="Breakfast" />
+					<ViewSettingsItem text="Lunch" key="Lunch" />
+					<ViewSettingsItem text="Dinner" key="Dinner" />
+					<ViewSettingsItem text="Before Bed" key="Before Bed" /> -->
+				</items>
+			</ViewSettingsFilterItem>
+
+
 			<!-- <ViewSettingsFilterItem
 				text="Weekday"
 				key="Weekday"

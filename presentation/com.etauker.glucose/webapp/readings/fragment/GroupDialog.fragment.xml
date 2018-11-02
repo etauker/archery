@@ -2,10 +2,15 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
 	<ViewSettingsDialog
+		title="Select View"
+		sortDescending="true"
+		groupDescending="true"
 		confirm="handleGroupDialogConfirm">
 		<groupItems>
-			<ViewSettingsItem text="Weekday" key="Weekday" />
-			<!-- <ViewSettingsItem text="Price" key="Price" /> -->
+			<ViewSettingsItem text="Meal" key="groupByMeals" />
+			<ViewSettingsItem text="Reading Group" key="groupByReadingGroups" />
+			<ViewSettingsItem text="Day" key="groupByWeekdays" />
+			<ViewSettingsItem text="Day Group" key="groupByDayGroups" />
 		</groupItems>
 	</ViewSettingsDialog>
 </core:FragmentDefinition>
