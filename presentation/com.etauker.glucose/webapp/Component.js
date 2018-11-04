@@ -30,7 +30,7 @@ sap.ui.define([
 		return $.ajax(oRequest)
 			.error(oError => {
 				if (oError.status == 401) {
-					this.navigateToTarget('login');
+					this.oSecurity.handleLogout();
 				}
 				else {
 					console.log(oError);
