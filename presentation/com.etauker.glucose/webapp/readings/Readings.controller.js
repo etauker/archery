@@ -14,33 +14,13 @@ sap.ui.define([
 	ReadingsController.prototype.onInit = function() {
 		this.oReadingModel = this.getOwnerComponent().getModel("readings");
 		this._mViewSettingsDialogs = {};
-		// this.getOwnerComponent().retrieveReadings()
-		// 	.then(oResponse => this.oReadingModel.setProperty("/readings", oResponse));
 		this.oReadingModel.setProperty("/state", {
 			tableId: "readingsTable",
 			grouping: this._getGroupingFunctions(),
 			filtering: this._getFilteringFunctions()
 		});
 
-		this.groupFunctions = {
-			Weekday: function(oBindingContext) {
-				let iDateTime = oBindingContext.getProperty("dateTime");
-				return {
-					key: this.formatter.getWeekday(iDateTime),
-					text: this.formatter.getWeekday(iDateTime)
-				};
-			}
-		}
-
-		// this.SortingFunctions = this._getSorterFunctions();
-
-
 		this.getRouter().attachRoutePatternMatched(this.onRouteMatched, this);
-
-		// this.byId(this.oReadingModel.getProperty("/state/tableId")).addEventDelegate({
-		//      onAfterRendering: this.applyGrouping.bind(this, "Weekday")
-		//  }, this);
-
 	};
 	ReadingsController.prototype.onAddReading = function(oEvent) {
 		this.getRouter().navTo("addReading");
@@ -55,15 +35,12 @@ sap.ui.define([
 		this.getOwnerComponent().retrieveReadings()
 			.then(oResponse => this.oReadingModel.setProperty("/readings", oResponse));
 	};
-
-	// TODO: Implement
 	ReadingsController.prototype.handleFilterDialogConfirm = function (oEvent) {
-		let oTable = this.byId(this.oReadingModel.getProperty("/state/tableId"));
+		let oTable = this.getView().byId(this.oReadingModel.getProperty("/state/tableId"));
 		let oParams = oEvent.getParameters();
 		let oBinding = oTable.getBinding("items");
 		let aFilters = [];
 		let aFunctions = [];
-
 
 		aFunctions = Object.keys(oParams.filterCompoundKeys)
 			.map(sKey => {
@@ -78,11 +55,10 @@ sap.ui.define([
 			aFilters.push(fnFilter.call(this, oFilter.acceptedValues));
 		});
 
-		// apply filter settings
 		oBinding.filter(aFilters);
 	};
 	ReadingsController.prototype.handleGroupDialogConfirm = function(oEvent) {
-		let oTable = this.byId(this.oReadingModel.getProperty("/state/tableId"));
+		let oTable = this.getView().byId(this.oReadingModel.getProperty("/state/tableId"));
 		let oParams = oEvent.getParameters();
 		let oBinding = oTable.getBinding("items");
 
@@ -99,7 +75,7 @@ sap.ui.define([
 		}
 	};
 	ReadingsController.prototype._showAllColumns = function() {
-		this.byId(this.oReadingModel.getProperty("/state/tableId")).getColumns()
+		this.getView().byId(this.oReadingModel.getProperty("/state/tableId")).getColumns()
 			.forEach(oColumn => oColumn.setVisible(true))
 	};
 	ReadingsController.prototype._getDefaultSorter = function() {
@@ -119,8 +95,108 @@ sap.ui.define([
 		}
 		return oDialog;
 	};
+	ReadingsController.prototype._getGroupingFunctions = () => {
+		return {
+			groupByWeekdays: {
+				field: "dateTime",
+				function: function(oBindingContext) {
+					let iDateTime = oBindingContext.getProperty("dateTime");
+					if (!iDateTime) return null;
 
+					let sWeekday = this.formatter.getWeekday(iDateTime);
+					let sDate = this.formatter.getDate(iDateTime);
 
+					this.getView().byId(this.oReadingModel.getProperty("/state/tableId")).getColumns()
+						.forEach(oColumn => {
+							if (oColumn.getHeader().getText() === "Date" || oColumn.getHeader().getText() === "Weekday")
+								oColumn.setVisible(false);
+						})
+
+					return {
+						key: sWeekday,
+						text: `${sWeekday} (${sDate})`
+					};
+				}
+			}
+		}
+	};
+	ReadingsController.prototype._getFilteringFunctions = () => {
+		return {
+			filterByMeals: {
+				function: function(aAcceptedValues) {
+					let sPath = "meal";
+					let fnFilterFunction = (oValue) => {
+						aAcceptedValues = aAcceptedValues.map(sValue => sValue.toUpperCase());
+						return aAcceptedValues.includes(oValue);
+					}
+					return new Filter(sPath, fnFilterFunction);
+				}
+			},
+			filterByReadingGroups: {
+				function: function(aAcceptedValues) {
+					let sPath = "";
+					let fnCustomFilterFunction = (aAcceptedValues, oValue) => {
+
+						let iDateTime = oValue["dateTime"];
+						let fReading = parseFloat(oValue["reading"]);
+						if (!iDateTime || !fReading) return null;
+
+						// TODO: Change to get the reading groups from the backend
+						let oReadingGroup = this._getReadingGroup();
+						let oDate = new Date(iDateTime);
+
+						return oReadingGroup.periods.some(function(aAcceptedValues, oPeriod) {
+							let oDateStart = new Date(oDate.valueOf());
+							let sStartHour = oPeriod.startTime.substring(0,2);
+							let sStartMinute = oPeriod.startTime.substring(3,5);
+							oDateStart.setHours(parseInt(sStartHour));
+							oDateStart.setMinutes(parseInt(sStartMinute));
+
+							let oDateEnd = new Date(oDate.valueOf());
+							let sEndHour = oPeriod.endTime.substring(0,2);
+							let sEndMinute = oPeriod.endTime.substring(3,5);
+							oDateEnd.setHours(parseInt(sEndHour));
+							oDateEnd.setMinutes(parseInt(sEndMinute));
+
+							// Where period start and end times span over two days
+							if (sEndHour < sStartHour && oDate.getHours() < 12) {
+								oDateStart.setDate(oDateStart.getDate()-1);
+							}
+							else if (sEndHour < sStartHour && oDate.getHours() >= 12) {
+								oDateEnd.setDate(oDateEnd.getDate()+1);
+							}
+
+							if (oDate >= oDateStart && oDate <= oDateEnd) {
+								return aAcceptedValues.some(sGroupId => {
+									let fMin = parseFloat(oPeriod.groups.filter(oGroup => oGroup.groupId === sGroupId)[0].minValue.toString());
+									let fMax = parseFloat(oPeriod.groups.filter(oGroup => oGroup.groupId === sGroupId)[0].maxValue.toString());
+									if (fReading >= fMin && fReading <= fMax) {
+										return true;
+									}
+								});
+							}
+						}.bind(this, aAcceptedValues));
+					};
+					return new Filter(sPath, fnCustomFilterFunction.bind(this, aAcceptedValues));
+				}
+			},
+			filterByDays: {
+				function: function(aAcceptedValues) {
+					let sPath = "dateTime";
+					let fnFilterFunction = (oValue) => {
+						return aAcceptedValues.includes(this.formatter.getWeekday(oValue));
+					}
+					return new Filter(sPath, fnFilterFunction);
+				}
+			},
+			filterByTimestamp: {
+				field: "meal",
+				function: function(oBindingContext) {
+					// TODO: Implement
+				}
+			}
+		}
+	};
 	ReadingsController.prototype._getReadingGroup = function() {
 		return {
 			periods: [
@@ -223,185 +299,6 @@ sap.ui.define([
 			]
 		};
 	};
-	ReadingsController.prototype._getGroupingFunctions = () => {
-		return {
-			// groupByMeals: {
-			// 	field: "meal",
-			// 	function: function(oBindingContext) {
-			// 		let sMeal = oBindingContext.getProperty("meal");
-			//
-			// 		return {
-			// 			key: sMeal,
-			// 			text: sMeal ? sMeal : "Meal Unknown"
-			// 		};
-			// 	}
-			// },
-			// groupByReadingGroups: {
-			// 	field: "reading",
-			// 	function: function(oBindingContext) {
-			// 		let iDateTime = oBindingContext.getProperty("dateTime");
-			// 		let fReading = parseFloat(oBindingContext.getProperty("reading"));
-			// 		let oFilterObject = {
-			// 			key: "",
-			// 			text: "Unknown Reading Group"
-			// 		};
-			// 		if (!iDateTime || !fReading) return oFilterObject;
-			//
-			// 		// TODO: Change to get the reading groups from the backend
-			// 		let oReadingGroup = this._getReadingGroup();
-			// 		let oDate = new Date(iDateTime);
-			//
-			// 		oReadingGroup.periods.some(oPeriod => {
-			// 			let oDateStart = new Date(oDate.valueOf());
-			// 			let sStartHour = oPeriod.startTime.substring(0,2);
-			// 			let sStartMinute = oPeriod.startTime.substring(3,5);
-			// 			oDateStart.setHours(parseInt(sStartHour));
-			// 			oDateStart.setMinutes(parseInt(sStartMinute));
-			//
-			// 			let oDateEnd = new Date(oDate.valueOf());
-			// 			let sEndHour = oPeriod.endTime.substring(0,2);
-			// 			let sEndMinute = oPeriod.endTime.substring(3,5);
-			// 			oDateEnd.setHours(parseInt(sEndHour));
-			// 			oDateEnd.setMinutes(parseInt(sEndMinute));
-			//
-			// 			// Where period start and end times span over two days
-			// 			if (sEndHour < sStartHour && oDate.getHours() < 12) {
-			// 				oDateStart.setDate(oDateStart.getDate()-1);
-			// 			}
-			// 			else if (sEndHour < sStartHour && oDate.getHours() >= 12) {
-			// 				oDateEnd.setDate(oDateEnd.getDate()+1);
-			// 			}
-			//
-			// 			if (oDate >= oDateStart && oDate <= oDateEnd) {
-			// 				return oPeriod.groups.some(oReadingGroup => {
-			// 					let fMin = parseFloat(oReadingGroup.minValue.toString());
-			// 					let fMax = parseFloat(oReadingGroup.maxValue.toString());
-			// 					if (fReading >= fMin && fReading <= fMax) {
-			// 						oFilterObject = {
-			// 							key: oReadingGroup.groupId,
-			// 							text: oReadingGroup.groupText
-			// 						}
-			// 						return true;
-			// 					}
-			// 				});
-			// 			}
-			// 		});
-			// 		return oFilterObject;
-			// 	}
-			// },
-			groupByWeekdays: {
-				field: "dateTime",
-				function: function(oBindingContext) {
-					let iDateTime = oBindingContext.getProperty("dateTime");
-					if (!iDateTime) return null;
-
-					let sWeekday = this.formatter.getWeekday(iDateTime);
-					let sDate = this.formatter.getDate(iDateTime);
-
-					this.byId(this.oReadingModel.getProperty("/state/tableId")).getColumns()
-						.forEach(oColumn => {
-							if (oColumn.getHeader().getText() === "Date" || oColumn.getHeader().getText() === "Weekday")
-								oColumn.setVisible(false);
-						})
-
-					return {
-						key: sWeekday,
-						text: `${sWeekday} (${sDate})`
-					};
-				}
-			}
-			// groupByDayGroups: {
-			// 	field: "dateTime",
-			// 	function: function(oBindingContext) {
-			// 		let iDateTime = oBindingContext.getProperty("dateTime");
-			// 		if (!iDateTime) return null;
-			//
-			// 		let oDate = new Date(iDateTime);
-			// 		let sGroup = (oDate.getDay() === 0 || oDate.getDay() === 6) ? "Weekend" : "Weekday";
-			//
-			// 		return {
-			// 			key: sGroup,
-			// 			text: sGroup
-			// 		};
-			// 	}
-			// }
-		}
-	};
-	ReadingsController.prototype._getFilteringFunctions = () => {
-		return {
-			filterByMeals: {
-				field: "meal",
-				function: function(aAcceptedValues) {
-					let sPath = "meal";
-					let sOperator = sap.ui.model.FilterOperator.EQ;
-					// TODO: Refactor to accept an array of values
-					let sValue1 = aAcceptedValues[0];//aAcceptedValues.map(value => new Filter(sPath, 'EQ', value));
-					return new Filter(sPath, sOperator, sValue1);
-				}
-			},
-			filterByReadingGroups: {
-				function: function(aAcceptedValues) {
-					let sPath = "";
-					let fnCustomFilterFunction = (aAcceptedValues, oValue) => {
-
-						let iDateTime = oValue["dateTime"];
-						let fReading = parseFloat(oValue["reading"]);
-						if (!iDateTime || !fReading) return null;
-
-						// TODO: Change to get the reading groups from the backend
-						let oReadingGroup = this._getReadingGroup();
-						let oDate = new Date(iDateTime);
-
-						return oReadingGroup.periods.some(function(aAcceptedValues, oPeriod) {
-							let oDateStart = new Date(oDate.valueOf());
-							let sStartHour = oPeriod.startTime.substring(0,2);
-							let sStartMinute = oPeriod.startTime.substring(3,5);
-							oDateStart.setHours(parseInt(sStartHour));
-							oDateStart.setMinutes(parseInt(sStartMinute));
-
-							let oDateEnd = new Date(oDate.valueOf());
-							let sEndHour = oPeriod.endTime.substring(0,2);
-							let sEndMinute = oPeriod.endTime.substring(3,5);
-							oDateEnd.setHours(parseInt(sEndHour));
-							oDateEnd.setMinutes(parseInt(sEndMinute));
-
-							// Where period start and end times span over two days
-							if (sEndHour < sStartHour && oDate.getHours() < 12) {
-								oDateStart.setDate(oDateStart.getDate()-1);
-							}
-							else if (sEndHour < sStartHour && oDate.getHours() >= 12) {
-								oDateEnd.setDate(oDateEnd.getDate()+1);
-							}
-
-							if (oDate >= oDateStart && oDate <= oDateEnd) {
-								return aAcceptedValues.some(sGroupId => {
-									let fMin = parseFloat(oPeriod.groups.filter(oGroup => oGroup.groupId === sGroupId)[0].minValue.toString());
-									let fMax = parseFloat(oPeriod.groups.filter(oGroup => oGroup.groupId === sGroupId)[0].maxValue.toString());
-									if (fReading >= fMin && fReading <= fMax) {
-										return true;
-									}
-								});
-							}
-						}.bind(this, aAcceptedValues));
-					};
-					return new Filter(sPath, fnCustomFilterFunction.bind(this, aAcceptedValues));
-				}
-			},
-			filterByDayGroups: {
-				field: "dateTime",
-				function: function(oBindingContext) {
-
-				}
-			},
-			filterByTimestamp: {
-				field: "meal",
-				function: function(oBindingContext) {
-
-				}
-			}
-		}
-	};
-
 
 	return ReadingsController;
 });

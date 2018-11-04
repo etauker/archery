@@ -27,7 +27,15 @@ sap.ui.define([
 		oRequest.beforeSend = (xhr) => {
 			xhr.setRequestHeader('Authorization', 'Bearer ' + sToken);
 		}
-		return $.ajax(oRequest);
+		return $.ajax(oRequest)
+			.error(oError => {
+				if (oError.status == 401) {
+					this.navigateToTarget('login');
+				}
+				else {
+					console.log(oError);
+				}
+			});
 	};
 	GlucoseAppComponent.prototype.getUserPreferences = function() {
 		const oDefaultPreferences = {
