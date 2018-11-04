@@ -14,8 +14,8 @@ sap.ui.define([
 	ReadingsController.prototype.onInit = function() {
 		this.oReadingModel = this.getOwnerComponent().getModel("readings");
 		this._mViewSettingsDialogs = {};
-		this.getOwnerComponent().retrieveReadings()
-			.then(oResponse => this.oReadingModel.setProperty("/readings", oResponse));
+		// this.getOwnerComponent().retrieveReadings()
+		// 	.then(oResponse => this.oReadingModel.setProperty("/readings", oResponse));
 		this.oReadingModel.setProperty("/state", {
 			tableId: "readingsTable",
 			grouping: this._getGroupingFunctions(),
@@ -52,7 +52,8 @@ sap.ui.define([
 		this.createViewSettingsDialog("com.etauker.glucose.readings.fragment.GroupDialog").open();
 	};
 	ReadingsController.prototype.onRouteMatched = function() {
-
+		this.getOwnerComponent().retrieveReadings()
+			.then(oResponse => this.oReadingModel.setProperty("/readings", oResponse));
 	};
 
 	// TODO: Implement
@@ -74,7 +75,7 @@ sap.ui.define([
 
 		aFunctions.forEach(oFilter => {
 			let fnFilter = this.oReadingModel.getProperty(`/state/filtering/${oFilter.filterFunction}/function`);
-			aFilters.push(fnFilter(oFilter.acceptedValues));
+			aFilters.push(fnFilter.call(this, oFilter.acceptedValues));
 		});
 
 		// apply filter settings
@@ -224,70 +225,70 @@ sap.ui.define([
 	};
 	ReadingsController.prototype._getGroupingFunctions = () => {
 		return {
-			groupByMeals: {
-				field: "meal",
-				function: function(oBindingContext) {
-					let sMeal = oBindingContext.getProperty("meal");
-
-					return {
-						key: sMeal,
-						text: sMeal ? sMeal : "Meal Unknown"
-					};
-				}
-			},
-			groupByReadingGroups: {
-				field: "reading",
-				function: function(oBindingContext) {
-					let iDateTime = oBindingContext.getProperty("dateTime");
-					let fReading = parseFloat(oBindingContext.getProperty("reading"));
-					let oFilterObject = {
-						key: "",
-						text: "Unknown Reading Group"
-					};
-					if (!iDateTime || !fReading) return oFilterObject;
-
-					// TODO: Change to get the reading groups from the backend
-					let oReadingGroup = this._getReadingGroup();
-					let oDate = new Date(iDateTime);
-
-					oReadingGroup.periods.some(oPeriod => {
-						let oDateStart = new Date(oDate.valueOf());
-						let sStartHour = oPeriod.startTime.substring(0,2);
-						let sStartMinute = oPeriod.startTime.substring(3,5);
-						oDateStart.setHours(parseInt(sStartHour));
-						oDateStart.setMinutes(parseInt(sStartMinute));
-
-						let oDateEnd = new Date(oDate.valueOf());
-						let sEndHour = oPeriod.endTime.substring(0,2);
-						let sEndMinute = oPeriod.endTime.substring(3,5);
-						oDateEnd.setHours(parseInt(sEndHour));
-						oDateEnd.setMinutes(parseInt(sEndMinute));
-
-						// Where period start and end times span over two days
-						if (sEndHour < sStartHour && oDate.getHours() < 12) {
-							oDateStart.setDate(oDateStart.getDate()-1);
-						}
-						else if (sEndHour < sStartHour && oDate.getHours() >= 12) {
-							oDateEnd.setDate(oDateEnd.getDate()+1);
-						}
-
-						if (oDate >= oDateStart && oDate <= oDateEnd) {
-							return oPeriod.groups.some(oReadingGroup => {
-								let fMin = parseFloat(oReadingGroup.minValue.toString());
-								let fMax = parseFloat(oReadingGroup.maxValue.toString());
-								if (fReading >= fMin && fReading <= fMax) {
-									oFilterObject = {
-										key: oReadingGroup.groupId,
-										text: oReadingGroup.groupText
-									}
-									return true;
-								}
-							});
-						}
-					});
-					return oFilterObject;
-				}
-			},
+			// groupByMeals: {
+			// 	field: "meal",
+			// 	function: function(oBindingContext) {
+			// 		let sMeal = oBindingContext.getProperty("meal");
+			//
+			// 		return {
+			// 			key: sMeal,
+			// 			text: sMeal ? sMeal : "Meal Unknown"
+			// 		};
+			// 	}
+			// },
+			// groupByReadingGroups: {
+			// 	field: "reading",
+			// 	function: function(oBindingContext) {
+			// 		let iDateTime = oBindingContext.getProperty("dateTime");
+			// 		let fReading = parseFloat(oBindingContext.getProperty("reading"));
+			// 		let oFilterObject = {
+			// 			key: "",
+			// 			text: "Unknown Reading Group"
+			// 		};
+			// 		if (!iDateTime || !fReading) return oFilterObject;
+			//
+			// 		// TODO: Change to get the reading groups from the backend
+			// 		let oReadingGroup = this._getReadingGroup();
+			// 		let oDate = new Date(iDateTime);
+			//
+			// 		oReadingGroup.periods.some(oPeriod => {
+			// 			let oDateStart = new Date(oDate.valueOf());
+			// 			let sStartHour = oPeriod.startTime.substring(0,2);
+			// 			let sStartMinute = oPeriod.startTime.substring(3,5);
+			// 			oDateStart.setHours(parseInt(sStartHour));
+			// 			oDateStart.setMinutes(parseInt(sStartMinute));
+			//
+			// 			let oDateEnd = new Date(oDate.valueOf());
+			// 			let sEndHour = oPeriod.endTime.substring(0,2);
+			// 			let sEndMinute = oPeriod.endTime.substring(3,5);
+			// 			oDateEnd.setHours(parseInt(sEndHour));
+			// 			oDateEnd.setMinutes(parseInt(sEndMinute));
+			//
+			// 			// Where period start and end times span over two days
+			// 			if (sEndHour < sStartHour && oDate.getHours() < 12) {
+			// 				oDateStart.setDate(oDateStart.getDate()-1);
+			// 			}
+			// 			else if (sEndHour < sStartHour && oDate.getHours() >= 12) {
+			// 				oDateEnd.setDate(oDateEnd.getDate()+1);
+			// 			}
+			//
+			// 			if (oDate >= oDateStart && oDate <= oDateEnd) {
+			// 				return oPeriod.groups.some(oReadingGroup => {
+			// 					let fMin = parseFloat(oReadingGroup.minValue.toString());
+			// 					let fMax = parseFloat(oReadingGroup.maxValue.toString());
+			// 					if (fReading >= fMin && fReading <= fMax) {
+			// 						oFilterObject = {
+			// 							key: oReadingGroup.groupId,
+			// 							text: oReadingGroup.groupText
+			// 						}
+			// 						return true;
+			// 					}
+			// 				});
+			// 			}
+			// 		});
+			// 		return oFilterObject;
+			// 	}
+			// },
 			groupByWeekdays: {
 				field: "dateTime",
 				function: function(oBindingContext) {
@@ -308,22 +309,22 @@ sap.ui.define([
 						text: `${sWeekday} (${sDate})`
 					};
 				}
-			},
-			groupByDayGroups: {
-				field: "dateTime",
-				function: function(oBindingContext) {
-					let iDateTime = oBindingContext.getProperty("dateTime");
-					if (!iDateTime) return null;
-
-					let oDate = new Date(iDateTime);
-					let sGroup = (oDate.getDay() === 0 || oDate.getDay() === 6) ? "Weekend" : "Weekday";
-
-					return {
-						key: sGroup,
-						text: sGroup
-					};
-				}
 			}
+			// groupByDayGroups: {
+			// 	field: "dateTime",
+			// 	function: function(oBindingContext) {
+			// 		let iDateTime = oBindingContext.getProperty("dateTime");
+			// 		if (!iDateTime) return null;
+			//
+			// 		let oDate = new Date(iDateTime);
+			// 		let sGroup = (oDate.getDay() === 0 || oDate.getDay() === 6) ? "Weekend" : "Weekday";
+			//
+			// 		return {
+			// 			key: sGroup,
+			// 			text: sGroup
+			// 		};
+			// 	}
+			// }
 		}
 	};
 	ReadingsController.prototype._getFilteringFunctions = () => {
@@ -339,9 +340,51 @@ sap.ui.define([
 				}
 			},
 			filterByReadingGroups: {
-				field: "reading",
-				function: function(oBindingContext) {
+				function: function(aAcceptedValues) {
+					let sPath = "";
+					let fnCustomFilterFunction = (aAcceptedValues, oValue) => {
 
+						let iDateTime = oValue["dateTime"];
+						let fReading = parseFloat(oValue["reading"]);
+						if (!iDateTime || !fReading) return null;
+
+						// TODO: Change to get the reading groups from the backend
+						let oReadingGroup = this._getReadingGroup();
+						let oDate = new Date(iDateTime);
+
+						return oReadingGroup.periods.some(function(aAcceptedValues, oPeriod) {
+							let oDateStart = new Date(oDate.valueOf());
+							let sStartHour = oPeriod.startTime.substring(0,2);
+							let sStartMinute = oPeriod.startTime.substring(3,5);
+							oDateStart.setHours(parseInt(sStartHour));
+							oDateStart.setMinutes(parseInt(sStartMinute));
+
+							let oDateEnd = new Date(oDate.valueOf());
+							let sEndHour = oPeriod.endTime.substring(0,2);
+							let sEndMinute = oPeriod.endTime.substring(3,5);
+							oDateEnd.setHours(parseInt(sEndHour));
+							oDateEnd.setMinutes(parseInt(sEndMinute));
+
+							// Where period start and end times span over two days
+							if (sEndHour < sStartHour && oDate.getHours() < 12) {
+								oDateStart.setDate(oDateStart.getDate()-1);
+							}
+							else if (sEndHour < sStartHour && oDate.getHours() >= 12) {
+								oDateEnd.setDate(oDateEnd.getDate()+1);
+							}
+
+							if (oDate >= oDateStart && oDate <= oDateEnd) {
+								return aAcceptedValues.some(sGroupId => {
+									let fMin = parseFloat(oPeriod.groups.filter(oGroup => oGroup.groupId === sGroupId)[0].minValue.toString());
+									let fMax = parseFloat(oPeriod.groups.filter(oGroup => oGroup.groupId === sGroupId)[0].maxValue.toString());
+									if (fReading >= fMin && fReading <= fMax) {
+										return true;
+									}
+								});
+							}
+						}.bind(this, aAcceptedValues));
+					};
+					return new Filter(sPath, fnCustomFilterFunction.bind(this, aAcceptedValues));
 				}
 			},
 			filterByDayGroups: {

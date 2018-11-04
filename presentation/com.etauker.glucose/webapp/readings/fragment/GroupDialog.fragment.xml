@@ -7,10 +7,10 @@
 		groupDescending="true"
 		confirm="handleGroupDialogConfirm">
 		<groupItems>
-			<ViewSettingsItem text="Meal" key="groupByMeals" />
-			<ViewSettingsItem text="Reading Group" key="groupByReadingGroups" />
+			<!-- <ViewSettingsItem text="Meal" key="groupByMeals" /> -->
+			<!-- <ViewSettingsItem text="Reading Group" key="groupByReadingGroups" /> -->
 			<ViewSettingsItem text="Day" key="groupByWeekdays" />
-			<ViewSettingsItem text="Day Group" key="groupByDayGroups" />
+			<!-- <ViewSettingsItem text="Day Group" key="groupByDayGroups" /> -->
 		</groupItems>
 	</ViewSettingsDialog>
 </core:FragmentDefinition>
