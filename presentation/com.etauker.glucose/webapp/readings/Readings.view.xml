@@ -28,34 +28,34 @@
 				</Toolbar>
 			</headerToolbar>
 			<columns>
-				<Column demandPopin="true" hAlign="Center">
+				<Column demandPopin="true" hAlign="Center" popinDisplay="Inline">
 					<Text text="Date" />
 				</Column>
-				<Column demandPopin="true" hAlign="Center">
+				<Column demandPopin="true" hAlign="Center" popinDisplay="Inline">
 					<Text text="Time" />
 				</Column>
-				<Column demandPopin="true" hAlign="Center">
+				<Column demandPopin="false" hAlign="Center" minScreenWidth="Desktop">
 					<Text text="Weekday" />
 				</Column>
-				<Column demandPopin="true" hAlign="Center">
+				<Column demandPopin="true" hAlign="Center" minScreenWidth="Desktop" popinDisplay="Inline">
 					<Text text="Meal" />
 				</Column>
-				<Column demandPopin="true" hAlign="Center">
+				<Column demandPopin="true" hAlign="Center" minScreenWidth="Tablet" popinDisplay="Inline">
 					<Text text="Reading" />
 				</Column>
-				<Column demandPopin="true" hAlign="Center">
-					<Text text="Carbohydrates" />
+				<Column  demandPopin="true" hAlign="Center" minScreenWidth="Tablet" popinDisplay="Inline">
+					<Text text="Carbs" />
 				</Column>
-				<Column demandPopin="true" hAlign="Center">
-					<Text text="Insulin Units (Short Acting)" />
+				<Column demandPopin="true" hAlign="Center" minScreenWidth="Tablet" popinDisplay="Inline">
+					<Text text="Humalog" />
 				</Column>
-				<Column demandPopin="true" hAlign="Center">
-					<Text text="Insulin Units (Long Acting)" />
+				<Column demandPopin="true" hAlign="Center" minScreenWidth="Tablet" popinDisplay="Inline">
+					<Text text="Levemir" />
 				</Column>
-				<Column demandPopin="true" hAlign="Center">
+				<Column  demandPopin="false" hAlign="Center" minScreenWidth="Desktop">
 					<Text text="Correction Units" />
 				</Column>
-				<Column demandPopin="true" hAlign="Begin">
+				<Column demandPopin="true" hAlign="Begin" minScreenWidth="Desktop" popinDisplay="Inline" width="20%">
 					<Text text="Notes" />
 				</Column>
 			</columns>
