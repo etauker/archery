@@ -12,7 +12,8 @@ const app = express();
 const port = process.env.PORT || 8888;
 const archeryWebappEndpoint = '/archery';
 const glucoseWebappEndpoint = '/glucose';
-const archeryWebappDirectory = __dirname + "/presentation/com.etauker.archery/archery-ui5/webapp";
+// Disabled until: v1.3
+// const archeryWebappDirectory = __dirname + "/presentation/com.etauker.archery/archery-ui5/webapp";
 const glucoseWebappDirectory = __dirname + "/presentation/com.etauker.glucose/webapp";
 const url = 'http://localhost:' + port + archeryWebappEndpoint;
 const modules = [ "data", "persistence", "logic", "service", "utils" ];
@@ -35,7 +36,8 @@ global.paths = {
 // Print configuration
 console.log(`--- App configuration ---`);
 console.log("Port: " + port);
-console.log("Archery webapp endpoint: " + archeryWebappEndpoint);
+// Disabled until: v1.3
+// console.log("Archery webapp endpoint: " + archeryWebappEndpoint);
 console.log("Glucose Monitoring webapp endpoint: " + glucoseWebappEndpoint);
 
 // For each dependency...
@@ -66,13 +68,15 @@ dependencies.forEach(library => {
 // Import services
 var securityRouter = require(SecurityServicePath)(app);
 app.use("/security", securityRouter)
-var archeryRouter = require(ArcheryServicePath)(app);
-app.use("/api", archeryRouter)
+// Disabled until: v1.3
+// var archeryRouter = require(ArcheryServicePath)(app);
+// app.use("/api", archeryRouter)
 var glucoseRouter = require(GlucoseServicePath)(app, global.paths);
 app.use("/glucose", glucoseRouter)
 
 // Import the webapp
-app.use(archeryWebappEndpoint, express.static(archeryWebappDirectory));
+// Disabled until: v1.3
+// app.use(archeryWebappEndpoint, express.static(archeryWebappDirectory));
 app.use(glucoseWebappEndpoint, express.static(glucoseWebappDirectory));
 
 // Start the server
