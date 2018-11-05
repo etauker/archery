@@ -12,6 +12,7 @@ sap.ui.define([
 	AddReadingController.prototype.onInit = function() {
 		BaseController.prototype.onInit.call(this);
 		this.getRouter().getRoute("addReading").attachMatched(this.handleRouteMatched, this);
+		this.getView().byId('glucoseAddReadingPage').attachNavButtonPress(this.onNavBack, this);
 		this.oReadingModel = this.getOwnerComponent().getModel("readings");
 		this.oReadingModel.setProperty("/new", this._getBlankReading());
 		this.oReadingModel.setProperty("/options", this._getBlankOptions());
@@ -39,6 +40,9 @@ sap.ui.define([
 	AddReadingController.prototype.onCancel = function() {
 		this.oReadingModel.setProperty("/new", this._getBlankReading());
 		this.handleNavBack();
+	};
+	AddReadingController.prototype.onLogout = function (oEvent) {
+		this.handleLogout();
 	};
 	AddReadingController.prototype._onRequestFailed = function(oError) {
 		console.log(oError);

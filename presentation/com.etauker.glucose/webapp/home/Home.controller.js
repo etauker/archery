@@ -6,13 +6,10 @@ sap.ui.define([
 
 	var HomeController = BaseController.extend("com.etauker.glucose.home.Home");
 
-	// HomeController.prototype.onLogin = function (oEvent) {
-	// 	this.getRouter().navTo("login");
-	// };
-	//
 	HomeController.prototype.onInit = function() {
 		BaseController.prototype.onInit.call(this);
 		this.getRouter().getRoute("appHome").attachMatched(this.handleRouteMatched, this);
+		this.getView().byId('glucoseHomePage').attachNavButtonPress(this.onNavBack, this);
 		this.oPreferencesModel = this.getOwnerComponent().getModel("preferences");
 		this._changeTab(this.oPreferencesModel.getProperty("/appHome/defaultTab"));
 	};
@@ -33,9 +30,6 @@ sap.ui.define([
 			}
 		});
 	};
-
-
-
 
 	return HomeController;
 });
