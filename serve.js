@@ -64,7 +64,7 @@ dependencies.forEach(library => {
         console.log(`Registered ${count} dependency paths for ${module}`);
     });
 });
-
+console.log(JSON.stringify(global.paths));
 // Import services
 var securityRouter = require(SecurityServicePath)(app);
 app.use("/security", securityRouter)
