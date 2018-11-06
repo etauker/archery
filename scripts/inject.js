@@ -1,5 +1,5 @@
 let i18nFiles = [
-    "./presentation/com.etauker.security/webapp/i18n/i18n.properties",
+    "./presentation/com.etauker.glucose/webapp/dependencies/com.etauker.security/i18n/i18n.properties",
     "./presentation/com.etauker.glucose/webapp/i18n/i18n.properties"
 ]
 

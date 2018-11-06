@@ -19,13 +19,13 @@
 				}
 			},
 			"login": {
-				"uri": "https://localhost:443/security/token"
+				"uri": "{{env.PROTOCOL}}://{{env.HOST}}:{{env.PORT}}/security/token"
 			},
 			"logout": {
-				"uri": "https://localhost:443/security/invalidate"
+				"uri": "{{env.PROTOCOL}}://{{env.HOST}}:{{env.PORT}}/security/invalidate"
 			},
 			"user": {
-				"uri": "https://localhost:443/security/users"
+				"uri": "{{env.PROTOCOL}}://{{env.HOST}}:{{env.PORT}}/security/users"
 			}
 		}
 	},
