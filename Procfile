@@ -1,1 +1,1 @@
-web: node ./serve.js
+web: npm install && npm run start

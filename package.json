@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jasmine ",
     "compile": "tsc",
-    "start": "tsc && heroku local"
+    "start": "tsc && node serve.js",
+    "start-local": "tsc && heroku local"
   },
   "repository": {
     "type": "git",
