@@ -17,11 +17,11 @@ i18nFiles.forEach(file => {
         }
 
         if (process.env.PROTOCOL)
-            content = content.replace(/env\.PROTOCOL=.*/g, `PROTOCOL=${process.env.PROTOCOL}`)
+            content = content.replace(/env\.PROTOCOL=.*/g, `env.PROTOCOL=${process.env.PROTOCOL}`)
         if (process.env.HOST)
-            content = content.replace(/env\.HOST=.*/g, `HOST=${process.env.HOST}`)
+            content = content.replace(/env\.HOST=.*/g, `env.HOST=${process.env.HOST}`)
         if (process.env.PORT)
-            content = content.replace(/env\.PORT=.*/g, `PORT=${process.env.PORT}`)
+            content = content.replace(/env\.PORT=.*/g, `env.PORT=${process.env.PORT}`)
 
         console.log("--- Updated i18n File ---")
         console.log(content)
