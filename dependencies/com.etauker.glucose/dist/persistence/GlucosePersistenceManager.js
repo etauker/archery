@@ -217,6 +217,7 @@ class GlucosePersistenceManager {
         this.user = oParams.user || process.env.COM_ETAUKER_GLUCOSE_DB_USER;
         this.password = oParams.password || process.env.COM_ETAUKER_GLUCOSE_DB_PASSWORD;
         this.database = oParams.database || process.env.COM_ETAUKER_GLUCOSE_DB_DATABASE;
+        this.port = oParams.port || process.env.COM_ETAUKER_GLUCOSE_DB_PORT;
         this.commit = oParams.commit === false ? false : true;
         this.debug = oParams.debug === true ? true : false;
         // Create the connection pool
@@ -225,6 +226,7 @@ class GlucosePersistenceManager {
             user: this.user,
             password: this.password,
             database: this.database,
+            port: this.port,
             connectionLimit: 10
         });
         // Ensure that all mandatory parameters have a value
@@ -234,6 +236,8 @@ class GlucosePersistenceManager {
             this._missingParameter("password");
         if (!this.database)
             this._missingParameter("database");
+        if (!this.port)
+            this._missingParameter("port");
     }
     ;
 }

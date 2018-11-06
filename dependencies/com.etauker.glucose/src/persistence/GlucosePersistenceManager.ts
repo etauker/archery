@@ -8,6 +8,7 @@ class GlucosePersistenceManager {
     private user: string;
     private password: string;
     private database: string;
+    private port: number;
     private commit: boolean;
     private debug: boolean;
     private pool;
