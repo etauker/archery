@@ -1,0 +1,4 @@
+node_modules
+.env
+dependencies/com.etauker.glucose/dist/
+logs/

@@ -1,0 +1,65 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+
+	<VBox class="sapUiSmallMargin">
+		<f:SimpleForm
+			editable="true"
+			layout="ResponsiveGridLayout"
+			title=""
+			labelSpanXL="4"
+			labelSpanL="4"
+			labelSpanM="4"
+			labelSpanS="12"
+			adjustLabelSpan="false"
+			emptySpanXL="0"
+			emptySpanL="0"
+			emptySpanM="0"
+			emptySpanS="0"
+			columnsXL="3"
+			columnsL="2"
+			columnsM="2"
+			singleContainerFullSize="false" >
+
+			<f:content>
+
+				<core:Title text="Details" />
+
+				<Label text="Reading" />
+				<Input type="Number" text="{readings>/new/reading}" value="{readings>/new/reading}" />
+
+				<Label text="Carbohydrates" />
+				<Input type="Number" text="{readings>/new/carbohydrates}" value="{readings>/new/carbohydrates}"/>
+
+				<Label text="Insulin Units (Short Acting)" />
+				<Input type="Number" text="{readings>/new/insulinUnitsShort}" value="{readings>/new/insulinUnitsShort}"/>
+
+				<Label text="Insulin Units (Long Acting)" />
+				<Input type="Number" text="{readings>/new/insulinUnitsLong}" value="{readings>/new/insulinUnitsLong}"/>
+
+				<Label text="Correction Units" />
+				<Input type="Number" text="{readings>/new/correctionUnits}" value="{readings>/new/correctionUnits}"/>
+
+
+
+
+
+				<core:Title text="Context" />
+
+				<Label text="Date" />
+				<DateTimePicker displayFormat="short" value="{readings>/new/dateTime}"/>
+
+				<Label text="Meal"/>
+				<Select items="{path: 'readings>/options/meals/'}" selectedKey="{path: 'readings>/new/meal'}">
+					<core:Item key="{path: 'readings>'}" text="{path: 'readings>'}"/>
+				</Select>
+
+				<Label text="Notes" />
+				<TextArea rows="5" growing="true" value="{readings>/new/note}"/>
+
+			</f:content>
+		</f:SimpleForm>
+	</VBox>
+
+</core:FragmentDefinition>

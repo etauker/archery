@@ -1,0 +1,38 @@
+{
+  "name": "etauker-archery",
+  "version": "1.0.0",
+  "description": "",
+  "main": "serve.js",
+  "scripts": {
+    "test": "jasmine ",
+    "compile": "tsc",
+    "start": "tsc && heroku local"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/etauker/archery.git"
+  },
+  "keywords": [
+    "etauker",
+    "archery"
+  ],
+  "author": "etauker",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/etauker/archery/issues"
+  },
+  "homepage": "https://github.com/etauker/archery#readme",
+  "dependencies": {
+    "argon2": "^0.19.3",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0",
+    "mysql": "^2.16.0",
+    "open": "0.0.5",
+    "promise-mysql": "^3.3.1"
+  },
+  "devDependencies": {
+    "jasmine": "^3.2.0",
+    "typescript": "^3.1.3"
+  }
+}

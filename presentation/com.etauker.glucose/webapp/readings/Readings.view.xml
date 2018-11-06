@@ -1,0 +1,81 @@
+<mvc:View
+	controllerName="com.etauker.glucose.readings.Readings"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc" width="100%">
+
+	<VBox width="100%">
+		<Table id="readingsTable"
+			inset="false"
+			growing="true"
+			alternateRowColors="true"
+			items="{path: 'readings>/readings'}">
+			<headerToolbar>
+				<Toolbar>
+					<Title text="Readings" level="H2"/>
+					<ToolbarSpacer />
+					<Button
+						icon="sap-icon://add"
+						press="onAddReading" />
+					<Button
+						tooltip="View Filter Settings"
+						icon="sap-icon://filter"
+						press="onFilterButtonPressed" />
+					<Button
+						tooltip="View Group Settings"
+						icon="sap-icon://group-2"
+						press="onGroupButtonPressed" />
+				</Toolbar>
+			</headerToolbar>
+			<columns>
+				<Column demandPopin="true" hAlign="Center" popinDisplay="Inline">
+					<Text text="Date" />
+				</Column>
+				<Column demandPopin="true" hAlign="Center" popinDisplay="Inline">
+					<Text text="Time" />
+				</Column>
+				<Column demandPopin="false" hAlign="Center" minScreenWidth="Desktop">
+					<Text text="Weekday" />
+				</Column>
+				<Column demandPopin="true" hAlign="Center" minScreenWidth="Desktop" popinDisplay="Inline">
+					<Text text="Meal" />
+				</Column>
+				<Column demandPopin="true" hAlign="Center" minScreenWidth="Tablet" popinDisplay="Inline">
+					<Text text="Reading" />
+				</Column>
+				<Column  demandPopin="true" hAlign="Center" minScreenWidth="Tablet" popinDisplay="Inline">
+					<Text text="Carbs" />
+				</Column>
+				<Column demandPopin="true" hAlign="Center" minScreenWidth="Tablet" popinDisplay="Inline">
+					<Text text="Humalog" />
+				</Column>
+				<Column demandPopin="true" hAlign="Center" minScreenWidth="Tablet" popinDisplay="Inline">
+					<Text text="Levemir" />
+				</Column>
+				<Column  demandPopin="false" hAlign="Center" minScreenWidth="Desktop">
+					<Text text="Correction Units" />
+				</Column>
+				<Column demandPopin="true" hAlign="Begin" minScreenWidth="Desktop" popinDisplay="Inline" width="20%">
+					<Text text="Notes" />
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem>
+					<cells>
+						<Text text="{path: 'readings>dateTime', formatter: '.formatter.getDate'}" />
+						<Text text="{path: 'readings>dateTime', formatter: '.formatter.getTime'}" />
+						<Text text="{path: 'readings>dateTime', formatter: '.formatter.getWeekday'}" />
+						<Text text="{path: 'readings>meal'}" />
+						<Text text="{path: 'readings>reading'}" />
+						<Text text="{path: 'readings>carbohydrates'}" />
+						<Text text="{path: 'readings>insulinUnitsShort'}" />
+						<Text text="{path: 'readings>insulinUnitsLong'}" />
+						<Text text="{path: 'readings>correctionUnits'}" />
+						<Text text="{path: 'readings>note'}" />
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+	</VBox>
+
+</mvc:View>
