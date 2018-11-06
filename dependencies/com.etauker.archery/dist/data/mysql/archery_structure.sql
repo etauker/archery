@@ -1,4 +1,4 @@
-USE etauker_archery;
+USE `etauker`;
 
 DROP TABLE IF EXISTS ar_club;
 CREATE TABLE ar_club (

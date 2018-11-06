@@ -4,7 +4,7 @@
 -- Drop tables in reverse to avoid foreign key checks
 --
 
-USE etauker_security;
+USE `etauker`;
 
 DROP TABLE IF EXISTS SESSION_EXTENSION;
 DROP TABLE IF EXISTS USER_ROLE;

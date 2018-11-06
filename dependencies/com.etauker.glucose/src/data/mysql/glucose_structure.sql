@@ -1,4 +1,4 @@
-USE `etauker_glucose`;
+USE `etauker`;
 --
 -- DROP TABLES
 --

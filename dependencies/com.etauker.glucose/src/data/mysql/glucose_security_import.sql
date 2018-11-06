@@ -1,4 +1,4 @@
-USE etauker_security;
+USE `etauker`;
 
 INSERT INTO ROLE (name, description, created_by, updated_by)
 VALUES

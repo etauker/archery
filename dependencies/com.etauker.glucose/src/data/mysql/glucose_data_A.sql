@@ -1,4 +1,4 @@
-USE etauker_glucose;
+USE `etauker`;
 -- TRUNCATE TABLE `TRANSACTION`;
 INSERT INTO `TRANSACTION` (`date_time`, `reading`, `carbohydrates`, `insulin_units_short`, `insulin_units_long`, `meal`, `note`, `correction_units`, `created_at`, `updated_at`, `created_by`) VALUES
 ('2017-11-19 21:40:00', 4.7, NULL, NULL, NULL, '', '', NULL, NULL, NULL, '95b5590a-d894-11e8-b25f-080027d2c7dd'),
