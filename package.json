@@ -5,7 +5,8 @@
   "main": "serve.js",
   "scripts": {
     "test": "jasmine ",
-    "compile": "tsc",
+    "compile": "node scripts/inject.js && tsc",
+    "compile-local": "node scripts/inject.js",
     "start": "tsc && node serve.js",
     "start-local": "tsc && heroku local"
   },
