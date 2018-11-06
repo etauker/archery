@@ -53,7 +53,9 @@ sap.ui.define([
 	};
 	GlucoseAppComponent.prototype.retrieveReadings = function() {
 		let sUrl = this.getManifestEntry("/sap.app/dataSources/transactions/get/uri");
-		sUrl = sUrl.replace("localhost", "dev01"); //for development
+		// sUrl = sUrl.replace("localhost", "dev01"); //for development
+		// sUrl = sUrl.replace("443", "8888"); //for development
+		// sUrl = sUrl.replace("https", "http"); //for development
 
 		let sMethod = "GET";
 		let oRequest = {
@@ -63,8 +65,10 @@ sap.ui.define([
 		return this.sendRestRequest(oRequest);
 	};
 	GlucoseAppComponent.prototype.retrieveOptions = function() {
-		var sUrl = this.getManifestEntry("/sap.app/dataSources/transactions/add/uri");
-		sUrl = sUrl.replace("localhost", "dev01"); //for development
+		let sUrl = this.getManifestEntry("/sap.app/dataSources/transactions/add/uri");
+		// sUrl = sUrl.replace("localhost", "dev01"); //for development
+		// sUrl = sUrl.replace("443", "8888"); //for development
+		// sUrl = sUrl.replace("https", "http"); //for development
 
 		var sMethod = "GET";
 		var oRequest = {
@@ -74,8 +78,10 @@ sap.ui.define([
 		return this.sendRestRequest(oRequest);
 	};
 	GlucoseAppComponent.prototype.saveReading = function(oReading) {
-		var sUrl = this.getManifestEntry("/sap.app/dataSources/transactions/add/uri");
-		sUrl = sUrl.replace("localhost", "dev01"); //for development
+		let sUrl = this.getManifestEntry("/sap.app/dataSources/transactions/add/uri");
+		// sUrl = sUrl.replace("localhost", "dev01"); //for development
+		// sUrl = sUrl.replace("443", "8888"); //for development
+		// sUrl = sUrl.replace("https", "http"); //for development
 
 		var sMethod = "POST";
 		var oRequest = {

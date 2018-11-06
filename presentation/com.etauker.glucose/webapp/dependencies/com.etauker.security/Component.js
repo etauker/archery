@@ -65,9 +65,12 @@ sap.ui.define([
 
 
 	SecurityComponent.prototype._login = function (sUsername, sPassword) {
-		var sUrl = this.getManifestEntry("/sap.app/dataSources/login/uri");
-		sUrl = sUrl.replace("localhost", "dev01"); //for development
-		var sMethod = "POST";
+		let sUrl = this.getManifestEntry("/sap.app/dataSources/login/uri");
+		// sUrl = sUrl.replace("localhost", "dev01"); //for development
+		// sUrl = sUrl.replace("443", "8888"); //for development
+		// sUrl = sUrl.replace("https", "http"); //for development
+
+		let sMethod = "POST";
 		return $.ajax({
 		    url: sUrl,
 			method: sMethod,
@@ -78,9 +81,12 @@ sap.ui.define([
 		});
 	};
 	SecurityComponent.prototype._logout = function (sToken) {
-		var sUrl = this.getManifestEntry("/sap.app/dataSources/logout/uri");
-		sUrl = sUrl.replace("localhost", "dev01"); //for development
-		var sMethod = "GET";
+		let sUrl = this.getManifestEntry("/sap.app/dataSources/logout/uri");
+		// sUrl = sUrl.replace("localhost", "dev01"); //for development
+		// sUrl = sUrl.replace("443", "8888"); //for development
+		// sUrl = sUrl.replace("https", "http"); //for development
+
+		let sMethod = "GET";
 		return $.ajax({
 			url: sUrl,
 			type: sMethod,

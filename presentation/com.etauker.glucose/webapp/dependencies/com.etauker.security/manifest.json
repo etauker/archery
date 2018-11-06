@@ -19,13 +19,13 @@
 				}
 			},
 			"login": {
-				"uri": "https://localhost:8888/security/token"
+				"uri": "https://localhost:443/security/token"
 			},
 			"logout": {
-				"uri": "https://localhost:8888/security/invalidate"
+				"uri": "https://localhost:443/security/invalidate"
 			},
 			"user": {
-				"uri": "https://localhost:8888/security/users"
+				"uri": "https://localhost:443/security/users"
 			}
 		}
 	},
