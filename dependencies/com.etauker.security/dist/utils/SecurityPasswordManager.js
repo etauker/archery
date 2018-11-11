@@ -28,22 +28,28 @@ SecurityPasswordManager.prototype.hashPassword = function(sPassword) {
     // TODO: Return a hashed password
 };
 SecurityPasswordManager.prototype.verifyPassword = function(sUsername, sPassword) {
-
+    console.log('verifyPassword called');
     return new Promise((fnResolve, fnReject) => {
         if (!sUsername) throw this.error.getError(4);
         if (!sPassword) throw this.error.getError(5);
+        console.log('username and password exist');
 
         let user = {};
         this.persistenceManager.getUserByUsername(sUsername).then(oUser => {
             if (!oUser) fnReject(this.error.getError(2));
+            console.log('user found');
+
             user = oUser;
             return argon2.verify(oUser.password_hash, sPassword);
         }).then(bMatch => {
+            console.log('user verfication complete');
             if (bMatch) { fnResolve(user); }
             else {
+                console.log('incorrect password');
                 fnReject(this.error.getError(1));
             };
         }).catch(oError => {
+            console.log('password verification failed');
             fnReject(this.error.getError(3, oError));
         });
     });

@@ -63,8 +63,10 @@ class SecurityPersistenceManager {
  *  @return {promise} Resolves to the user entry from the database.
  */
 SecurityPersistenceManager.prototype.getUser = function(oUser) {
+    console.log('getUser called');
     var sQuery = this._formSelectQuery("USER", oUser);
     return this._query(sQuery).then(aQueryResult => {
+        console.log(`${aQueryResult.length} matching users found`);
         if (aQueryResult.length > 1) throw this.error.getError(7, null, "", "Expected 1, received "+aQueryResult.length+".");
         return aQueryResult[0];
     });
@@ -75,6 +77,7 @@ SecurityPersistenceManager.prototype.getUser = function(oUser) {
  *  @return {promise} Resolves to the user entry from the database.
  */
 SecurityPersistenceManager.prototype.getUserByUsername = function(sUsername) {
+    console.log('getUserByUsername called');
     return this.getUser({
         username: sUsername
     });

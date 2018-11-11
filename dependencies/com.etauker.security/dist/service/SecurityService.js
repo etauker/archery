@@ -91,6 +91,5 @@ module.exports = function(app) {
         oResponse.status = oError.http ? oError.http : 500;
         return oResponse;
     }
-console.log(router.prototype);
     return router;
 }
