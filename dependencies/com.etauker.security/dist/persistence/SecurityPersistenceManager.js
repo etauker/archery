@@ -273,15 +273,19 @@ SecurityPersistenceManager.prototype._query = function(sQuery, aParams) {
         }
 
         this.pool.getConnection((oError, oConnection) => {
+            console.log('getConnection');
             if (oError) throw this.error.getError(3, oError);
 
             oConnection.beginTransaction(oError => {
+                console.log('beginTransaction');
                 if (oError) throw this.error.getError(4, oError);
 
                 oConnection.query(sQuery, (oError, aRows, fields) => {
+                    console.log('query');
 
                     // Error while querying the database
                     if (oError) {
+                        console.log('oError');
                         oConnection.rollback(() => fnReject(oContext.error.getError(5, oError)));
                     }
 
