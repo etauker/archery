@@ -28,7 +28,7 @@ describe("SecurityPersistenceManager getUser function", function() {
             expect(oResult[0].username).toBe("admin");
             expect(oResult[0].created_by).toBe("SETUP_SCRIPT");
         }).catch(oError => {
-            console.log(oError);
+            console.log(JSON.stringify(oError));
             fail("Error retrieving user from the database.");
         });
     });
