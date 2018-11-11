@@ -34,6 +34,14 @@ class SecurityPersistenceManager {
         this.commit = oParams.commit === false ? false : true;
         this.debug = oParams.debug === true ? true : false;
 
+        console.log(`host: ${this.host}`);
+        console.log(`user: ${this.user}`);
+        console.log(`password: ${this.password}`);
+        console.log(`database: ${this.database}`);
+        console.log(`port: ${this.port}`);
+        console.log(`commit: ${this.commit}`);
+        console.log(`debug: ${this.debug}`);
+
         // Create the connection pool
         this.pool = mysql.createPool({
             host     : this.host,
@@ -41,7 +49,7 @@ class SecurityPersistenceManager {
             password : this.password,
             database : this.database,
             port : this.port,
-            connectionLimit : 10
+            connectionLimit : 4
         }).catch(oError => {
             console.log(JSON.stringify(oError));
         });
