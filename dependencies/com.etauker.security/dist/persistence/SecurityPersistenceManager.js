@@ -262,6 +262,7 @@ SecurityPersistenceManager.prototype._formInsertQuery = function(sTable, aEntiti
  *  @return {promise} The insert statement to be excuted in the database.
  */
 SecurityPersistenceManager.prototype._query = function(sQuery, aParams) {
+    console.log('_query called');
     var oContext = this;
     return new Promise((fnResolve, fnReject) => {
 
@@ -303,6 +304,8 @@ SecurityPersistenceManager.prototype._query = function(sQuery, aParams) {
                 });
             });
         });
+    }).catch(oError => {
+        console.log(JSON.stringify(oError));
     });
 };
 
