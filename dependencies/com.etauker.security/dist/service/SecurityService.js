@@ -23,19 +23,19 @@ module.exports = function(app) {
     }));
 
     router.post('/token', function(req, res) {
+        console.log('/token called');
         const sUsername = validator.validateUsername(req.body.username);
         const sPassword = validator.validatePassword(req.body.password);
-        console.log(sUsername);
-        console.log(sUsername && sPassword);
+        console.log(`username: ${sUsername}`);
 
         if (sUsername && sPassword) {
             password.verifyPassword(sUsername, sPassword).then((oUser) => {
                 return token.generateToken(oUser);
             }).then(sToken => {
-                console.log(sToken);
+                console.log(`token: ${sToken}`);
                 res.send(sToken);
             }).catch(oError => {
-                console.log(oError.message);
+                console.log('Error occured!');
 
                 // Prepare the response object
                 let oResponse = _formatErrorResponse(oError);
@@ -49,7 +49,7 @@ module.exports = function(app) {
                 res.status(oResponse.status).send(oResponse);
             });
         } else {
-            console.log('No username or password');
+            console.log('No username or password!');
 
             // Prepare the response object
             let oResponse = _formatErrorResponse(validator.getInvalidUsernameOrPasswordError());
