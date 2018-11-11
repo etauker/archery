@@ -35,13 +35,15 @@ class SecurityPersistenceManager {
         this.debug = oParams.debug === true ? true : false;
 
         // Create the connection pool
-        this.pool = mysql.createPool( {
+        this.pool = mysql.createPool({
             host     : this.host,
             user     : this.user,
             password : this.password,
             database : this.database,
             port : this.port,
             connectionLimit : 10
+        }).catch(oError => {
+            console.log(JSON.stringify(oError));
         });
 
         // Ensure that all mandatory parameters have a value
@@ -274,7 +276,10 @@ SecurityPersistenceManager.prototype._query = function(sQuery, aParams) {
 
         this.pool.getConnection((oError, oConnection) => {
             console.log('getConnection');
-            if (oError) throw this.error.getError(3, oError);
+            if (oError) {
+                console.log(`error: ${oError.message}`);
+                throw this.error.getError(3, oError);
+            }
 
             oConnection.beginTransaction(oError => {
                 console.log('beginTransaction');
