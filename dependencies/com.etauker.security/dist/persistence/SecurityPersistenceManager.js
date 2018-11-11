@@ -50,8 +50,6 @@ class SecurityPersistenceManager {
             database : this.database,
             port : this.port,
             connectionLimit : 4
-        }).catch(oError => {
-            console.log(JSON.stringify(oError));
         });
 
         // Ensure that all mandatory parameters have a value
