@@ -268,6 +268,7 @@ SecurityPersistenceManager.prototype._query = function(sQuery, aParams) {
 
         // Guard for non-exitent connection pool
         if (typeof this.pool.query !== 'function') {
+            console.log('typeof this.pool.query !== "function"');
             throw this.error.getError(2, { pool: this.pool }, "", "Pool likely does not exist.");
         }
 
@@ -286,7 +287,9 @@ SecurityPersistenceManager.prototype._query = function(sQuery, aParams) {
 
                     // Commit the query
                     if (this.commit) {
+                        console.log('commit...');
                         oConnection.commit((oError) => {
+                            console.log('commit successful');
                             oConnection.release();
                             if (oError) { fnReject(oContext.error.getError(6, oError)); }
                             else {
@@ -296,7 +299,9 @@ SecurityPersistenceManager.prototype._query = function(sQuery, aParams) {
                     }
                     // Rollback the query
                     else {
+                        console.log('rollback...');
                         oConnection.rollback(() => {
+                            console.log('rollback successful');
                             oConnection.release();
                             fnResolve(aRows);
                         });
