@@ -25,6 +25,8 @@ module.exports = function(app) {
     router.post('/token', function(req, res) {
         const sUsername = validator.validateUsername(req.body.username);
         const sPassword = validator.validatePassword(req.body.password);
+        console.log(sUsername);
+        console.log(sUsername && sPassword);
 
         if (sUsername && sPassword) {
             password.verifyPassword(sUsername, sPassword).then((oUser) => {
