@@ -30,8 +30,10 @@ module.exports = function(app) {
             password.verifyPassword(sUsername, sPassword).then((oUser) => {
                 return token.generateToken(oUser);
             }).then(sToken => {
+                console.log(sToken);
                 res.send(sToken);
             }).catch(oError => {
+                console.log(oError);
 
                 // Prepare the response object
                 let oResponse = _formatErrorResponse(oError);
@@ -45,6 +47,7 @@ module.exports = function(app) {
                 res.status(oResponse.status).send(oResponse);
             });
         } else {
+            console.log('No username or password');
 
             // Prepare the response object
             let oResponse = _formatErrorResponse(validator.getInvalidUsernameOrPasswordError());
