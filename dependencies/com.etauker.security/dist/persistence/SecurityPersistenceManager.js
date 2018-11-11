@@ -69,6 +69,9 @@ SecurityPersistenceManager.prototype.getUser = function(oUser) {
         console.log(`${aQueryResult.length} matching users found`);
         if (aQueryResult.length > 1) throw this.error.getError(7, null, "", "Expected 1, received "+aQueryResult.length+".");
         return aQueryResult[0];
+    }).catch(oError => {
+        console.log(JSON.stringify(oError));
+        throw oError;
     });
 };
 /**
