@@ -30,10 +30,10 @@ module.exports = function(app) {
             password.verifyPassword(sUsername, sPassword).then((oUser) => {
                 return token.generateToken(oUser);
             }).then(sToken => {
-                console.log(sToken);
+                console.log(JSON.stringify(sToken));
                 res.send(sToken);
             }).catch(oError => {
-                console.log(oError);
+                console.log(JSON.stringify(oError));
 
                 // Prepare the response object
                 let oResponse = _formatErrorResponse(oError);
