@@ -106,7 +106,7 @@ SecurityPersistenceManager.prototype.getUserByUsername = function(sUsername) {
 SecurityPersistenceManager.prototype.getRolesByUser = function(oUser) {
 
     // Format the query
-    var sQuery = `SELECT * FROM etauker_security.ROLE WHERE id IN (SELECT role_id FROM etauker_security.USER_ROLE `;
+    var sQuery = `SELECT * FROM ${this.database}.ROLE WHERE id IN (SELECT role_id FROM ${this.database}.USER_ROLE `;
     if (oUser.uuid) {
         sQuery += `WHERE user_id = "${oUser.uuid}"`;
     } else if (oUser.username) {
