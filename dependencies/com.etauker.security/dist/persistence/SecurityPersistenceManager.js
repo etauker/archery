@@ -34,21 +34,13 @@ class SecurityPersistenceManager {
         this.commit = oParams.commit === false ? false : true;
         this.debug = oParams.debug === true ? true : false;
 
-        console.log(`host: ${this.host}`);
-        console.log(`user: ${this.user}`);
-        console.log(`password: ${this.password}`);
-        console.log(`database: ${this.database}`);
-        console.log(`port: ${this.port}`);
-        console.log(`commit: ${this.commit}`);
-        console.log(`debug: ${this.debug}`);
-
         // Create the connection pool
         this.pool = mysql.createPool({
             host     : this.host,
             user     : this.user,
             password : this.password,
             database : this.database,
-            // port : this.port,
+            port : this.port,
             debug: true,
             connectionLimit : 4
         });
@@ -72,14 +64,12 @@ class SecurityPersistenceManager {
  *  @return {promise} Resolves to the user entry from the database.
  */
 SecurityPersistenceManager.prototype.getUser = function(oUser) {
-    console.log('getUser called');
     var sQuery = this._formSelectQuery("USER", oUser);
     return this._query(sQuery).then(aQueryResult => {
         console.log(`${aQueryResult.length} matching users found`);
         if (aQueryResult.length > 1) throw this.error.getError(7, null, "", "Expected 1, received "+aQueryResult.length+".");
         return aQueryResult[0];
     }).catch(oError => {
-        console.log(JSON.stringify(oError));
         throw oError;
     });
 };
@@ -89,7 +79,6 @@ SecurityPersistenceManager.prototype.getUser = function(oUser) {
  *  @return {promise} Resolves to the user entry from the database.
  */
 SecurityPersistenceManager.prototype.getUserByUsername = function(sUsername) {
-    console.log('getUserByUsername called');
     return this.getUser({
         username: sUsername
     });
@@ -271,41 +260,32 @@ SecurityPersistenceManager.prototype._formInsertQuery = function(sTable, aEntiti
  *  @return {promise} The insert statement to be excuted in the database.
  */
 SecurityPersistenceManager.prototype._query = function(sQuery, aParams) {
-    console.log('_query called');
     var oContext = this;
     return new Promise((fnResolve, fnReject) => {
 
         // Guard for non-exitent connection pool
         if (typeof this.pool.query !== 'function') {
-            console.log('typeof this.pool.query !== "function"');
             throw this.error.getError(2, { pool: this.pool }, "", "Pool likely does not exist.");
         }
 
         this.pool.getConnection((oError, oConnection) => {
-            console.log('getConnection');
             if (oError) {
-                console.log(`error: ${oError.message}`);
                 throw this.error.getError(3, oError);
             }
 
             oConnection.beginTransaction(oError => {
-                console.log('beginTransaction');
                 if (oError) throw this.error.getError(4, oError);
 
                 oConnection.query(sQuery, (oError, aRows, fields) => {
-                    console.log('query');
 
                     // Error while querying the database
                     if (oError) {
-                        console.log('oError');
                         oConnection.rollback(() => fnReject(oContext.error.getError(5, oError)));
                     }
 
                     // Commit the query
                     if (this.commit) {
-                        console.log('commit...');
                         oConnection.commit((oError) => {
-                            console.log('commit successful');
                             oConnection.release();
                             if (oError) { fnReject(oContext.error.getError(6, oError)); }
                             else {
@@ -315,9 +295,7 @@ SecurityPersistenceManager.prototype._query = function(sQuery, aParams) {
                     }
                     // Rollback the query
                     else {
-                        console.log('rollback...');
                         oConnection.rollback(() => {
-                            console.log('rollback successful');
                             oConnection.release();
                             fnResolve(aRows);
                         });
@@ -325,9 +303,7 @@ SecurityPersistenceManager.prototype._query = function(sQuery, aParams) {
                 });
             });
         });
-    }).catch(oError => {
-        console.log(JSON.stringify(oError));
-    });
+    })
 };
 
 /**

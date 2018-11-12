@@ -12,7 +12,6 @@ const SecurityServiceValidator = require(SecurityServiceValidatorPath);
 var persistence = new SecurityPersistenceManager();
 var password = new SecurityPasswordManager(persistence);
 var token = new SecurityTokenManager(persistence);
-// console.log(token.persistenceManager);
 var validator = new SecurityServiceValidator();
 
 module.exports = function(app) {
@@ -23,20 +22,15 @@ module.exports = function(app) {
     }));
 
     router.post('/token', function(req, res) {
-        console.log('/token called');
         const sUsername = validator.validateUsername(req.body.username);
         const sPassword = validator.validatePassword(req.body.password);
-        console.log(`username: ${sUsername}`);
 
         if (sUsername && sPassword) {
             password.verifyPassword(sUsername, sPassword).then((oUser) => {
                 return token.generateToken(oUser);
             }).then(sToken => {
-                console.log(`token: ${sToken}`);
                 res.send(sToken);
             }).catch(oError => {
-                console.log('Error occured!');
-                console.log(JSON.stringify(oError));
 
                 // Prepare the response object
                 let oResponse = _formatErrorResponse(oError);
