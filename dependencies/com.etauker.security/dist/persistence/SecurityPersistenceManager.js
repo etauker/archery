@@ -43,15 +43,15 @@ class SecurityPersistenceManager {
         console.log(`debug: ${this.debug}`);
 
         // Create the connection pool
-        // this.pool = mysql.createPool({
-        //     host     : this.host,
-        //     user     : this.user,
-        //     password : this.password,
-        //     database : this.database,
-        //     port : this.port,
-        //     connectionLimit : 4
-        // });
-        this.pool = mysql.createPool(process.env.JAWSDB_URL);
+        this.pool = mysql.createPool({
+            host     : this.host,
+            user     : this.user,
+            password : this.password,
+            database : this.database,
+            port : this.port,
+            debug: true,
+            connectionLimit : 4
+        });
 
         // Ensure that all mandatory parameters have a value
         if (!this.user) this._missingParameter("user");
