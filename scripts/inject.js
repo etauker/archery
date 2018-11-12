@@ -24,7 +24,6 @@ i18nFiles.forEach(file => {
             content = content.replace(/env\.PORT=.*/g, `env.PORT=${process.env.PORT}`)
 
         console.log("--- Updated i18n File ---")
-        console.log(content)
 
         try { fs.writeFileSync(file, content); }
         catch (oError) {
