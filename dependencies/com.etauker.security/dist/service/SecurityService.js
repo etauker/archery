@@ -36,6 +36,7 @@ module.exports = function(app) {
                 res.send(sToken);
             }).catch(oError => {
                 console.log('Error occured!');
+                console.log(JSON.stringify(oError));
 
                 // Prepare the response object
                 let oResponse = _formatErrorResponse(oError);
