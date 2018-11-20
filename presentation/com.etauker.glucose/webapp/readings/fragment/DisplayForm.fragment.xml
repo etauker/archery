@@ -52,7 +52,7 @@
 
 				<Label text="Meal"/>
 				<Select items="{path: 'readings>/options/meals/'}" selectedKey="{path: 'readings>/new/meal'}">
-					<core:Item key="{path: 'readings>'}" text="{path: 'readings>'}"/>
+					<core:Item key="{path: 'readings>'}" text="{path: 'readings>', formatter: '.formatter.getMeal'}"/>
 				</Select>
 
 				<Label text="Notes" />

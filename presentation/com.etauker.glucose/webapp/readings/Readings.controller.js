@@ -33,7 +33,7 @@ sap.ui.define([
 	};
 	ReadingsController.prototype.onRouteMatched = function() {
 		this.getOwnerComponent().retrieveReadings()
-			.then(oResponse => this.oReadingModel.setProperty("/readings", oResponse));
+			.then(aReadings => this.oReadingModel.setProperty("/readings", aReadings));
 	};
 	ReadingsController.prototype.handleFilterDialogConfirm = function (oEvent) {
 		let oTable = this.getView().byId(this.oReadingModel.getProperty("/state/tableId"));

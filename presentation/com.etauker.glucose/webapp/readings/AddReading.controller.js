@@ -3,11 +3,14 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageToast",
 	"com/etauker/security/Component",
-	"sap/ui/core/format/DateFormat"
-], function (BaseController, JSONModel, MessageToast, SecurityComponent, DateFormat) {
+	"sap/ui/core/format/DateFormat",
+	"com/etauker/glucose/model/Formatter"
+], function (BaseController, JSONModel, MessageToast, SecurityComponent, DateFormat, Formatter) {
 	"use strict";
 
-	var AddReadingController = BaseController.extend("com.etauker.glucose.readings.AddReading");
+	var AddReadingController = BaseController.extend("com.etauker.glucose.readings.AddReading", {
+		formatter: Formatter
+	});
 
 	AddReadingController.prototype.onInit = function() {
 		BaseController.prototype.onInit.call(this);
@@ -21,6 +24,10 @@ sap.ui.define([
 		BaseController.prototype.handleRouteMatched.call(this);
 		this.oReadingModel.setProperty("/new", this._getBlankReading());
 		this.getOwnerComponent().retrieveOptions()
+			.then(oResult => {
+				oResult.meals.unshift("");
+				return oResult;
+			})
 			.then(oResult => this.oReadingModel.setProperty("/options", oResult))
 			.fail(this._onRequestFailed.bind(this));
 	};

@@ -1,5 +1,5 @@
 sap.ui.define([], function () {
-	"use strict";
+	'use strict';
 
 	return {
 		getDate: function (iTimestamp) {
@@ -12,7 +12,7 @@ sap.ui.define([], function () {
 		getTime: function (iTimestamp) {
 			let oDate = new Date(iTimestamp);
 			let sLocale = navigator.language;
-			let oOptions = { hour: "numeric", minute: "numeric" };
+			let oOptions = { hour: 'numeric', minute: 'numeric' };
 			let sDate = oDate.toLocaleTimeString(sLocale, oOptions);
 			return sDate;
 		},
@@ -22,6 +22,11 @@ sap.ui.define([], function () {
 			let oOptions = { weekday: 'long' };
 			let sDate = oDate.toLocaleDateString(sLocale, oOptions);
 			return sDate;
+		},
+		getMeal: function (sMeal) {
+			// TODO: i18n
+			if (sMeal === '') return 'None';
+			return sMeal;
 		}
 	};
 });
