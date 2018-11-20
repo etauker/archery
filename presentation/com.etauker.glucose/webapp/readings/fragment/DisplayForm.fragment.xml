@@ -48,7 +48,7 @@
 				<core:Title text="Context" />
 
 				<Label text="Date" />
-				<DateTimePicker displayFormat="short" value="{readings>/new/dateTime}"/>
+				<DateTimePicker displayFormat="dd/MM/yyyy, HH:mm" valueFormat="dd/MM/yyyy, HH:mm" value="{path: 'readings>/new/dateTime'}" />
 
 				<Label text="Meal"/>
 				<Select items="{path: 'readings>/options/meals/'}" selectedKey="{path: 'readings>/new/meal'}">
