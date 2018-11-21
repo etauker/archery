@@ -2,15 +2,16 @@
 	controllerName="com.etauker.glucose.readings.Readings"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
-	xmlns:mvc="sap.ui.core.mvc" width="100%">
+	xmlns:mvc="sap.ui.core.mvc" width="100%"
+	xmlns:glucose="com.etauker.glucose.controls">
 
 	<VBox width="100%">
-		<Table id="readingsTable"
+		<glucose:GlucoseReadingTable id="readingsTable"
 			inset="false"
 			growing="true"
 			alternateRowColors="true"
 			items="{path: 'readings>/readings'}">
-			<headerToolbar>
+			<glucose:headerToolbar>
 				<Toolbar>
 					<Title text="Readings" level="H2"/>
 					<ToolbarSpacer />
@@ -26,8 +27,8 @@
 						icon="sap-icon://group-2"
 						press="onGroupButtonPressed" />
 				</Toolbar>
-			</headerToolbar>
-			<columns>
+			</glucose:headerToolbar>
+			<glucose:columns>
 				<Column demandPopin="true" hAlign="Center" popinDisplay="Inline">
 					<Text text="Date" />
 				</Column>
@@ -58,8 +59,8 @@
 				<Column demandPopin="true" hAlign="Begin" minScreenWidth="Desktop" popinDisplay="Inline" width="20%">
 					<Text text="Notes" />
 				</Column>
-			</columns>
-			<items>
+			</glucose:columns>
+			<glucose:items>
 				<ColumnListItem>
 					<cells>
 						<Text text="{path: 'readings>dateTime', formatter: '.formatter.getDate'}" />
@@ -74,8 +75,8 @@
 						<Text text="{path: 'readings>note'}" />
 					</cells>
 				</ColumnListItem>
-			</items>
-		</Table>
+			</glucose:items>
+		</glucose:GlucoseReadingTable>
 	</VBox>
 
 </mvc:View>
