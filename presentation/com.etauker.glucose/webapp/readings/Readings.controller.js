@@ -64,6 +64,7 @@ sap.ui.define([
 
 		// Reset initial table state
 		this._showAllColumns();
+		this._showDefaultColumnWidths();
 		oBinding.sort(this._getDefaultSorter());
 
 		if (oParams.groupItem) {
@@ -77,6 +78,13 @@ sap.ui.define([
 	ReadingsController.prototype._showAllColumns = function() {
 		this.getView().byId(this.oReadingModel.getProperty("/state/tableId")).getColumns()
 			.forEach(oColumn => oColumn.setVisible(true))
+	};
+	ReadingsController.prototype._showDefaultColumnWidths = function() {
+		this.getView().byId(this.oReadingModel.getProperty("/state/tableId")).getColumns()
+			.forEach(oColumn => {
+				if (oColumn.getHeader().getText() === "Notes") oColumn.setWidth("20%");
+				else { oColumn.setWidth() }
+			})
 	};
 	ReadingsController.prototype._getDefaultSorter = function() {
 		// TODO: Implement preferences based initial sorting
@@ -108,8 +116,8 @@ sap.ui.define([
 
 					this.getView().byId(this.oReadingModel.getProperty("/state/tableId")).getColumns()
 						.forEach(oColumn => {
-							if (oColumn.getHeader().getText() === "Date" || oColumn.getHeader().getText() === "Weekday")
-								oColumn.setVisible(false);
+							if (oColumn.getHeader().getText() === "Date" || oColumn.getHeader().getText() === "Weekday") oColumn.setVisible(false);
+							else if (oColumn.getHeader().getText() === "Time") oColumn.setWidth('100%');
 						})
 
 					return {
