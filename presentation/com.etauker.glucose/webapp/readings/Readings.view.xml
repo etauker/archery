@@ -3,7 +3,8 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc" width="100%"
-	xmlns:glucose="com.etauker.glucose.controls">
+	xmlns:glucose="com.etauker.glucose.controls"
+	xmlns:g="com.etauker.glucose.controls.glucoseReadings">
 
 	<VBox width="100%">
 		<glucose:GlucoseReadingTable id="readingsTable"
@@ -61,8 +62,8 @@
 				</Column>
 			</glucose:columns>
 			<glucose:items>
-				<ColumnListItem>
-					<cells>
+				<g:ListItem>
+					<g:cells>
 						<Text text="{path: 'readings>dateTime', formatter: '.formatter.getDate'}" />
 						<Text text="{path: 'readings>dateTime', formatter: '.formatter.getTime'}" />
 						<Text text="{path: 'readings>dateTime', formatter: '.formatter.getWeekday'}" />
@@ -73,8 +74,8 @@
 						<Text text="{path: 'readings>insulinUnitsLong'}" />
 						<Text text="{path: 'readings>correctionUnits'}" />
 						<Text text="{path: 'readings>note'}" />
-					</cells>
-				</ColumnListItem>
+					</g:cells>
+				</g:ListItem>
 			</glucose:items>
 		</glucose:GlucoseReadingTable>
 	</VBox>
