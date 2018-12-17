@@ -19,7 +19,6 @@ sap.ui.define([
 			grouping: this._getGroupingFunctions(),
 			filtering: this._getFilteringFunctions()
 		});
-
 		this.getRouter().attachRoutePatternMatched(this.onRouteMatched, this);
 	};
 	ReadingsController.prototype.onAddReading = function(oEvent) {
@@ -63,8 +62,6 @@ sap.ui.define([
 		let oBinding = oTable.getBinding("items");
 
 		// Reset initial table state
-		this._showAllColumns();
-		this._showDefaultColumnWidths();
 		oBinding.sort(this._getDefaultSorter());
 
 		if (oParams.groupItem) {
@@ -75,31 +72,15 @@ sap.ui.define([
 			oBinding.sort(new Sorter(sColumn, bDescending, fnGrouping.bind(this)));
 		}
 	};
-	ReadingsController.prototype._showAllColumns = function() {
-		this.getView().byId(this.oReadingModel.getProperty("/state/tableId")).getColumns()
-			.forEach(oColumn => oColumn.setVisible(true))
-	};
-	ReadingsController.prototype._showDefaultColumnWidths = function() {
-		this.getView().byId(this.oReadingModel.getProperty("/state/tableId")).getColumns()
-			.forEach(oColumn => {
-				if (oColumn.getHeader().getText() === "Notes") oColumn.setWidth("20%");
-				else { oColumn.setWidth() }
-			})
-	};
 	ReadingsController.prototype._getDefaultSorter = function() {
 		// TODO: Implement preferences based initial sorting
 		return new Sorter('dateTime', true);
 	};
 	ReadingsController.prototype.createViewSettingsDialog = function (sDialogFragmentName) {
 		var oDialog = this._mViewSettingsDialogs[sDialogFragmentName];
-
 		if (!oDialog) {
 			oDialog = sap.ui.xmlfragment(sDialogFragmentName, this);
 			this._mViewSettingsDialogs[sDialogFragmentName] = oDialog;
-
-			// if (Device.system.desktop) {
-			// 	oDialog.addStyleClass("sapUiSizeCompact");
-			// }
 		}
 		return oDialog;
 	};
@@ -110,16 +91,13 @@ sap.ui.define([
 				function: function(oBindingContext) {
 					let iDateTime = oBindingContext.getProperty("dateTime");
 					if (!iDateTime) return null;
-
 					let sWeekday = this.formatter.getWeekday(iDateTime);
 					let sDate = this.formatter.getDate(iDateTime);
-
-					this.getView().byId(this.oReadingModel.getProperty("/state/tableId")).getColumns()
-						.forEach(oColumn => {
-							if (oColumn.getHeader().getText() === "Date" || oColumn.getHeader().getText() === "Weekday") oColumn.setVisible(false);
-							else if (oColumn.getHeader().getText() === "Time") oColumn.setWidth('100%');
-						})
-
+					this.getView().byId('readingsTable').getColumns().forEach(column => {
+						if (typeof column.onGroupingChange === 'function') {
+							column.onGroupingChange({ newGrouping: 'Day' });
+						}
+					});
 					return {
 						key: sWeekday,
 						text: `${sWeekday} (${sDate})`

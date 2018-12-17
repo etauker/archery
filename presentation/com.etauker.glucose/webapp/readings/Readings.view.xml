@@ -3,16 +3,15 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc" width="100%"
-	xmlns:glucose="com.etauker.glucose.controls"
 	xmlns:g="com.etauker.glucose.controls.glucoseReadings">
 
 	<VBox width="100%">
-		<glucose:GlucoseReadingTable id="readingsTable"
+		<Table id="readingsTable"
 			inset="false"
 			growing="true"
 			alternateRowColors="true"
 			items="{path: 'readings>/readings'}">
-			<glucose:headerToolbar>
+			<headerToolbar>
 				<Toolbar>
 					<Title text="Readings" level="H2"/>
 					<ToolbarSpacer />
@@ -28,40 +27,51 @@
 						icon="sap-icon://group-2"
 						press="onGroupButtonPressed" />
 				</Toolbar>
-			</glucose:headerToolbar>
-			<glucose:columns>
-				<Column demandPopin="true" hAlign="Center" popinDisplay="Inline">
+			</headerToolbar>
+			<columns>
+
+				<g:DateColumn hAlign="Center">
 					<Text text="Date" />
-				</Column>
-				<Column demandPopin="true" hAlign="Center" popinDisplay="Inline">
+				</g:DateColumn>
+
+				<g:TimeColumn hAlign="Center">
 					<Text text="Time" />
-				</Column>
-				<Column demandPopin="false" hAlign="Center" minScreenWidth="Desktop">
+				</g:TimeColumn>
+
+				<g:WeekdayColumn hAlign="Center">
 					<Text text="Weekday" />
-				</Column>
-				<Column demandPopin="true" hAlign="Center" minScreenWidth="Desktop" popinDisplay="Inline">
+				</g:WeekdayColumn>
+
+				<g:MealColumn hAlign="Center">
 					<Text text="Meal" />
-				</Column>
-				<Column demandPopin="true" hAlign="Center" minScreenWidth="Tablet" popinDisplay="Inline">
+				</g:MealColumn>
+
+				<g:ReadingColumn hAlign="Center">
 					<Text text="Reading" />
-				</Column>
-				<Column  demandPopin="true" hAlign="Center" minScreenWidth="Tablet" popinDisplay="Inline">
+				</g:ReadingColumn>
+
+				<g:CarbohydrateColumn hAlign="Center">
 					<Text text="Carbs" />
-				</Column>
-				<Column demandPopin="true" hAlign="Center" minScreenWidth="Tablet" popinDisplay="Inline">
+				</g:CarbohydrateColumn>
+
+				<g:ShortInsulinColumn hAlign="Center">
 					<Text text="Humalog" />
-				</Column>
-				<Column demandPopin="true" hAlign="Center" minScreenWidth="Tablet" popinDisplay="Inline">
+				</g:ShortInsulinColumn>
+
+				<g:LongInsulinColumn hAlign="Center">
 					<Text text="Levemir" />
-				</Column>
-				<Column  demandPopin="false" hAlign="Center" minScreenWidth="Desktop">
+				</g:LongInsulinColumn>
+
+				<g:CorrectionUnitColumn hAlign="Center">
 					<Text text="Correction Units" />
-				</Column>
-				<Column demandPopin="true" hAlign="Begin" minScreenWidth="Desktop" popinDisplay="Inline" width="20%">
+				</g:CorrectionUnitColumn>
+
+				<g:NotesColumn hAlign="Begin">
 					<Text text="Notes" />
-				</Column>
-			</glucose:columns>
-			<glucose:items>
+				</g:NotesColumn>
+
+			</columns>
+			<items>
 				<g:ListItem>
 					<g:cells>
 						<Text text="{path: 'readings>dateTime', formatter: '.formatter.getDate'}" />
@@ -76,8 +86,8 @@
 						<Text text="{path: 'readings>note'}" />
 					</g:cells>
 				</g:ListItem>
-			</glucose:items>
-		</glucose:GlucoseReadingTable>
+			</items>
+		</Table>
 	</VBox>
 
 </mvc:View>
