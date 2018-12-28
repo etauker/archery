@@ -6,9 +6,9 @@
   "scripts": {
     "test": "jasmine ",
     "compile": "node scripts/inject.js && tsc",
-    "compile-local": "node scripts/inject.js",
-    "start": "npm run compile && node serve.js",
-    "start-local": "tsc && heroku local"
+    "start-production": "npm run compile && node serve.js",
+    "start-local": "heroku local",
+    "start": "npm run start-local"
   },
   "repository": {
     "type": "git",

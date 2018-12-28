@@ -33,6 +33,7 @@ i18nFiles.forEach(file => {
         }
         if (process.env.PORT) {
             content = content.replace(/env\.PORT=.*/g, `env.PORT=${process.env.PORT}`)
+            content = content.replace(/env\.COLON=.*/g, `env.COLON=:`)
             injected = true;
         }
         if (injected) {

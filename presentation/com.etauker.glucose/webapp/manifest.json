@@ -13,10 +13,10 @@
 		"dataSources": {
 			"transactions": {
 				"add": {
-					"uri": "{{env.PROTOCOL}}://{{env.HOST}}/glucose/transactions/add"
+					"uri": "{{env.PROTOCOL}}://{{env.HOST}}{{env.COLON}}{{env.PORT}}/glucose/transactions/add"
 				},
 				"get": {
-					"uri": "{{env.PROTOCOL}}://{{env.HOST}}/glucose/transactions/get"
+					"uri": "{{env.PROTOCOL}}://{{env.HOST}}{{env.COLON}}{{env.PORT}}/glucose/transactions/get"
 				}
 			}
 		}
