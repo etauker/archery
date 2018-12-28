@@ -28,7 +28,7 @@ class ArcheryPersistenceManager {
         this.user = oParams.user || process.env.COM_ETAUKER_ARCHERY_DB_USER;
         this.password = oParams.password || process.env.COM_ETAUKER_ARCHERY_DB_PASSWORD;
         this.database = oParams.database || process.env.COM_ETAUKER_ARCHERY_DB_DATABASE;
-        this.port = oParams.port || process.env.COM_ETAUKER_ARCHERY_DB_PORT;
+        this.port = oParams.port || process.env.COM_ETAUKER_ARCHERY_DB_PORT || 3306;
         this.commit = oParams.commit === false ? false : true;
         this.debug = oParams.debug === true ? true : false;
 
