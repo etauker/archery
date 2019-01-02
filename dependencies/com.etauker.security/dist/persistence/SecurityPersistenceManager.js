@@ -10,17 +10,17 @@ class SecurityPersistenceManager {
 
         // Objects
         this.error = new SecurityErrorGenerator(
-            "com.etauker.security",
-            "persistence",
-            "SecurityPersistenceManager",
+            'com.etauker.security',
+            'persistence',
+            'SecurityPersistenceManager',
             [
-                { code: 1, http: 500, message: "Missing parameters" },
-                { code: 2, http: 500, message: "Database connection pool issue occured." },
-                { code: 3, http: 500, message: "Error getting database connection." },
-                { code: 4, http: 500, message: "Error starting a transaction." },
-                { code: 5, http: 500, message: "Error querying the database." },
-                { code: 6, http: 500, message: "Error committing query to the database." },
-                { code: 7, http: 500, message: "Unexpected number of results." }
+                { code: 1, http: 500, message: 'Missing parameters' },
+                { code: 2, http: 500, message: 'Database connection pool issue occured.' },
+                { code: 3, http: 500, message: 'Error getting database connection.' },
+                { code: 4, http: 500, message: 'Error starting a transaction.' },
+                { code: 5, http: 500, message: 'Error querying the database.' },
+                { code: 6, http: 500, message: 'Error committing query to the database.' },
+                { code: 7, http: 500, message: 'Unexpected number of results.' }
             ]
         );
 
@@ -46,10 +46,10 @@ class SecurityPersistenceManager {
         });
 
         // Ensure that all mandatory parameters have a value
-        if (!this.user) this._missingParameter("user");
-        if (!this.password) this._missingParameter("password");
-        if (!this.database) this._missingParameter("database");
-        if (!this.port) this._missingParameter("port");
+        if (!this.user) this._missingParameter('user');
+        if (!this.password) this._missingParameter('password');
+        if (!this.database) this._missingParameter('database');
+        if (!this.port) this._missingParameter('port');
     }
 }
 
@@ -64,10 +64,10 @@ class SecurityPersistenceManager {
  *  @return {promise} Resolves to the user entry from the database.
  */
 SecurityPersistenceManager.prototype.getUser = function(oUser) {
-    var sQuery = this._formSelectQuery("USER", oUser);
+    var sQuery = this._formSelectQuery('USER', oUser);
     return this._query(sQuery).then(aQueryResult => {
         console.log(`${aQueryResult.length} matching users found`);
-        if (aQueryResult.length > 1) throw this.error.getError(7, null, "", "Expected 1, received "+aQueryResult.length+".");
+        if (aQueryResult.length > 1) throw this.error.getError(7, null, '', `Expected 1, received ${aQueryResult.length}.`);
         return aQueryResult[0];
     }).catch(oError => {
         throw oError;
@@ -95,13 +95,13 @@ SecurityPersistenceManager.prototype.getUserByUsername = function(sUsername) {
 SecurityPersistenceManager.prototype.getRolesByUser = function(oUser) {
 
     // Format the query
-    var sQuery = `SELECT * FROM ${this.database}.ROLE WHERE id IN (SELECT role_id FROM ${this.database}.USER_ROLE `;
+    var sQuery = `SELECT * FROM \`${this.database}\`.\`ROLE\` WHERE \`id\` IN (SELECT \`role_id\` FROM \`${this.database}\`.\`USER_ROLE\` `;
     if (oUser.uuid) {
-        sQuery += `WHERE user_id = "${oUser.uuid}"`;
+        sQuery += `WHERE \`user_id\` = '${oUser.uuid}'`;
     } else if (oUser.username) {
-        sQuery += `WHERE user_id = (SELECT uuid FROM USER WHERE username = "${oUser.username}" LIMIT 1)`;
+        sQuery += `WHERE \`user_id\` = (SELECT \`uuid\` FROM \`${this.database}\`.\`USER\` WHERE \`username\` = '${oUser.username}' LIMIT 1)`;
     }
-    sQuery += ");";
+    sQuery += ');';
 
     // Execute the query
     return this._query(sQuery).then(aUserRoles => {
@@ -118,7 +118,7 @@ SecurityPersistenceManager.prototype.getRolesByUser = function(oUser) {
 SecurityPersistenceManager.prototype.createUser = function(oUser, sPassword) {
     return SecurityPasswordManager.verifyPassword(oUser.username, sPassword).then(sHash => {
         oUser.password_hash = sHash;
-        var sQuery = this._formInsertQuery("USER", [oUser], Object.keys(oUser))
+        var sQuery = this._formInsertQuery('USER', [oUser], Object.keys(oUser))
         return this._query(sQuery).then(oQueryResult => {
             return oQueryResult;
         });
@@ -155,16 +155,16 @@ SecurityPersistenceManager.prototype.saveSession = function(sToken, oDecodedToke
         jwt_algorithm: oConfig.algorithm,
         user_id: oDecodedToken.sub,
         original_exp: {
-            type: "timestamp",
+            type: 'timestamp',
             value: oDecodedToken.exp
         },
         original_iat: {
-            type: "timestamp",
+            type: 'timestamp',
             value: oDecodedToken.iat
         }
     };
 
-    var sQuery = this._formInsertQuery("SESSION", [oSession], Object.keys(oSession));
+    var sQuery = this._formInsertQuery('SESSION', [oSession], Object.keys(oSession));
     return this._query(sQuery).then(oQueryResult => {
         return oQueryResult;
     });
@@ -173,7 +173,7 @@ SecurityPersistenceManager.prototype.extendSession = function(oExtension) {
     // TODO: Creates a database entry corresponding to the provided object
 };
 SecurityPersistenceManager.prototype.invalidateSession = function(sUuid) {
-    var sQuery = 'UPDATE `'+this.database+'`.`SESSION` SET `invalid` = 1 WHERE `id` = "'+sUuid+'";';
+    var sQuery = `UPDATE \`${this.database}\`.\`SESSION\` SET \`invalid\` = 1 WHERE \`id\` = '${sUuid}';`;
     return this._query(sQuery).then(aQueryResult => {
         return aQueryResult;
     });
@@ -186,7 +186,7 @@ SecurityPersistenceManager.prototype.invalidateSession = function(sUuid) {
 SecurityPersistenceManager.prototype.checkSessionValidity = function(sSessionId) {
     var sQuery = `SELECT \`invalid\` FROM \`${this.database}\`.\`SESSION\` WHERE \`id\` = '${sSessionId}'`;
     return this._query(sQuery).then(aQueryResult => {
-        if (aQueryResult.length > 1) throw this.error.getError(7, null, "", "Expected 1, received "+aQueryResult.length+".");
+        if (aQueryResult.length > 1) throw this.error.getError(7, null, '', `Expected 1, received ${aQueryResult.length}.`);
         return (aQueryResult[0].invalid === 0);
     });
 };
@@ -211,15 +211,15 @@ SecurityPersistenceManager.prototype.getUuid = function() {
  *  @return {string} The query to be excuted in the database.
  */
 SecurityPersistenceManager.prototype._formSelectQuery = function(sTable, oEntity) {
-    var sQuery = `SELECT * FROM ${this.database}.${sTable} WHERE `;
+    var sQuery = `SELECT * FROM \`${this.database}\`.\`${sTable}\` WHERE `;
 
-    // Loop through all properties of the object and format as 'KEY = "value"'
+    // Loop through all properties of the object and format as 'KEY = 'value''
     var aProperties = Object.keys(oEntity).map(sKey => {
-        return `${sKey} = "${oEntity[sKey]}"`;
+        return `\`${sKey}\` = '${oEntity[sKey]}'`;
     })
 
     // Join the individual lines with AND and add semicolon at the end
-    sQuery += aProperties.join(" AND ") + ";";
+    sQuery += aProperties.join(' AND ') + ';';
     return sQuery;
 };
 
@@ -233,23 +233,23 @@ SecurityPersistenceManager.prototype._formSelectQuery = function(sTable, oEntity
  *  @return {string} The insert statement to be excuted in the database.
  */
 SecurityPersistenceManager.prototype._formInsertQuery = function(sTable, aEntities, aFields) {
-    var sQuery = `INSERT INTO ${this.database}.${sTable} (`;
-    sQuery += aFields.join(", ") + ") VALUES ";
+    var sQuery = `INSERT INTO \`${this.database}\`.\`${sTable}\` (`;
+    sQuery += aFields.join(', ') + ') VALUES ';
 
-    // Loop through all properties of the object and format as 'KEY = "value"'
+    // Loop through all properties of the object and format as 'KEY = 'value''
     aEntities = aEntities.map(oObject => {
         var aProperties = Object.keys(oObject).map(sKey => {
 
             // Special case for converting unix timestamp to datetime
-            if (typeof oObject[sKey] === "object" && oObject[sKey].type === "timestamp") {
-                return "(SELECT FROM_UNIXTIME("+oObject[sKey].value+"))";
+            if (typeof oObject[sKey] === 'object' && oObject[sKey].type === 'timestamp') {
+                return '(SELECT FROM_UNIXTIME('+oObject[sKey].value+'))';
             }
 
-            return `"${oObject[sKey]}"`;
+            return `'${oObject[sKey]}'`;
         })
-        return "(" + aProperties.join(", ") + ")";
+        return '(' + aProperties.join(', ') + ')';
     });
-    sQuery += aEntities.join(", ") + ";";
+    sQuery += aEntities.join(', ') + ';';
     return sQuery;
 };
 
@@ -265,7 +265,7 @@ SecurityPersistenceManager.prototype._query = function(sQuery, aParams) {
 
         // Guard for non-exitent connection pool
         if (typeof this.pool.query !== 'function') {
-            throw this.error.getError(2, { pool: this.pool }, "", "Pool likely does not exist.");
+            throw this.error.getError(2, { pool: this.pool }, '', 'Pool likely does not exist.');
         }
 
         this.pool.getConnection((oError, oConnection) => {

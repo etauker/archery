@@ -15,7 +15,7 @@ const glucoseWebappEndpoint = '/glucose';
 // Disabled until: v1.3
 // const archeryWebappDirectory = __dirname + "/presentation/com.etauker.archery/archery-ui5/webapp";
 const glucoseWebappDirectory = __dirname + "/presentation/com.etauker.glucose/webapp";
-const url = 'https://localhost:' + port + archeryWebappEndpoint;
+const url = 'https://localhost:' + port + glucoseWebappEndpoint;
 const modules = [ "data", "persistence", "logic", "service", "utils" ];
 const dependencies = [
     "com.etauker.security",

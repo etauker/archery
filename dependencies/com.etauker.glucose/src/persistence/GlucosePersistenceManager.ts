@@ -28,17 +28,17 @@ class GlucosePersistenceManager {
         // Objects
         this.logger = new GlucoseLogger(paths);
         this.error = new ErrorGenerator(
-            "com.etauker.glucose",
-            "persistence",
-            "GlucosePersistenceManager",
+            'com.etauker.glucose',
+            'persistence',
+            'GlucosePersistenceManager',
             [
-                { code: 1, http: 500, message: "Missing parameters" },
-                { code: 2, http: 500, message: "Database connection pool issue occured." },
-                { code: 3, http: 500, message: "Error getting database connection." },
-                { code: 4, http: 500, message: "Error starting a transaction." },
-                { code: 5, http: 500, message: "Error querying the database." },
-                { code: 6, http: 500, message: "Error committing query to the database." },
-                { code: 7, http: 500, message: "Unexpected number of results." }
+                { code: 1, http: 500, message: 'Missing parameters' },
+                { code: 2, http: 500, message: 'Database connection pool issue occured.' },
+                { code: 3, http: 500, message: 'Error getting database connection.' },
+                { code: 4, http: 500, message: 'Error starting a transaction.' },
+                { code: 5, http: 500, message: 'Error querying the database.' },
+                { code: 6, http: 500, message: 'Error committing query to the database.' },
+                { code: 7, http: 500, message: 'Unexpected number of results.' }
             ]
         );
 
@@ -63,10 +63,10 @@ class GlucosePersistenceManager {
         });
 
         // Ensure that all mandatory parameters have a value
-        if (!this.user) this._missingParameter("user");
-        if (!this.password) this._missingParameter("password");
-        if (!this.database) this._missingParameter("database");
-        if (!this.port) this._missingParameter("port");
+        if (!this.user) this._missingParameter('user');
+        if (!this.password) this._missingParameter('password');
+        if (!this.database) this._missingParameter('database');
+        if (!this.port) this._missingParameter('port');
     };
 
     //===========================================
@@ -74,11 +74,11 @@ class GlucosePersistenceManager {
     //===========================================
     public getMealTypes = function() {
         return [
-            "Before Work",
-            "Breakfast",
-            "Lunch",
-            "Dinner",
-            "Before Bed"
+            'Before Work',
+            'Breakfast',
+            'Lunch',
+            'Dinner',
+            'Before Bed'
         ];
     };
 
@@ -94,7 +94,7 @@ class GlucosePersistenceManager {
         let oTransaction = GlucoseTransactionInstance.toDataLayerObject(oTransactionObject);
         var sQuery = this._formSelectQuery('TRANSACTION', oTransaction);
         return this._query(sQuery).then(aQueryResult => {
-            if (aQueryResult.length > 1) throw this.error.getError(7, null, "", "Expected 1, received "+aQueryResult.length+".");
+            if (aQueryResult.length > 1) throw this.error.getError(7, null, '', `Expected 1, received ${aQueryResult.length$}.`);
             return aQueryResult[0];
         });
     };
@@ -121,7 +121,7 @@ class GlucosePersistenceManager {
         this.logger.logObject(sUserId, 'sUserId', 'getTransactions', 'GlucosePersistenceManager');
         // this.logger.logObject(oTransactionFilter, 'oTransactionFilter', 'getTransactions', 'GlucosePersistenceManager');
 
-        let sQuery = `SELECT * FROM ${this.database}.\`TRANSACTION\` WHERE \`created_by\` = "${sUserId}" ORDER BY \`date_time\` DESC LIMIT 200;`;
+        let sQuery = `SELECT * FROM \`${this.database}\`.\`TRANSACTION\` WHERE \`created_by\` = '${sUserId}' ORDER BY \`date_time\` DESC LIMIT 200;`;
         // if (oTransactionFilter) {
         //     let oTransaction = GlucoseTransactionInstance.toDataLayerObject(oTransactionFilter);
         //     sQuery = this._formSelectQuery('TRANSACTION', oTransaction);
@@ -144,7 +144,7 @@ class GlucosePersistenceManager {
         oTransactionObject.createdBy = sUserId;
         oTransactionObject.updatedBy = sUserId;
         let oTransaction = GlucoseTransactionInstance.toDataLayerObject(oTransactionObject);
-        var sQuery = this._formInsertQuery("TRANSACTION", [oTransaction], Object.keys(oTransaction))
+        var sQuery = this._formInsertQuery('TRANSACTION', [oTransaction], Object.keys(oTransaction))
         this.logger.logObject(sQuery, 'sQuery', 'saveTransaction', 'GlucosePersistenceManager');
         return this._query(sQuery).then(oQueryResult => {
             this.logger.logObject(oQueryResult, 'oQueryResult', 'saveTransaction', 'GlucosePersistenceManager');
@@ -164,24 +164,24 @@ class GlucosePersistenceManager {
      *  @return {string} The query to be excuted in the database.
      */
     private _formSelectQuery = function(sTable, oEntity) {
-        var sQuery = `SELECT * FROM ${this.database}.${sTable} WHERE `;
+        var sQuery = `SELECT * FROM \`${this.database}\`.\`${sTable}\` WHERE `;
 
-        // Loop through all properties of the object and format as 'KEY = "value"'
+        // Loop through all properties of the object and format as 'KEY = 'value'
         var aProperties = Object.keys(oEntity).map(sKey => {
 
             // Special case for converting unix timestamp to datetime
-            if (typeof oEntity[sKey] === "object" && oEntity[sKey].type === "timestamp") {
-                return "(SELECT FROM_UNIXTIME("+oEntity[sKey].value+"))";
+            if (typeof oEntity[sKey] === 'object' && oEntity[sKey].type === 'timestamp') {
+                return '(SELECT FROM_UNIXTIME('+oEntity[sKey].value+'))';
             }
 
             if (typeof oEntity[sKey] === 'string')
-                return `${sKey} = "${oEntity[sKey]}"`;
+                return `\`${sKey}\` = '${oEntity[sKey]}'`;
             if (typeof oEntity[sKey] === 'number')
-                return `${sKey} = ${oEntity[sKey]}`;
+                return `\`${sKey}\` = ${oEntity[sKey]}`;
         })
 
         // Join the individual lines with AND and add semicolon at the end
-        sQuery += aProperties.join(" AND ") + " LIMIT 1000;";
+        sQuery += aProperties.join(' AND ') + ' LIMIT 1000;';
         return sQuery;
     };
 
@@ -195,23 +195,23 @@ class GlucosePersistenceManager {
      *  @return {string} The insert statement to be excuted in the database.
      */
     private _formInsertQuery = function(sTable, aEntities, aFields) {
-        var sQuery = `INSERT INTO ${this.database}.${sTable} (`;
-        sQuery += aFields.join(", ") + ") VALUES ";
+        var sQuery = `INSERT INTO \`${this.database}\`.\`${sTable}\` (`;
+        sQuery += aFields.join(', ') + ') VALUES ';
 
-        // Loop through all properties of the object and format as 'KEY = "value"'
+        // Loop through all properties of the object and format as 'KEY = 'value'
         aEntities = aEntities.map(oObject => {
             var aProperties = Object.keys(oObject).map(sKey => {
 
                 // Special case for converting unix timestamp to datetime
-                if (typeof oObject[sKey] === "object" && oObject[sKey].type === "timestamp") {
-                    return "(SELECT FROM_UNIXTIME("+oObject[sKey].value+"))";
+                if (typeof oObject[sKey] === 'object' && oObject[sKey].type === 'timestamp') {
+                    return '(SELECT FROM_UNIXTIME('+oObject[sKey].value+'))';
                 }
 
-                return `"${oObject[sKey]}"`;
+                return `'${oObject[sKey]}'`;
             })
-            return "(" + aProperties.join(", ") + ")";
+            return '(' + aProperties.join(', ') + ')';
         });
-        sQuery += aEntities.join(", ") + ";";
+        sQuery += aEntities.join(', ') + ';';
         return sQuery;
     };
 
@@ -227,7 +227,7 @@ class GlucosePersistenceManager {
 
             // Guard for non-exitent connection pool
             if (typeof this.pool.query !== 'function') {
-                throw this.error.getError(2, { pool: this.pool }, "", "Pool likely does not exist.");
+                throw this.error.getError(2, { pool: this.pool }, '', 'Pool likely does not exist.');
             }
 
             this.pool.getConnection((oError, oConnection) => {
