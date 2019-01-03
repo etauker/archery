@@ -24,6 +24,14 @@ class GlucoseLogger {
         // let sFile = this.paths.logs ? `${this.paths.logs}/glucose/${sDate}.log` : `${sDate}.log` ;
         // this._appendFile(sMessage, sFile, true);
     };
+    public logObjectTransparently = (sIdentifier: string, sFunction: string, sClass: string, oObject: any): any => {
+        // Disabled until: v1.3
+        // let sMessage = this._getFilledTemplate(oObject, sIdentifier, sFunction, sClass);
+        // let sDate = new Date().toISOString().substring(0, 10);
+        // let sFile = this.paths.logs ? `${this.paths.logs}/glucose/${sDate}.log` : `${sDate}.log` ;
+        // this._appendFile(sMessage, sFile, true);
+        return oObject;
+    };
 
     //===========================================
     //             PRIVATE FUNCTIONS
