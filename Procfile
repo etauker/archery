@@ -1,1 +1,1 @@
-web: npm install && npm run start-production
+web: node serve.js

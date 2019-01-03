@@ -1,3 +1,5 @@
+console.log('serve.js being executed');
+
 // Requires
 const express = require('express');
 const open = require('open');
@@ -9,7 +11,7 @@ global.REALM = "etauker.com";
 
 // Configuration
 const app = express();
-const port = process.env.PORT || 8888;
+const port = 8888;
 const archeryWebappEndpoint = '/archery';
 const glucoseWebappEndpoint = '/glucose';
 // Disabled until: v1.3

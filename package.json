@@ -4,11 +4,12 @@
   "description": "",
   "main": "serve.js",
   "scripts": {
-    "test": "jasmine ",
+    "test": "jasmine",
     "compile": "node scripts/inject.js && tsc",
-    "start-production": "npm run compile && node serve.js",
+    "postinstall": "npm run compile",
     "start-local": "heroku local",
-    "start": "npm run start-local"
+    "start-production": "node serve.js",
+    "start": "npm run start-production"
   },
   "repository": {
     "type": "git",
