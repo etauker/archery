@@ -22,3 +22,9 @@
 6. Bump version to next development version.
 7. Push to origin master: `git push origin master`.
 8. Push tags to github: `git push --tags`.
+
+## Rolling Back Deployments
+```
+heroku releases
+heroku rollback {release}
+```

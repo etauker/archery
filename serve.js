@@ -11,7 +11,7 @@ global.REALM = "etauker.com";
 
 // Configuration
 const app = express();
-const port = 8888;
+const port = process.env.PORT || 8888;
 const archeryWebappEndpoint = '/archery';
 const glucoseWebappEndpoint = '/glucose';
 // Disabled until: v1.3
