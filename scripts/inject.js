@@ -31,9 +31,14 @@ i18nFiles.forEach(file => {
             content = content.replace(/env\.HOST=.*/g, `env.HOST=${process.env.HOST}`)
             injected = true;
         }
-        if (process.env.PORT) {
-            content = content.replace(/env\.PORT=.*/g, `env.PORT=${process.env.PORT}`)
+        if (process.env.SERVICE_PORT) {
+            content = content.replace(/env\.SERVICE_PORT=.*/g, `env.SERVICE_PORT=${process.env.SERVICE_PORT}`)
             content = content.replace(/env\.COLON=.*/g, `env.COLON=:`)
+            injected = true;
+        }
+        else {
+            content = content.replace(/env\.SERVICE_PORT=.*/g, `env.SERVICE_PORT=`)
+            content = content.replace(/env\.COLON=.*/g, `env.COLON=`)
             injected = true;
         }
         if (injected) {

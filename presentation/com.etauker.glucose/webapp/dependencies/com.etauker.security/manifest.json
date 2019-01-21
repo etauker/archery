@@ -19,13 +19,13 @@
 				}
 			},
 			"login": {
-				"uri": "{{env.PROTOCOL}}://{{env.HOST}}{{env.COLON}}{{env.PORT}}/security/token"
+				"uri": "{{env.PROTOCOL}}://{{env.HOST}}{{env.COLON}}{{env.SERVICE_PORT}}/security/token"
 			},
 			"logout": {
-				"uri": "{{env.PROTOCOL}}://{{env.HOST}}{{env.COLON}}{{env.PORT}}/security/invalidate"
+				"uri": "{{env.PROTOCOL}}://{{env.HOST}}{{env.COLON}}{{env.SERVICE_PORT}}/security/invalidate"
 			},
 			"user": {
-				"uri": "{{env.PROTOCOL}}://{{env.HOST}}{{env.COLON}}{{env.PORT}}/security/users"
+				"uri": "{{env.PROTOCOL}}://{{env.HOST}}{{env.COLON}}{{env.SERVICE_PORT}}/security/users"
 			}
 		}
 	},
