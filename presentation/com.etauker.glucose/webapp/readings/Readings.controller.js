@@ -33,6 +33,12 @@ sap.ui.define([
 	ReadingsController.prototype.onRouteMatched = function() {
 		this.getOwnerComponent().retrieveReadings()
 			.then(aReadings => this.oReadingModel.setProperty("/readings", aReadings));
+		this.getOwnerComponent().getModel("readings")
+			.setProperty("/state", {
+				tableId: "readingsTable",
+				grouping: this._getGroupingFunctions(),
+				filtering: this._getFilteringFunctions()
+			});
 	};
 	ReadingsController.prototype.handleFilterDialogConfirm = function (oEvent) {
 		let oTable = this.getView().byId(this.oReadingModel.getProperty("/state/tableId"));
@@ -70,6 +76,13 @@ sap.ui.define([
 			let sColumn = this.oReadingModel.getProperty(`/state/grouping/${sFunction}/field`);
 			let fnGrouping = this.oReadingModel.getProperty(`/state/grouping/${sFunction}/function`);
 			oBinding.sort(new Sorter(sColumn, bDescending, fnGrouping.bind(this)));
+		} else {
+			this.getView().byId('readingsTable').getColumns().forEach(column => {
+				if (typeof column.onGroupingChange === 'function') {
+					column.onGroupingChange({ newGrouping: 'Default' });
+				}
+			});
+			oBinding.sort(new Sorter(sColumn, true));
 		}
 	};
 	ReadingsController.prototype._getDefaultSorter = function() {
