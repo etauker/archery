@@ -77,6 +77,7 @@ sap.ui.define([
 			let fnGrouping = this.oReadingModel.getProperty(`/state/grouping/${sFunction}/function`);
 			oBinding.sort(new Sorter(sColumn, bDescending, fnGrouping.bind(this)));
 		} else {
+			let sColumn = this.oReadingModel.getProperty(`/state/grouping/removeGrouping/field`);
 			this.getView().byId('readingsTable').getColumns().forEach(column => {
 				if (typeof column.onGroupingChange === 'function') {
 					column.onGroupingChange({ newGrouping: 'Default' });
@@ -116,6 +117,9 @@ sap.ui.define([
 						text: `${sWeekday} (${sDate})`
 					};
 				}
+			},
+			removeGrouping: {
+				field: "dateTime"
 			}
 		}
 	};
