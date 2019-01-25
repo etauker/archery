@@ -1,0 +1,21 @@
+<mat-form-field>
+  <mat-select [(value)]="selected">
+    <mat-option value="day">Day</mat-option>
+    <mat-option value="week">Week</mat-option>
+    <mat-option value="month">Month</mat-option>
+    <mat-option value="custom">Custom</mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-slider id="start" name="time" min="0" max="2678400" step="3600" value="604800" tickInterval="744"></mat-slider>
+<label for="time">Time</label>
+
+<!-- Chart height set in component.ts -->
+<div style="position: relative; display: block; overflow: hidden;">
+    <canvas id="canvas"></canvas>
+</div>
+
+<!-- Chart height set here -->
+<div style="position: relative; display: block; height: 256px;">
+    <canvas id="canvas2"></canvas>
+</div>

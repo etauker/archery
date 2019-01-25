@@ -1,0 +1,29 @@
+<div style="text-align:center">
+    <mat-toolbar color="primary">
+
+      <span>{{title}}</span>
+      <span class="spacer"></span>
+
+
+      <mat-menu #rootMenu="matMenu">
+          <button mat-menu-item [matMenuTriggerFor]="subMenu">Navigation</button>
+      </mat-menu>
+
+      <mat-menu #subMenu="matMenu">
+          <button routerLink="/dashboards" mat-menu-item>All Charts</button>
+          <button routerLink="/comparison/chart-1" mat-menu-item>Chart 1</button>
+          <button routerLink="/comparison/chart-2" mat-menu-item>Chart 2</button>
+      </mat-menu>
+
+      <button mat-icon-button [matMenuTriggerFor]="rootMenu">
+          <mat-icon>more_vert</mat-icon>
+          <!-- <span>Menu</span> -->
+      </button>
+
+      <button mat-icon-button>
+          <mat-icon>logout</mat-icon>
+          <!-- <span style="font-size: medium;">Logout</span> -->
+      </button>
+
+    </mat-toolbar>
+</div>
