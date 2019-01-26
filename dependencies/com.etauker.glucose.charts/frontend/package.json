@@ -1,21 +1,25 @@
 {
   "name": "com.etauker.glucose.charts",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "postinstall": "ng build --aot --prod --deploy-url /glucose-charts/"
   },
   "private": true,
   "dependencies": {
     "@angular/animations": "^7.2.2",
     "@angular/cdk": "^7.2.2",
+    "@angular/cli": "~7.2.3",
+    "@angular/compiler-cli": "~7.2.0",
     "@angular/common": "~7.2.0",
     "@angular/compiler": "~7.2.0",
     "@angular/core": "~7.2.0",
+    "@angular-devkit/build-angular": "~0.12.0",
     "@angular/forms": "~7.2.0",
     "@angular/material": "^7.2.2",
     "@angular/platform-browser": "~7.2.0",
@@ -28,9 +32,6 @@
     "zone.js": "~0.8.26"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~0.12.0",
-    "@angular/cli": "~7.2.3",
-    "@angular/compiler-cli": "~7.2.0",
     "@angular/language-service": "~7.2.0",
     "@types/node": "~8.9.4",
     "@types/jasmine": "~2.8.8",

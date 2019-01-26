@@ -5,7 +5,11 @@
   "main": "serve.js",
   "scripts": {
     "test": "jasmine",
-    "compile": "node scripts/inject.js && tsc",
+    "compile": "bash scripts/build.bash && node scripts/inject.js && tsc",
+    "predeploy": "bash scripts/build.bash",
+    "deploy": "git push heroku master",
+    "postdeploy": "",
+    "preinstall": "npm install -g @angular/cli",
     "postinstall": "npm run compile",
     "start-local": "heroku local",
     "start-production": "node serve.js",
