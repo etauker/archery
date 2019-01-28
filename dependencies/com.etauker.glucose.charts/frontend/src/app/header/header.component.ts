@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TranslationService } from '../service/translation/translation.service';
 
 @Component({
   selector: 'app-header',
@@ -7,11 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HeaderComponent implements OnInit {
 
-    title = 'Glucose Charts';
-    
-    constructor() { }
+    title = 'glucose.charts.app.title';
 
-    ngOnInit() {
+    constructor(
+        private translation: TranslationService
+    ) {
+        this.loadTranslations();
     }
 
+    ngOnInit() { }
+
+    async loadTranslations () {
+        this.title = await this.translation.getText(this.title);
+    }
 }
