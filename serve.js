@@ -12,11 +12,13 @@ global.REALM = "etauker.com";
 // Configuration
 const app = express();
 const port = process.env.PORT || 8888;
+const securityLoginWebappEndpoint = '/login';
 const archeryWebappEndpoint = '/archery';
 const glucoseWebappEndpoint = '/glucose';
 const glucoseChartsWebappEndpoint = '/glucose-charts';
 // Disabled until: v1.3
 // const archeryWebappDirectory = __dirname + "/presentation/com.etauker.archery/archery-ui5/webapp";
+const securityLoginWebappDirectory = __dirname + "/dependencies/com.etauker.security.login/frontend/webapp";
 const glucoseWebappDirectory = __dirname + "/presentation/com.etauker.glucose/webapp";
 const glucoseChartsWebappDirectory = __dirname + "/dependencies/com.etauker.glucose.charts/frontend/dist";
 const modules = [ "data", "persistence", "logic", "service", "utils" ];
@@ -42,6 +44,7 @@ console.log(`--- App configuration ---`);
 console.log("Port: " + port);
 // Disabled until: v1.3
 // console.log("Archery webapp endpoint: " + archeryWebappEndpoint);
+console.log("Security Login webapp endpoint: " + securityLoginWebappEndpoint);
 console.log("Glucose Transactions webapp endpoint: " + glucoseWebappEndpoint);
 console.log("Glucose Charts webapp endpoint: " + glucoseChartsWebappEndpoint);
 
@@ -82,8 +85,11 @@ app.use("/glucose", glucoseRouter)
 // Import the webapp
 // Disabled until: v1.3
 // app.use(archeryWebappEndpoint, express.static(archeryWebappDirectory));
+app.use(securityLoginWebappEndpoint, express.static(securityLoginWebappDirectory));
 app.use(glucoseWebappEndpoint, express.static(glucoseWebappDirectory));
 app.use(glucoseChartsWebappEndpoint, express.static(glucoseChartsWebappDirectory));
+
+
 
 app.all(`${glucoseChartsWebappEndpoint}/assets/*`, function(req, res, next) {
     console.log(`req.path: ${req.path}`);
@@ -98,5 +104,6 @@ app.all(`${glucoseChartsWebappEndpoint}/*`, function(req, res, next) {
 // Start the server
 app.listen(port);
 console.log("--- App listening ---");
+console.log("Security Login: " + securityLoginWebappEndpoint);
 console.log("Glucose Transactions: " + glucoseWebappEndpoint);
 console.log("Glucose Charts: " + glucoseChartsWebappEndpoint);

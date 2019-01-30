@@ -1,0 +1,20 @@
+<mvc:View
+	controllerName="com.etauker.security.login.Login"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	displayBlock="true">
+	<App id="app">
+		<Page title="{i18n>appTitle}" class="sapUiResponsiveContentPadding">
+			<headerContent>
+				<Button icon="sap-icon://add" tooltip="Create Account" press="onCreateAccount"/>
+			</headerContent>
+			<content>
+					<Label text="{i18n>Username}" />
+					<Input type="Text" value="{login>/username}" />
+					<Label text="{i18n>Password}" />
+					<Input type="Password" value="{login>/password}"/>
+					<Button text="{i18n>Login}" press="onLogin"></Button>
+			</content>
+		</Page>
+	</App>
+</mvc:View>
