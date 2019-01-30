@@ -25,11 +25,11 @@ const glucoseWebappDirectory = __dirname + "/presentation/com.etauker.glucose/we
 const glucoseChartsWebappDirectory = __dirname + "/dependencies/com.etauker.glucose.charts/frontend/dist";
 const modules = [ "data", "persistence", "logic", "service", "utils" ];
 const dependencies = [
-    "com.etauker.security.login/frontend"
     "com.etauker.security",
     "com.etauker.archery",
     "com.etauker.glucose",
-    "com.etauker.glucose.charts/frontend"
+    "com.etauker.glucose.charts/frontend",
+    "com.etauker.security.login/frontend"
 ];
 
 // App preparation
