@@ -14,6 +14,11 @@ sap.ui.define([
 	//===========================================
 	LogoutController.prototype.onInit = function () {
 		var jwt = localStorage.getItem('com.etauker.security.token');
+
+		this.PARAMS = {
+			RETURN: 'return'
+		}
+
 		if (!jwt) { this._onSuccessfulLogout(jwt); }
 		else { this.handleLogout(); }
 	};
@@ -58,8 +63,25 @@ sap.ui.define([
 	//            INTERNAL CALLBACKS
 	//===========================================
 	LogoutController.prototype._onSuccessfulLogout = function () {
+
+		let parameters = window.location.search.split(/[\?&]/);
+		let protocol = window.location.protocol;
+		let host = window.location.host;
+		let path = '/';
+		let search = '';
+
 		localStorage.removeItem('com.etauker.security.token');
-		window.location.pathname = '/';
+		parameters.some(param => {
+
+			let returnParam = this.PARAMS.RETURN;
+			if (param.indexOf(`${returnParam}=`) !== -1) {
+				path = param.replace(`${returnParam}=`, '');
+				return true;
+			}
+
+		});
+		let href = `${protocol}//${host}/${path}${search}`;
+		window.location.href = href;
 	};
 	LogoutController.prototype._onFailedLogout = function (oError) {
 		var oErrorObject = oError.responseJSON;
