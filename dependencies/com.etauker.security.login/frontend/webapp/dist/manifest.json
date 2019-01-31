@@ -3,10 +3,10 @@
 	"sap.app": {
 		"id": "com.etauker.security.login",
 		"i18n": "i18n/i18n.properties",
-		"title": "{{appTitle}}",
-		"description": "{{appDescription}}",
+		"title": "{{LOGIN.title}}",
+		"description": "{{LOGIN.description}}",
 		"applicationVersion": {
-			"version": "1.0.0"
+			"version": "1.0.1"
 		},
 		"dataSources": {
 			"login": {

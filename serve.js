@@ -19,8 +19,8 @@ const glucoseWebappEndpoint = '/glucose';
 const glucoseChartsWebappEndpoint = '/glucose-charts';
 // Disabled until: v1.3
 // const archeryWebappDirectory = __dirname + "/presentation/com.etauker.archery/archery-ui5/webapp";
-const securityLoginWebappDirectory = __dirname + "/dependencies/com.etauker.security.login/frontend/webapp";
-const securityLogoutWebappDirectory = __dirname + "/dependencies/com.etauker.security.logout/frontend/webapp";
+const securityLoginWebappDirectory = __dirname + "/dependencies/com.etauker.security.login/frontend/webapp/dist";
+const securityLogoutWebappDirectory = __dirname + "/dependencies/com.etauker.security.logout/frontend/webapp/dist";
 const glucoseWebappDirectory = __dirname + "/presentation/com.etauker.glucose/webapp";
 const glucoseChartsWebappDirectory = __dirname + "/dependencies/com.etauker.glucose.charts/frontend/dist";
 const modules = [ "data", "persistence", "logic", "service", "utils" ];

@@ -4,16 +4,16 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	displayBlock="true">
 	<App id="app">
-		<Page title="{i18n>appTitle}" class="sapUiResponsiveContentPadding">
+		<Page title="{i18n>LOGIN.title}" class="sapUiResponsiveContentPadding">
 			<headerContent>
-				<Button icon="sap-icon://add" tooltip="Create Account" press="onCreateAccount"/>
+				<Button icon="sap-icon://add" tooltip="{i18n>LOGIN.createAccount}" press="onCreateAccount"/>
 			</headerContent>
 			<content>
-					<Label text="{i18n>Username}" />
+					<Label text="{i18n>LOGIN.username}" />
 					<Input type="Text" value="{login>/username}" />
-					<Label text="{i18n>Password}" />
+					<Label text="{i18n>LOGIN.password}" />
 					<Input type="Password" value="{login>/password}"/>
-					<Button text="{i18n>Login}" press="onLogin"></Button>
+					<Button text="{i18n>LOGIN.login}" press="onLogin"></Button>
 			</content>
 		</Page>
 	</App>
