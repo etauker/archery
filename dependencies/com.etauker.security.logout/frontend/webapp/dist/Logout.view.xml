@@ -1,0 +1,9 @@
+<mvc:View
+	controllerName="com.etauker.security.logout.Logout"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	displayBlock="true">
+	<App id="app">
+		<Page title="{i18n>LOGOUT.title}" class="sapUiResponsiveContentPadding"></Page>
+	</App>
+</mvc:View>
