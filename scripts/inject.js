@@ -2,9 +2,17 @@ const fs = require('fs');
 const path = require('path');
 let i18nFiles = [];
 let i18nRegex = /.*i18n.*\.properties/g;
+let fileLocations = [
+    './presentation',
+    './dependencies/com.etauker.security.login/frontend/webapp/dist',
+    './dependencies/com.etauker.security.logout/frontend/webapp/dist'
+];
+
 
 console.log(`--- Detecting i18n files ---`);
-findFiles('./presentation', i18nRegex, i18nFiles);
+fileLocations.forEach(directory => {
+    findFiles(directory, i18nRegex, i18nFiles);
+});
 
 console.log(`--- Injecting environment variables ---`)
 i18nFiles.forEach(file => {
