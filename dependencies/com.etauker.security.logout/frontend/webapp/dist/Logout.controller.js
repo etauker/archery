@@ -1,8 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/MessageToast",
-	"com/etauker/security/logout/libs/jwt-decode.min"
+	"sap/m/MessageToast"
 ], function (Controller, JSONModel, MessageToast) {
 	"use strict";
 
