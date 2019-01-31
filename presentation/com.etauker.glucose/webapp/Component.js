@@ -23,7 +23,7 @@ sap.ui.define([
 		this.getRouter().navTo(sTargetName);
 	};
 	GlucoseAppComponent.prototype.sendRestRequest = function(oRequest) {
-		var sToken = localStorage.getItem('com.etauker.glucose.security.token');
+		var sToken = localStorage.getItem('com.etauker.security.token');
 		oRequest.beforeSend = (xhr) => {
 			xhr.setRequestHeader('Authorization', 'Bearer ' + sToken);
 		}

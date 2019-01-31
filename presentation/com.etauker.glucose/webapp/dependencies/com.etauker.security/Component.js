@@ -26,7 +26,7 @@ sap.ui.define([
 		this.oAppContext = oContext;
 	};
 	SecurityComponent.prototype.handleLogin = function (sUsername, sPassword) {
-		var jwt = localStorage.getItem('com.etauker.glucose.security.token');//Cookies.get("token");
+		var jwt = localStorage.getItem('com.etauker.security.token');//Cookies.get("token");
 		if (jwt && jwt !== "undefined") {
 			this._onSuccessfulLogin(jwt);
 		}
@@ -37,7 +37,7 @@ sap.ui.define([
 		}
 	};
 	SecurityComponent.prototype.handleLogout = function () {
-		var jwt = localStorage.getItem('com.etauker.glucose.security.token');//Cookies.get("token");
+		var jwt = localStorage.getItem('com.etauker.security.token');//Cookies.get("token");
 		if (jwt && jwt !== "undefined") {
 			this._logout(jwt)
 				.then(this._onSuccessfulLogout.bind(this))
@@ -50,7 +50,7 @@ sap.ui.define([
 	SecurityComponent.prototype.checkLoginState = function () {
 		var bLoggedIn = this.oSecurityModel.getProperty("/LOGGED_IN");
 		if (!bLoggedIn) {
-			var token = localStorage.getItem('com.etauker.glucose.security.token');//Cookies.get("token");
+			var token = localStorage.getItem('com.etauker.security.token');//Cookies.get("token");
 			if (token) {
 				token = token.substring("token".length, token.length);
 				var decoded = jwt_decode(token);
@@ -98,7 +98,7 @@ sap.ui.define([
 	SecurityComponent.prototype._onSuccessfulLogin = function (sResponse) {
 		if (sResponse) {
 			// Save the token as a cookies
-			localStorage.setItem('com.etauker.glucose.security.token', sResponse);
+			localStorage.setItem('com.etauker.security.token', sResponse);
 			// Cookies.set("token", sResponse);
 			// Decode token
 			var oDecoded = jwt_decode(sResponse);
@@ -118,7 +118,7 @@ sap.ui.define([
 	};
 	SecurityComponent.prototype._onSuccessfulLogout = function () {
 		// Cookies.remove('token');
-		localStorage.removeItem('com.etauker.glucose.security.token');
+		localStorage.removeItem('com.etauker.security.token');
 		this.oSecurityModel.setProperty("/JWT", {});
 		this.oSecurityModel.setProperty("/LOGGED_IN", false);
 		this.oAppContext.navigateToTarget("login");

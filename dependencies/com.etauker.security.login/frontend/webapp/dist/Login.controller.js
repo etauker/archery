@@ -14,7 +14,7 @@ sap.ui.define([
 	//             LIFECYCLE METHODS
 	//===========================================
 	LoginController.prototype.onInit = function () {
-		var jwt = localStorage.getItem('com.etauker.security.login.token');
+		var jwt = localStorage.getItem('com.etauker.security.token');
 		if (jwt) { this._onSuccessfulLogin(jwt); }
 
 		this.oLoginModel = new JSONModel({
@@ -41,7 +41,7 @@ sap.ui.define([
 	//          INTERNAL EVENT HANDLERS
 	//===========================================
 	LoginController.prototype.handleLogin = function (sUsername, sPassword) {
-		var jwt = localStorage.getItem('com.etauker.security.login.token');
+		var jwt = localStorage.getItem('com.etauker.security.token');
 		if (jwt) {
 			this._onSuccessfulLogin(jwt);
 		}
@@ -80,7 +80,7 @@ sap.ui.define([
 	//===========================================
 	LoginController.prototype._onSuccessfulLogin = function (sResponse) {
 		if (sResponse) {
-			localStorage.setItem('com.etauker.security.login.token', sResponse);
+			localStorage.setItem('com.etauker.security.token', sResponse);
 			this._navBack();
 		}
 		else {
