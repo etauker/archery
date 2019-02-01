@@ -1,6 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/Component",
-	"sap/m/MessageToast"
+	"sap/m/MessageToast",
+	"com/etauker/glucose/libs/jwt-decode.min"
 ], function (Component, MessageToast) {
 	"use strict";
 
@@ -21,31 +22,10 @@ sap.ui.define([
 			}
 		});
 		this.oAppContext.setModel(this.oSecurityModel, "security");
+		this.isPriviledged();
 	};
 	SecurityComponent.prototype.setParentContext = function (oContext) {
 		this.oAppContext = oContext;
-	};
-	SecurityComponent.prototype.handleLogin = function (sUsername, sPassword) {
-		var jwt = localStorage.getItem('com.etauker.security.token');//Cookies.get("token");
-		if (jwt && jwt !== "undefined") {
-			this._onSuccessfulLogin(jwt);
-		}
-		else {
-			this._login(sUsername, sPassword)
-				.then(this._onSuccessfulLogin.bind(this))
-				.fail(this._onFailedLogin.bind(this));
-		}
-	};
-	SecurityComponent.prototype.handleLogout = function () {
-		var jwt = localStorage.getItem('com.etauker.security.token');//Cookies.get("token");
-		if (jwt && jwt !== "undefined") {
-			this._logout(jwt)
-				.then(this._onSuccessfulLogout.bind(this))
-				.fail(this._onFailedLogout.bind(this));
-		}
-		else {
-			this._onSuccessfulLogout(jwt);
-		}
 	};
 	SecurityComponent.prototype.checkLoginState = function () {
 		var bLoggedIn = this.oSecurityModel.getProperty("/LOGGED_IN");
@@ -61,73 +41,19 @@ sap.ui.define([
 			}
 		};
 	}
-
-
-
-	SecurityComponent.prototype._login = function (sUsername, sPassword) {
-		let sUrl = this.getManifestEntry("/sap.app/dataSources/login/uri");
-		// sUrl = sUrl.replace("localhost", "dev01"); //for development
-		// sUrl = sUrl.replace("443", "8888"); //for development
-		// sUrl = sUrl.replace("https", "http"); //for development
-
-		let sMethod = "POST";
-		return $.ajax({
-		    url: sUrl,
-			method: sMethod,
-			data: {
-			   username: sUsername,
-			   password: sPassword
-		   	}
-		});
-	};
-	SecurityComponent.prototype._logout = function (sToken) {
-		let sUrl = this.getManifestEntry("/sap.app/dataSources/logout/uri");
-		// sUrl = sUrl.replace("localhost", "dev01"); //for development
-		// sUrl = sUrl.replace("443", "8888"); //for development
-		// sUrl = sUrl.replace("https", "http"); //for development
-
-		let sMethod = "GET";
-		return $.ajax({
-			url: sUrl,
-			type: sMethod,
-			beforeSend: function (xhr) {
-			    xhr.setRequestHeader('Authorization', 'Bearer ' + sToken);
-			}
-		});
-	};
-	SecurityComponent.prototype._onSuccessfulLogin = function (sResponse) {
-		if (sResponse) {
-			// Save the token as a cookies
-			localStorage.setItem('com.etauker.security.token', sResponse);
-			// Cookies.set("token", sResponse);
-			// Decode token
-			var oDecoded = jwt_decode(sResponse);
-			// Add to security model
-			this.oSecurityModel.setProperty("/JWT", oDecoded);
-			// this.oSecurityModel.setProperty("/USER/USERNAME", "");
-			// Return true
-			this.oSecurityModel.setProperty("/LOGGED_IN", true);
-			this.oAppContext.navigateToTarget("appHome");
-		}
-	};
-	SecurityComponent.prototype._onFailedLogin = function (oError) {
-		var oErrorObject = oError.responseJSON;
-		console.log(oErrorObject);
-		this.oSecurityModel.setProperty("/LOGGED_IN", false);
-		MessageToast.show("Username or password is incorrect");
-	};
-	SecurityComponent.prototype._onSuccessfulLogout = function () {
+	SecurityComponent.prototype.handleLogout = function () {
 		// Cookies.remove('token');
 		localStorage.removeItem('com.etauker.security.token');
 		this.oSecurityModel.setProperty("/JWT", {});
 		this.oSecurityModel.setProperty("/LOGGED_IN", false);
-		this.oAppContext.navigateToTarget("login");
 		this.clearAppContext();
+		this.handleNavToLogout();
 	};
-	SecurityComponent.prototype._onFailedLogout = function (oError) {
-		var oErrorObject = oError.responseJSON;
-		console.log(oErrorObject);
-		MessageToast.show("An error occured during logout: " + (oErrorObject.message || ""));
+	SecurityComponent.prototype.handleSuccessfulLogin = function () {
+			let sToken = localStorage.getItem('com.etauker.security.token');
+			var oDecoded = jwt_decode(sToken);
+			this.oSecurityModel.setProperty("/JWT", oDecoded);
+			this.oSecurityModel.setProperty("/LOGGED_IN", true);
 	};
 	SecurityComponent.prototype._showContent = function(oContext) {
 		oContext.getView().byId("unauthorised") ? oContext.getView().byId("unauthorised").setProperty("visible", false) : null;
@@ -175,8 +101,30 @@ sap.ui.define([
 			}
 		});
 	};
-
-
+	SecurityComponent.prototype.handleNavToLogin = function(oReading) {
+		let protocol = window.location.protocol;
+		let host = window.location.host;
+		let path = 'login';
+		let search = '?return=glucose';
+		let href = `${protocol}//${host}/${path}${search}`;
+		window.location.href = href;
+	};
+	SecurityComponent.prototype.handleNavToLogout = function(oReading) {
+		let protocol = window.location.protocol;
+		let host = window.location.host;
+		let path = 'logout';
+		let search = '?return=glucose';
+		let href = `${protocol}//${host}/${path}${search}`;
+		window.location.href = href;
+	};
+	SecurityComponent.prototype.isPriviledged = function(oReading) {
+		var sToken = localStorage.getItem('com.etauker.security.token');
+		if (!sToken) {
+			this.handleNavToLogin();
+		} else {
+			this.handleSuccessfulLogin();
+		}
+	};
 
 	return SecurityComponent;
 });

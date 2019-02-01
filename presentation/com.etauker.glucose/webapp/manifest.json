@@ -83,11 +83,6 @@
 				"pattern": "login",
 				"name": "login",
 				"target": "login"
-			},
-			{
-				"pattern": "createUser",
-				"name": "createUser",
-				"target": "createUser"
 			}],
 			"targets": {
 				"home": {
@@ -113,12 +108,6 @@
 					"viewPath": "com.etauker.glucose.login",
 					"viewName": "Login",
 					"viewLevel" : 2
-				},
-				"createUser": {
-					"viewId": "createUser",
-					"viewPath": "com.etauker.glucose.createUser",
-					"viewName": "CreateUser",
-					"viewLevel" : 3
 				}
 			}
 		}

@@ -1,8 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/routing/History",
-	"com/etauker/security/util/Permissions",
-	"com/etauker/glucose/libs/jwt-decode.min"
+	"com/etauker/security/util/Permissions"
 ], function(Controller, History, Permissions) {
 	"use strict";
 
@@ -20,9 +19,6 @@ sap.ui.define([
 	BaseController.prototype.handleLogout = function() {
 		this.oSecurity.handleLogout();
 	};
-	BaseController.prototype.handleLogin = function(sUsername, sPassword) {
-		this.oSecurity.handleLogin(sUsername, sPassword);
-	};
 	BaseController.prototype.getRouter = function() {
 		return sap.ui.core.UIComponent.getRouterFor(this);
 	};
@@ -30,7 +26,7 @@ sap.ui.define([
 		this.handleNavBack();
 	};
 	BaseController.prototype.onNavToLogin = function(oEvent) {
-		this.getRouter().navTo("login", {}, true /*no history*/);
+		this.oSecurity.handleNavToLogin();
 	};
 	BaseController.prototype.handleNavBack = function() {
 		var oHistory = History.getInstance();
