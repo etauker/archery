@@ -11,6 +11,7 @@ sap.ui.define([
 	});
 
 	GlucoseAppComponent.prototype.init = function () {
+		this.isPriviledged();
 		UIComponent.prototype.init.apply(this, arguments);
 
 		// create the views based on the url/hash
@@ -91,5 +92,19 @@ sap.ui.define([
 		};
 		return this.sendRestRequest(oRequest);
 	};
+	GlucoseAppComponent.prototype.isPriviledged = function(oReading) {
+		let protocol = window.location.protocol;
+		let host = window.location.host;
+		let path = 'login';
+		let search = '?return=glucose';
+		let href = `${protocol}//${host}/${path}${search}`;
+
+		var sToken = localStorage.getItem('com.etauker.security.token');
+		if (!sToken) {
+			window.location.href = href;
+		}
+	};
+
+
 	return GlucoseAppComponent;
 });

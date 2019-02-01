@@ -97,13 +97,10 @@ app.use(glucoseChartsWebappEndpoint, express.static(glucoseChartsWebappDirectory
 
 
 app.all(`${glucoseChartsWebappEndpoint}/assets/*`, function(req, res, next) {
-    console.log(`req.path: ${req.path}`);
     res.sendFile(`${glucoseChartsWebappDirectory}${req.path}`);
-    // res.sendFile(`${glucoseChartsWebappDirectory}/index.html`, { root: __dirname + glucoseChartsWebappEndpoint });
 });
 app.all(`${glucoseChartsWebappEndpoint}/*`, function(req, res, next) {
     res.sendFile(`${glucoseChartsWebappDirectory}/index.html`);
-    // res.sendFile(`${glucoseChartsWebappDirectory}/index.html`, { root: __dirname + glucoseChartsWebappEndpoint });
 });
 
 // Start the server

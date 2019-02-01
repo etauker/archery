@@ -14,6 +14,11 @@ sap.ui.define([
 	//             LIFECYCLE METHODS
 	//===========================================
 	LoginController.prototype.onInit = function () {
+
+		this.PARAMS = {
+			RETURN: 'return'
+		}
+		
 		var jwt = localStorage.getItem('com.etauker.security.token');
 		if (jwt) { this._onSuccessfulLogin(jwt); }
 
@@ -69,8 +74,30 @@ sap.ui.define([
 		   	}
 		});
 	};
-	LoginController.prototype._navBack = function() {
-		window.history.go(-1);
+	LoginController.prototype._nav = function() {
+		let parameters = window.location.search.split(/[\?&]/);
+		let protocol = window.location.protocol;
+		let host = window.location.host;
+		let path = '/';
+		let search = '';
+
+		let returnExists = parameters.some(param => {
+
+			let returnParam = this.PARAMS.RETURN;
+			if (param.indexOf(`${returnParam}=`) !== -1) {
+				path = param.replace(`${returnParam}=`, '');
+				return true;
+			}
+
+		});
+
+		if (returnExists) {
+			let href = `${protocol}//${host}/${path}${search}`;
+			window.location.href = href;
+		} else {
+			window.history.go(-1);
+		}
+
 	};
 
 
@@ -81,7 +108,7 @@ sap.ui.define([
 	LoginController.prototype._onSuccessfulLogin = function (sResponse) {
 		if (sResponse) {
 			localStorage.setItem('com.etauker.security.token', sResponse);
-			this._navBack();
+			this._nav();
 		}
 		else {
 			MessageToast.show("An unexpected error occured");
