@@ -64,23 +64,13 @@ sap.ui.define([
 	//===========================================
 	LogoutController.prototype._onSuccessfulLogout = function () {
 
-		let parameters = window.location.search.split(/[\?&]/);
 		let protocol = window.location.protocol;
 		let host = window.location.host;
-		let path = '/';
-		let search = '';
+		let path = 'login';
+		let search = window.location.search;
+		let href = `${protocol}//${host}/${path}${search}`;
 
 		localStorage.removeItem('com.etauker.security.token');
-		parameters.some(param => {
-
-			let returnParam = this.PARAMS.RETURN;
-			if (param.indexOf(`${returnParam}=`) !== -1) {
-				path = param.replace(`${returnParam}=`, '');
-				return true;
-			}
-
-		});
-		let href = `${protocol}//${host}/${path}${search}`;
 		window.location.href = href;
 	};
 	LogoutController.prototype._onFailedLogout = function (oError) {
