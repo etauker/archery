@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { SecurityService } from './service/security/security.service';
 
 
 @Component({
@@ -8,7 +9,12 @@ import { Component } from '@angular/core';
 })
 
 export class AppComponent {
-    title = 'Glucose Charts';
-    constructor() { }
+    authenticated = false;
+
+    constructor() {
+        const security = new SecurityService();
+        this.authenticated = security.authenticated();
+    }
+
     ngOnInit() { }
 }
