@@ -1,0 +1,98 @@
+[
+	{
+		"periodId": "beforeBreakfast",
+		"periodText": "Before Breakfast",
+		"startTime": "06:01",
+		"endTime": "10:00",
+		"groups": [
+			{
+				"groupId": "low",
+				"groupText": "Low",
+				"minValue": 0,
+				"maxValue": 5.5
+			},
+			{
+				"groupId": "good",
+				"groupText": "Good",
+				"minValue": 5.6,
+				"maxValue": 7.5
+			},
+			{
+				"groupId": "high",
+				"groupText": "High",
+				"minValue": 7.6,
+				"maxValue": 14
+			},
+			{
+				"groupId": "veryHigh",
+				"groupText": "Very High",
+				"minValue": 14.1,
+				"maxValue": 50
+			}
+		]
+	},
+	{
+		"periodId": "beforeMeals",
+		"periodText": "Before Meals",
+		"startTime": "10:01",
+		"endTime": "22:00",
+		"groups": [
+			{
+				"groupId": "low",
+				"groupText": "Low",
+				"minValue": 0,
+				"maxValue": 4.5
+			},
+			{
+				"groupId": "good",
+				"groupText": "Good",
+				"minValue": 4.6,
+				"maxValue": 7.5
+			},
+			{
+				"groupId": "high",
+				"groupText": "High",
+				"minValue": 7.6,
+				"maxValue": 14
+			},
+			{
+				"groupId": "veryHigh",
+				"groupText": "Very High",
+				"minValue": 14.1,
+				"maxValue": 50
+			}
+		]
+	},
+	{
+		"periodId": "beforeBed",
+		"periodText": "Before Bed",
+		"startTime": "22:01",
+		"endTime": "06:00",
+		"groups": [
+			{
+				"groupId": "low",
+				"groupText": "Low",
+				"minValue": 0,
+				"maxValue": 6.5
+			},
+			{
+				"groupId": "good",
+				"groupText": "Good",
+				"minValue": 6.6,
+				"maxValue": 8
+			},
+			{
+				"groupId": "high",
+				"groupText": "High",
+				"minValue": 8.1,
+				"maxValue": 14
+			},
+			{
+				"groupId": "veryHigh",
+				"groupText": "Very High",
+				"minValue": 14.1,
+				"maxValue": 50
+			}
+		]
+	}
+]
