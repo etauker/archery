@@ -46,10 +46,9 @@ export class DashboardComponent implements OnInit {
 
 
     constructor(private charts: ChartsService) {
-
-        // TODO: Implement preferences
         let now = new Date();
         this.endTimestamp = now.valueOf();
+        this.selectedOption = this.periodSelectOptions.find(option => option.defaultFor.includes('desktop')).value;
         this.handleTimeRangeChange(this.selectedOption);
     }
 
