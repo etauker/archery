@@ -1,3 +1,6 @@
+import { IGlucoseError } from '../exports';
+
+
 class GlucoseErrorGenerator {
 
     //===========================================

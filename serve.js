@@ -27,8 +27,8 @@ const modules = [ "data", "persistence", "logic", "service", "utils" ];
 const dependencies = [
     "com.etauker.security",
     "com.etauker.archery",
-    "com.etauker.glucose.core/backend",
-    "com.etauker.glucose.readings/backend",
+    "com.etauker.glucose.core",
+    "com.etauker.glucose.readings",
     "com.etauker.glucose.charts/frontend",
     "com.etauker.security.login/frontend"
 ];
@@ -50,7 +50,7 @@ console.log("Port: " + port);
 // console.log("Archery webapp endpoint: " + archeryWebappEndpoint);
 console.log("Security Login webapp endpoint: " + securityLoginWebappEndpoint);
 console.log("Security Logout webapp endpoint: " + securityLogoutWebappEndpoint);
-console.log("Glucose Transactions webapp endpoint: " + glucoseWebappEndpoint);
+console.log("Glucose Readings webapp endpoint: " + glucoseWebappEndpoint);
 console.log("Glucose Charts webapp endpoint: " + glucoseChartsWebappEndpoint);
 
 // For each dependency...
@@ -59,7 +59,7 @@ dependencies.forEach(library => {
 
     // ...for each module...
     modules.forEach(module => {
-        let path = `${__dirname}/dependencies/${library}/dist/${module}/`;
+        let path = `${__dirname}/dependencies/${library}/backend/dist/${module}/`;
         let count = 0;
         if (fs.existsSync(path)) {
 
@@ -72,6 +72,7 @@ dependencies.forEach(library => {
                 let propertyName = `${filename}Path`;
                 global.paths[propertyName] = `${path}${filename}`;
                 global[propertyName] = `${path}${filename}`;//Temp
+                console.log(propertyName);
             });
         }
         console.log(`Registered ${count} dependency paths for ${module}`);
@@ -84,7 +85,7 @@ app.use("/security", securityRouter)
 // Disabled until: v1.3
 // var archeryRouter = require(ArcheryServicePath)(app);
 // app.use("/api", archeryRouter)
-var glucoseRouter = require(GlucoseServicePath)(app, global.paths);
+var glucoseRouter = require(GlucoseReadingsServicePath)(app, global.paths);
 app.use("/glucose", glucoseRouter)
 
 // Import the webapp

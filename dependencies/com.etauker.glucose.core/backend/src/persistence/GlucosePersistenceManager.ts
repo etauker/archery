@@ -1,3 +1,5 @@
+import { GlucoseTransaction } from '../exports';
+
 var GlucoseTransactionInstance;
 class GlucosePersistenceManager {
 

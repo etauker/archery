@@ -1,0 +1,16 @@
+{
+  "name": "com.etauker.glucose.readings.backend",
+  "version": "1.0.0",
+  "description": "Services for com.etauker.glucose.readings application.",
+  "main": "",
+  "scripts": {
+    "start": "heroku local",
+    "prebuild": "bash scripts/dependencies.bash",
+    "build": "tsc",
+    "test": "echo 'No tests defined'",
+    "lint": "echo 'No linting defined'",
+    "postinstall": "npm run build"
+  },
+  "author": "etauker",
+  "license": "ISC"
+}
