@@ -134,7 +134,7 @@ export class ChartsService {
     //                 AJAX CALLS
     //===========================================
     private retrieveData() {
-        return this.http.get(`/glucose/transactions/get`, { responseType: 'text' as 'json' });
+        return this.http.get(`/glucose/readings/get`, { responseType: 'text' as 'json' });
     }
     private retrieveMealPeriods() {
         return this.http.get(`assets/data/MealPeriods.json`, { responseType: 'text' as 'json' })
