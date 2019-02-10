@@ -1,42 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class GlucoseTransaction {
+    constructor() { }
 }
-// //===========================================
-// //                  GETTERS
-// //===========================================
-// get id():                   string          { return this._id; }
-// get createdAt():            Date|null       { return this._createdAt; }
-// get updatedAt():            Date|null       { return this._updatedAt; }
-// get createdBy():            string|null     { return this._createdBy; }
-// get updatedBy():            string|null     { return this._updatedBy; }
-// get dateTime():             Date|null       { return this._dateTime; }
-// get reading():              number|null     { return this._reading; }
-// get carbohydrates():        number|null     { return this._carbohydrates; }
-// get insulinUnitsShort():    number|null     { return this._insulinUnitsShort; }
-// get insulinUnitsLong():     number|null     { return this._insulinUnitsLong; }
-// get correctionUnits():      number|null     { return this._correctionUnits; }
-// get meal():                 string|null     { return this._meal; }
-// get note():                 string|null     { return this._note; }
-// //===========================================
-// //                  SETTERS
-// //===========================================
-// set id(newId: string)                                       { this._id = newId; }
-// set createdAt(newCreatedAt: Date|null)                      { this._createdAt = newCreatedAt; }
-// set updatedAt(newUpdatedAt: Date|null)                      { this._updatedAt = newUpdatedAt; }
-// set createdBy(newCreatedBy: string|null)                    { this._createdBy = newCreatedBy; }
-// set updatedBy(newUpdatedBy: string|null)                    { this._updatedBy = newUpdatedBy; }
-// set dateTime(newDateTime: Date|null)                        { this._dateTime = newDateTime; }
-// set reading(newReading: number|null)                        { this._reading = newReading; }
-// set carbohydrates(newCarbohydrates: number|null)            { this._carbohydrates = newCarbohydrates; }
-// set insulinUnitsShort(newInsulinUnitsShort: number|null)    { this._insulinUnitsShort = newInsulinUnitsShort; }
-// set insulinUnitsLong(newInsulinUnitsLong: number|null)      { this._insulinUnitsLong = newInsulinUnitsLong; }
-// set correctionUnits(newCorrectionUnits: number|null)        { this._correctionUnits = newCorrectionUnits; }
-// set meal(newMeal: string|null)                              { this._meal = newMeal; }
-// set note(newNote: string|null)                              { this._note = newNote; }
 //===========================================
 //                  CONVERTERS
 //===========================================
+GlucoseTransaction.newInstance = () => {
+    return Object.create(GlucoseTransaction);
+};
 GlucoseTransaction.fromDataLayerObject = (oObject) => {
-    // console.log("Generating GlucoseTransaction from DataLayerObject.");
     let instance = Object.create(GlucoseTransaction);
     instance.id = oObject.id || null;
     instance.createdAt = (oObject.created_at ? new Date(oObject.created_at) : null);
@@ -54,7 +27,6 @@ GlucoseTransaction.fromDataLayerObject = (oObject) => {
     return instance;
 };
 GlucoseTransaction.fromPresentationLayerObject = (oObject) => {
-    // console.log("Generating GlucoseTransaction from PresentationLayerObject.");
     let instance = Object.create(GlucoseTransaction);
     instance.id = oObject.id || null;
     instance.createdAt = null;
@@ -72,7 +44,6 @@ GlucoseTransaction.fromPresentationLayerObject = (oObject) => {
     return instance;
 };
 GlucoseTransaction.toDataLayerObject = (oObject) => {
-    // console.log("Generating DataLayerObject from GlucoseTransaction.");
     let instance = {
         id: oObject.id || null,
         created_at: (oObject.createdAt ? GlucoseTransaction.formatDateTime(oObject.createdAt) : null),
@@ -92,10 +63,6 @@ GlucoseTransaction.toDataLayerObject = (oObject) => {
     return instance;
 };
 GlucoseTransaction.toPresentationLayerObject = (oObject) => {
-    // console.log("Generating PresentationLayerObject from GlucoseTransaction.");
-    // console.log("--- toPresentationLayerObject start---");
-    // console.log(oObject);
-    // console.log("--- /toPresentationLayerObject start---");
     let instance = {
         id: oObject.id || null,
         dateTime: oObject.dateTime ? oObject.dateTime.valueOf() : null,
@@ -107,12 +74,11 @@ GlucoseTransaction.toPresentationLayerObject = (oObject) => {
         meal: oObject.meal || null,
         note: oObject.note || null
     };
-    // instance = GlucoseTransaction.removeNullProperties(instance);
-    // console.log("--- toPresentationLayerObject end---");
-    // console.log(instance);
-    // console.log("--- /toPresentationLayerObject end---");
     return instance;
 };
+//===========================================
+//                  HELPERS
+//===========================================
 GlucoseTransaction.removeNullProperties = (oObject) => {
     for (let property in oObject) {
         if (oObject[property] === null)
@@ -124,4 +90,5 @@ GlucoseTransaction.formatDateTime = (oDate) => {
     let sDateString = oDate.toISOString().slice(0, 19).replace('T', ' ');
     return sDateString;
 };
+exports.GlucoseTransaction = GlucoseTransaction;
 module.exports = GlucoseTransaction;

@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist",
+        "allowJs": true,
+        "target": "es6"
+    },
+    "include": [
+        "./src/data/**/*.js",
+        "./src/persistence/**/*.js",
+        "./src/utils/**/*.js",
+        "./src/logic/**/*.js",
+        "./src/service/**/*.js",
+        "./src/test/**/*.js"
+    ]
+}

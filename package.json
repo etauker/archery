@@ -5,7 +5,8 @@
   "main": "serve.js",
   "scripts": {
     "test": "jasmine",
-    "compile": "bash scripts/build.bash && node scripts/inject.js && tsc",
+    "compile-local": "bash scripts/build.bash",
+    "compile": "bash scripts/build.bash && node scripts/inject.js",
     "predeploy": "bash scripts/build.bash",
     "deploy": "git push heroku master",
     "postdeploy": "",
