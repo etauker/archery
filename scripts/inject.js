@@ -3,7 +3,8 @@ const path = require('path');
 let i18nFiles = [];
 let i18nRegex = /.*i18n.*\.properties/g;
 let fileLocations = [
-    './presentation',
+    // './presentation',
+    './dependencies/com.etauker.glucose.readings/frontend/webapp/dist',
     './dependencies/com.etauker.security.login/frontend/webapp/dist',
     './dependencies/com.etauker.security.logout/frontend/webapp/dist'
 ];
