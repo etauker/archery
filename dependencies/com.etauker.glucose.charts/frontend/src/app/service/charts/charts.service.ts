@@ -72,7 +72,7 @@ export class ChartsService {
         // Get array of reading data points
         let readingData = transactions.reduce((array, transaction) => {
             array.push({
-                x: new Date(transaction.date_time),
+                x: new Date(transaction.dateTime),
                 y: transaction.reading,
                 label: transaction.note
             });
@@ -105,14 +105,14 @@ export class ChartsService {
 
         // Get min insulin units
         let minInsulinUnitsShort = transactions.reduce((min, transaction) => {
-            if (!transaction.insulin_units_short) return min;
-            return transaction.insulin_units_short < min ? transaction.insulin_units_short : min;
+            if (!transaction.insulinUnitsShort) return min;
+            return transaction.insulinUnitsShort < min ? transaction.insulinUnitsShort : min;
         }, Infinity);
 
         // Get max insulin units
         let maxInsulinUnitsShort = transactions.reduce((max, transaction) => {
-            if (!transaction.insulin_units_short) return max;
-            return transaction.insulin_units_short > max ? transaction.insulin_units_short : max;
+            if (!transaction.insulinUnitsShort) return max;
+            return transaction.insulinUnitsShort > max ? transaction.insulinUnitsShort : max;
         }, 0);
 
 
@@ -134,7 +134,7 @@ export class ChartsService {
     //                 AJAX CALLS
     //===========================================
     private retrieveData() {
-        return this.http.get(`assets/data/transactions.json`, { responseType: 'text' as 'json' });
+        return this.http.get(`/glucose/transactions/get`, { responseType: 'text' as 'json' });
     }
     private retrieveMealPeriods() {
         return this.http.get(`assets/data/MealPeriods.json`, { responseType: 'text' as 'json' })
@@ -152,7 +152,7 @@ export class ChartsService {
     //===========================================
     private addAdditionalProperties(transaction) {
         if (!transaction) { return null; }
-        if (!transaction.date_time) { return null; }
+        if (!transaction.dateTime) { return null; }
 
         const weekdays = [
             'Sunday',
@@ -164,7 +164,7 @@ export class ChartsService {
             'Saturday'
         ];
 
-        const dateTime = new Date(transaction.date_time);
+        const dateTime = new Date(transaction.dateTime);
         transaction.timestamp = dateTime.valueOf();
         transaction.weekday = weekdays[dateTime.getDay()];
         return transaction;
@@ -193,12 +193,12 @@ export class ChartsService {
     }
 
     private getPointColour(transaction) {
-        let transactionDateTime = new Date(transaction.date_time);
+        let transactionDateTime = new Date(transaction.dateTime);
         let matchingPeriod = this.mealPeriods.find(period => {
 
             // Set the transaction date time as the start date time
-            let startDateTime = this.getDateObject(transaction.date_time, period.startTime);
-            let endDateTime = this.getDateObject(transaction.date_time, period.endTime);
+            let startDateTime = this.getDateObject(transaction.dateTime, period.startTime);
+            let endDateTime = this.getDateObject(transaction.dateTime, period.endTime);
 
             // Correction for where transaction is just before or just after midnight
             if (endDateTime.getHours() < startDateTime.getHours() && transactionDateTime.getHours() < 6) {
