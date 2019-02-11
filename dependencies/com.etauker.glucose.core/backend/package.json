@@ -1,6 +1,6 @@
 {
   "name": "com.etauker.glucose.core.backend",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Base backend dependency for all com.etauker.glucose applications.",
   "main": "",
   "scripts": {
