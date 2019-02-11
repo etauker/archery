@@ -129,7 +129,7 @@ class GlucosePersistenceWorker {
         // Loop through all properties of the object and format as 'KEY' = 'value'
         const aProperties = Object.keys(oEntity).map(sKey => {
             if (typeof oEntity[sKey] === 'string')
-                return `\`${sKey}\` = '${oEntity[sKey]}'`;
+                return `\`${sKey}\` = '${oEntity[sKey].replace(/\\'/, "'").replace(/\\"/, '"')}'`;
             else if (typeof oEntity[sKey] === 'number')
                 return `\`${sKey}\` = ${oEntity[sKey]}`;
             else
@@ -164,7 +164,7 @@ class GlucosePersistenceWorker {
         // Loop through all properties of the object and format as 'KEY' = 'value'
         aEntities = aEntities.map(oObject => {
             const aProperties = Object.keys(oObject).map(sKey => {
-                return `'${oObject[sKey]}'`;
+                return `'${oObject[sKey].replace(/'/g, "\\'").replace(/"/, '\\"')}'`;
             })
             return '(' + aProperties.join(', ') + ')';
         });
