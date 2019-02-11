@@ -118,11 +118,21 @@ sap.ui.define([
 		window.location.href = href;
 	};
 	SecurityComponent.prototype.isPriviledged = function(oReading) {
-		var sToken = localStorage.getItem('com.etauker.security.token');
-		if (!sToken) {
+
+		try {
+			var sToken = localStorage.getItem('com.etauker.security.token');
+			var oDecoded = jwt_decode(sToken);
+			var hasRole = oDecoded.roles.some(role => role.name.indexOf('com.etauker.glucose') != 1);
+			var now = new Date();
+			now = now.valueOf() / 1000;
+
+			if (!sToken || oDecoded.exp < now || !hasRole) {
+				this.handleNavToLogin();
+			} else {
+				this.handleSuccessfulLogin();
+			}
+		} catch (error) {
 			this.handleNavToLogin();
-		} else {
-			this.handleSuccessfulLogin();
 		}
 	};
 

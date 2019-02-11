@@ -18,9 +18,12 @@ sap.ui.define([
 		this.PARAMS = {
 			RETURN: 'return'
 		}
-		
-		var jwt = localStorage.getItem('com.etauker.security.token');
-		if (jwt) { this._onSuccessfulLogin(jwt); }
+
+		const jwt = localStorage.getItem('com.etauker.security.token');
+		if (jwt) {
+			localStorage.removeItem('com.etauker.security.token');
+			location.reload();
+		}
 
 		this.oLoginModel = new JSONModel({
 			username: "",
