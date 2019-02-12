@@ -164,7 +164,10 @@ class GlucosePersistenceWorker {
         // Loop through all properties of the object and format as 'KEY' = 'value'
         aEntities = aEntities.map(oObject => {
             const aProperties = Object.keys(oObject).map(sKey => {
-                return `'${oObject[sKey].replace(/'/g, "\\'").replace(/"/, '\\"')}'`;
+                if (typeof oObject[sKey] === 'string') {
+                    oObject[sKey] = oObject[sKey].replace(/'/g, "\\'").replace(/"/, '\\"');
+                }
+                return `'${oObject[sKey]}'`;
             })
             return '(' + aProperties.join(', ') + ')';
         });
